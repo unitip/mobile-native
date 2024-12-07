@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Unitip</string>
+
+    <!-- auth -->
+    <string name="login">Masuk</string>
+    <string name="login_title">Selamat datang kembali di Unitip</string>
+    <string name="login_subtitle">Silahkan masukkan beberapa informasi berikut untuk masuk ke akun Anda</string>
+    <string name="login_switch">Sudah punya akun? Masuk sekarang</string>
+    <string name="register">Daftar</string>
+    <string name="register_title">Daftar dan bergabung bersama Unitip</string>
+    <string name="register_subtitle">Masukkan beberapa informasi berikut untuk mendaftarkan akun Unitip baru Anda</string>
+    <string name="register_switch">Belum punya akun? Daftar sekarang</string>
+    <string name="name_placeholder">Nama lengkap</string>
+    <string name="email_placeholder">Alamat email</string>
+    <string name="password_placeholder">Kata sandi</string>
+    <string name="confirm_password_placeholder">Konfirmasi kata sandi</string>
+</resources>
