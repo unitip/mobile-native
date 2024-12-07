@@ -13,10 +13,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobsScreen() {
+fun JobsScreen(
+    onNavigate: (route: Any) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -27,7 +30,7 @@ fun JobsScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = { onNavigate(Routes.CreateJob) },
                 modifier = Modifier.padding(bottom = 80.dp)
             ) {
                 Icon(Icons.TwoTone.Add, contentDescription = null)

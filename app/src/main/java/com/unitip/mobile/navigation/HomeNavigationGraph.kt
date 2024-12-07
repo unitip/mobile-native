@@ -13,13 +13,18 @@ import com.unitip.mobile.features.setting.presentation.ProfileScreen
 @Composable
 fun HomeNavigationGraph(
     navController: NavHostController,
+    onNavigate: (route: Any) -> Unit = {},
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.Home.Jobs,
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
-        composable<Routes.Home.Jobs> { JobsScreen() }
+        composable<Routes.Home.Jobs> {
+            JobsScreen(
+                onNavigate = onNavigate,
+            )
+        }
         composable<Routes.Home.Offers> { OffersScreen() }
         composable<Routes.Home.Chats> { ChatsScreen() }
         composable<Routes.Home.Profile> { ProfileScreen() }

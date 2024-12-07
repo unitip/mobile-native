@@ -33,7 +33,9 @@ private data class NavigationItem<T : Any>(
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onNavigate: (route: Any) -> Unit = {},
+) {
     val navigationItems = listOf(
         NavigationItem(
             "Dashboard", Icons.TwoTone.Home,
@@ -89,6 +91,7 @@ fun HomeScreen() {
     ) {
         HomeNavigationGraph(
             navController = homeNavController,
+            onNavigate = onNavigate,
         )
     }
 }

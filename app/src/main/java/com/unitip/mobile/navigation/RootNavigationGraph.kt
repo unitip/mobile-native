@@ -12,10 +12,18 @@ import com.unitip.mobile.features.job.presentation.CreateJobScreen
 fun RootNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Routes.CreateJob,
+        startDestination = Routes.Home,
     ) {
         composable<Routes.Auth> { AuthScreen() }
-        composable<Routes.Home> { HomeScreen() }
-        composable<Routes.CreateJob> { CreateJobScreen() }
+        composable<Routes.Home> {
+            HomeScreen(
+                onNavigate = { navController.navigate(it) }
+            )
+        }
+        composable<Routes.CreateJob> {
+            CreateJobScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
