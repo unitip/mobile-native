@@ -22,14 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.core.ui.theme.UnitipTheme
 import com.unitip.mobile.features.auth.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(
-    viewModel: AuthViewModel = viewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -132,11 +132,21 @@ fun AuthScreen(
                     .align(Alignment.End)
                     .padding(end = 16.dp, bottom = 8.dp, top = 16.dp)
             ) {
-                Button(onClick = {}) {
+                Button(onClick = {
+                    with(uiState) {
+                        if (!isLoading) {
+                            if (isLogin) viewModel.login()
+                            else viewModel.register()
+                        }
+                    }
+                }) {
                     Text(
                         text = stringResource(
-                            if (isLogin) R.string.login
-                            else R.string.register
+                            if (uiState.isLoading) R.string.loading
+                            else (
+                                    if (isLogin) R.string.login
+                                    else R.string.register
+                                    )
                         )
                     )
                 }

@@ -14,4 +14,6 @@
     <string name="email_placeholder">Alamat email</string>
     <string name="password_placeholder">Kata sandi</string>
     <string name="confirm_password_placeholder">Konfirmasi kata sandi</string>
+
+    <string name="loading">Memuat</string>
 </resources>
