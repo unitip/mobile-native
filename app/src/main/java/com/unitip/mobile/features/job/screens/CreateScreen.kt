@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.presentation
+package com.unitip.mobile.features.job.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

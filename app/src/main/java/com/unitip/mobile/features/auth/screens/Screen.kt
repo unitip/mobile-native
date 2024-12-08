@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.presentation
+package com.unitip.mobile.features.auth.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.navigation.RootNavigationGraph
+import com.unitip.mobile.core.navigation.ApplicationNavigationGraph
 import com.unitip.mobile.ui.theme.UnitipTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +19,7 @@ class MainActivity : ComponentActivity() {
             UnitipTheme {
                 Surface {
                     val navController = rememberNavController()
-                    RootNavigationGraph(navController = navController)
+                    ApplicationNavigationGraph(navController = navController)
                 }
             }
         }

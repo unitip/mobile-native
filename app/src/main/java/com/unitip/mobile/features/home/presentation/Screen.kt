@@ -22,8 +22,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.navigation.HomeNavigationGraph
-import com.unitip.mobile.navigation.Routes
+import com.unitip.mobile.core.navigation.HomeNavigationGraph
+import com.unitip.mobile.core.navigation.Routes
 
 private data class NavigationItem<T : Any>(
     val title: String,

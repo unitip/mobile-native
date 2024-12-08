@@ -1,18 +1,18 @@
-package com.unitip.mobile.navigation
+package com.unitip.mobile.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.unitip.mobile.features.auth.presentation.AuthScreen
+import com.unitip.mobile.features.auth.screens.AuthScreen
 import com.unitip.mobile.features.home.presentation.HomeScreen
-import com.unitip.mobile.features.job.presentation.CreateJobScreen
+import com.unitip.mobile.features.job.screens.CreateJobScreen
 
 @Composable
-fun RootNavigationGraph(navController: NavHostController) {
+fun ApplicationNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Home,
+        startDestination = Routes.Auth,
     ) {
         composable<Routes.Auth> { AuthScreen() }
         composable<Routes.Home> {

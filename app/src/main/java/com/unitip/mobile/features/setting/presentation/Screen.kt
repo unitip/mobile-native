@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.setting.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,10 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.core.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    onNavigate: (route: Any) -> Unit = {},
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,6 +71,13 @@ fun ProfileScreen() {
             }
 
             HorizontalDivider()
+
+            ListItem(
+                leadingContent = { Icon(Icons.TwoTone.Person, contentDescription = null) },
+                headlineContent = { Text("Auth") },
+                supportingContent = { Text("Ke halaman autentikasi") },
+                modifier = Modifier.clickable { onNavigate(Routes.Auth) }
+            )
         }
     }
 }
