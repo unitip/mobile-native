@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,16 +22,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unitip.mobile.R
-import com.unitip.mobile.ui.theme.UnitipTheme
+import com.unitip.mobile.core.ui.theme.UnitipTheme
+import com.unitip.mobile.features.auth.viewmodel.AuthViewModel
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(
+    viewModel: AuthViewModel = viewModel(),
+) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var isLogin by remember { mutableStateOf(true) }
+
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold {
         Column(

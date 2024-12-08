@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
 import com.unitip.mobile.core.navigation.ApplicationNavigationGraph
-import com.unitip.mobile.ui.theme.UnitipTheme
+import com.unitip.mobile.core.ui.theme.UnitipTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,7 +16,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            UnitipTheme {
+            UnitipTheme(
+                darkTheme = false,
+            ) {
                 Surface {
                     val navController = rememberNavController()
                     ApplicationNavigationGraph(navController = navController)

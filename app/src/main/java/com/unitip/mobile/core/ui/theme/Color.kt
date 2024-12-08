@@ -1,4 +1,4 @@
-package com.unitip.mobile.ui.theme
+package com.unitip.mobile.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

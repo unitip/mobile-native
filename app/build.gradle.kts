@@ -3,9 +3,11 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
+//    id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.21"
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -61,8 +63,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // hilt dagger
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -73,6 +75,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-kapt {
-    correctErrorTypes = true
-}
+//kapt {
+//    correctErrorTypes = true
+//}
