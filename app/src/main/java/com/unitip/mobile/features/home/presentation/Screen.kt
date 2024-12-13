@@ -1,6 +1,8 @@
 package com.unitip.mobile.features.home.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Check
@@ -11,7 +13,7 @@ import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -61,8 +63,15 @@ fun HomeScreen(
 
     val homeNavController = rememberNavController()
 
-    Scaffold(
-        bottomBar = {
+    Surface {
+        Column {
+            Box(modifier = Modifier.weight(1f)) {
+                HomeNavigationGraph(
+                    navController = homeNavController,
+                    onNavigate = onNavigate,
+                )
+            }
+
             NavigationBar {
                 val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
@@ -88,10 +97,5 @@ fun HomeScreen(
                 }
             }
         }
-    ) {
-        HomeNavigationGraph(
-            navController = homeNavController,
-            onNavigate = onNavigate,
-        )
     }
 }

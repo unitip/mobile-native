@@ -12,7 +12,7 @@ import com.unitip.mobile.features.job.screens.CreateJobScreen
 fun ApplicationNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Auth,
+        startDestination = Routes.Home,
     ) {
         composable<Routes.Auth> { AuthScreen() }
         composable<Routes.Home> {
