@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.viewmodel
+package com.unitip.mobile.features.auth.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.unitip.mobile.features.auth.data.AuthRepository

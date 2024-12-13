@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,13 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
+import com.unitip.mobile.core.ui.UIStatus
 import com.unitip.mobile.core.ui.theme.UnitipTheme
-import com.unitip.mobile.features.auth.viewmodel.AuthViewModel
+import com.unitip.mobile.features.auth.viewmodels.AuthViewModel
 
 @Composable
 fun AuthScreen(
@@ -127,28 +131,36 @@ fun AuthScreen(
                 }
             )
 
+
+
             Box(
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 16.dp, bottom = 8.dp, top = 16.dp)
             ) {
-                Button(onClick = {
-                    with(uiState) {
-                        if (!isLoading) {
-                            if (isLogin) viewModel.login()
-                            else viewModel.register()
+                Button(
+                    enabled = uiState.status != UIStatus.Loading,
+                    onClick = {
+                        with(uiState) {
+                            if (status != UIStatus.Loading) {
+                                if (isLogin) viewModel.login()
+                                else viewModel.register()
+                            }
                         }
-                    }
-                }) {
-                    Text(
-                        text = stringResource(
-                            if (uiState.isLoading) R.string.loading
-                            else (
-                                    if (isLogin) R.string.login
-                                    else R.string.register
-                                    )
+                    }) {
+                    if (uiState.status == UIStatus.Loading)
+                        CircularProgressIndicator(
+                            strokeCap = StrokeCap.Round,
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
                         )
-                    )
+                    else
+                        Text(
+                            text = stringResource(
+                                if (isLogin) R.string.login
+                                else R.string.register
+                            )
+                        )
                 }
             }
 
@@ -158,6 +170,7 @@ fun AuthScreen(
                     .padding(bottom = 16.dp)
             ) {
                 TextButton(
+                    enabled = uiState.status != UIStatus.Loading,
                     onClick = {
                         isLogin = !isLogin
                     },
