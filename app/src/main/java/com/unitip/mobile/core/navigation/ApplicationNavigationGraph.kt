@@ -1,5 +1,6 @@
 package com.unitip.mobile.core.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,6 +15,10 @@ fun ApplicationNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = Routes.Home,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) },
     ) {
         composable<Routes.Auth> { AuthScreen() }
         composable<Routes.Home> {
