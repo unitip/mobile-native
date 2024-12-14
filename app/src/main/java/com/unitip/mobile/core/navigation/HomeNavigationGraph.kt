@@ -17,7 +17,7 @@ fun HomeNavigationGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Home.Jobs,
+        startDestination = Routes.Home.Chats,
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
         composable<Routes.Home.Jobs> {
