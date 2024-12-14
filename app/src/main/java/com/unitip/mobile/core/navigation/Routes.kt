@@ -27,5 +27,9 @@ sealed class Routes {
 
     @Serializable
     object CreateJob
+
+    @Serializable
+    object Chat
+
 }
 

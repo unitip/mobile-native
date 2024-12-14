@@ -23,10 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.core.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatsScreen() {
+fun ChatsScreen(
+    onNavigate: (route: Any) -> Unit = {}
+) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -58,7 +61,10 @@ fun ChatsScreen() {
                     headlineContent = { Text("Rizal Anggooro") },
                     supportingContent = { Text("${if (it % 2 == 0) "Anda: " else ""}how are you?") },
                     trailingContent = { Text("10.10") },
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable {
+                            onNavigate(Routes.Chat)
+                    },
+
                 )
             }
 

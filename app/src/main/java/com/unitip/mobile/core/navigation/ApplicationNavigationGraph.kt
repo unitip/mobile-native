@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unitip.mobile.features.auth.screens.AuthScreen
+import com.unitip.mobile.features.chat.presentation.ChatScreen
 import com.unitip.mobile.features.home.presentation.HomeScreen
 import com.unitip.mobile.features.job.screens.CreateJobScreen
 
@@ -22,6 +23,11 @@ fun ApplicationNavigationGraph(navController: NavHostController) {
         }
         composable<Routes.CreateJob> {
             CreateJobScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable<Routes.Chat> {
+            ChatScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
