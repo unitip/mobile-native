@@ -17,19 +17,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.unitip.mobile.R
 import com.unitip.mobile.core.navigation.HomeNavigationGraph
 import com.unitip.mobile.core.navigation.Routes
 
 private data class NavigationItem<T : Any>(
     val title: String,
-    val icon: ImageVector,
+    val icon: Painter,
     val route: T
 )
 
@@ -40,23 +43,23 @@ fun HomeScreen(
 ) {
     val navigationItems = listOf(
         NavigationItem(
-            "Dashboard", Icons.TwoTone.Home,
+            "Dashboard", painterResource(id = R.drawable.round_home),
             route = Routes.Home.Dashboard
         ),
         NavigationItem(
-            "Jobs", Icons.TwoTone.LocationOn,
+            "Jobs", painterResource(R.drawable.round_work),
             route = Routes.Home.Jobs
         ),
         NavigationItem(
-            "Offers", Icons.TwoTone.Check,
+            "Offers",painterResource(R.drawable.round_assignment),
             route = Routes.Home.Offers
         ),
         NavigationItem(
-            "Chats", Icons.TwoTone.Email,
+            "Chats", painterResource(R.drawable.round_chat_bubble),
             route = Routes.Home.Chats
         ),
         NavigationItem(
-            "Profile", Icons.TwoTone.Person,
+            "Profile", painterResource(R.drawable.round_person),
             route = Routes.Home.Profile
         ),
     )
