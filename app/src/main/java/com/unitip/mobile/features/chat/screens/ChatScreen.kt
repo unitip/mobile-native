@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.chat.presentation
+package com.unitip.mobile.features.chat.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,7 +40,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlin.random.Random
 
+private data class ChatItem(
+    val from: String,
+    val message: String,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,16 +54,7 @@ fun ChatScreen(
 ) {
     var title by remember { mutableStateOf("Rijal Anggoro") }
     var message by remember { mutableStateOf(TextFieldValue("")) }
-    var dummyMessages by remember {
-        mutableStateOf(
-            listOf(
-                Pair("Rizal Anggooro", "Hi, how are you?"),
-                Pair("You", "I'm good, thanks! How about you?"),
-                Pair("Rizal Anggooro", "I'm doing great, thanks for asking!"),
-                Pair("You", "Glad to hear that!"),
-            )
-        )
-    }
+    var messages = remember { mutableStateListOf<ChatItem>() }
 
     Scaffold(
         topBar = {
@@ -81,11 +78,13 @@ fun ChatScreen(
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(16.dp),
-                    reverseLayout = false // So that new messages appear at the bottom
                 ) {
-                    items(dummyMessages.size) { index ->
-                        val (sender, text) = dummyMessages[index]
-                        MessageBubble(sender = sender, text = text)
+                    items(messages.size) { index ->
+                        val messageItem = messages[index]
+                        MessageBubble(
+                            sender = messageItem.from,
+                            text = messageItem.message
+                        )
                     }
                 }
 
@@ -117,9 +116,12 @@ fun ChatScreen(
 
                     FilledIconButton(
                         onClick = {
-                            // Send the message
-                            dummyMessages.toMutableList().add(Pair("You", message.text))
-                            message = TextFieldValue("")
+                            messages.add(
+                                ChatItem(
+                                    from = if (Random.nextBoolean()) "You" else "Rijal Anggoro",
+                                    message = message.text
+                                )
+                            )
                         },
                         modifier = Modifier
                             .align(Alignment.CenterVertically)

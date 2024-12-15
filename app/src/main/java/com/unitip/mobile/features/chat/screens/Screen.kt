@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.chat.presentation
+package com.unitip.mobile.features.chat.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,10 +62,10 @@ fun ChatsScreen(
                     supportingContent = { Text("${if (it % 2 == 0) "Anda: " else ""}how are you?") },
                     trailingContent = { Text("10.10") },
                     modifier = Modifier.clickable {
-                            onNavigate(Routes.Chat)
+                        onNavigate(Routes.Chat)
                     },
 
-                )
+                    )
             }
 
             item {
