@@ -150,7 +150,7 @@ fun CreateOfferScreen(
                     .fillMaxWidth()
                     .padding(end = 16.dp, top = 16.dp),
             ) {
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(onClick = onNavigateBack) {
                     Text(text = "Batal")
                 }
                 Spacer(modifier = Modifier.width(8.dp))

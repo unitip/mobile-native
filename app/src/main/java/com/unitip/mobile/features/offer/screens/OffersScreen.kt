@@ -16,11 +16,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.core.navigation.Routes
 import com.unitip.mobile.features.offer.components.OfferCardItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OffersScreen() {
+fun OffersScreen(
+    onNavigate: (Any) -> Unit
+) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -32,7 +35,7 @@ fun OffersScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {}
+                onClick = { onNavigate(Routes.CreateOffer) }
             ) {
                 Icon(
                     Icons.Rounded.Add,

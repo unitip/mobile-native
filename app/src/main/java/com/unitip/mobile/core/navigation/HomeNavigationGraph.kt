@@ -25,7 +25,11 @@ fun HomeNavigationGraph(
                 onNavigate = onNavigate,
             )
         }
-        composable<Routes.Home.Offers> { OffersScreen() }
+        composable<Routes.Home.Offers> {
+            OffersScreen(
+                onNavigate = onNavigate,
+            )
+        }
         composable<Routes.Home.Chats> {
             ChatsScreen(
                 onNavigate = onNavigate,

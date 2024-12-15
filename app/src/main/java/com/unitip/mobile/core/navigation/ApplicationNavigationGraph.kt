@@ -15,7 +15,7 @@ import com.unitip.mobile.features.offer.screens.CreateOfferScreen
 fun ApplicationNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Routes.CreateOffer,
+        startDestination = Routes.Home,
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
         popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
