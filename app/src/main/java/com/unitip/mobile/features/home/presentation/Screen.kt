@@ -4,12 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Check
-import androidx.compose.material.icons.twotone.Email
-import androidx.compose.material.icons.twotone.Home
-import androidx.compose.material.icons.twotone.LocationOn
-import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,22 +11,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.R
+import com.composables.icons.lucide.BadgeHelp
+import com.composables.icons.lucide.BriefcaseBusiness
+import com.composables.icons.lucide.LayoutDashboard
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.MessagesSquare
+import com.composables.icons.lucide.User
 import com.unitip.mobile.core.navigation.HomeNavigationGraph
 import com.unitip.mobile.core.navigation.Routes
 
 private data class NavigationItem<T : Any>(
     val title: String,
-    val icon: Painter,
+    val icon: ImageVector,
     val route: T
 )
 
@@ -43,23 +40,28 @@ fun HomeScreen(
 ) {
     val navigationItems = listOf(
         NavigationItem(
-            "Dashboard", painterResource(id = R.drawable.round_home),
+            "Dashboard",
+            icon = Lucide.LayoutDashboard,
             route = Routes.Home.Dashboard
         ),
         NavigationItem(
-            "Jobs", painterResource(R.drawable.round_work),
+            "Jobs",
+            icon = Lucide.BriefcaseBusiness,
             route = Routes.Home.Jobs
         ),
         NavigationItem(
-            "Offers",painterResource(R.drawable.round_assignment),
+            "Offers",
+            icon = Lucide.BadgeHelp,
             route = Routes.Home.Offers
         ),
         NavigationItem(
-            "Chats", painterResource(R.drawable.round_chat_bubble),
+            "Chats",
+            icon = Lucide.MessagesSquare,
             route = Routes.Home.Chats
         ),
         NavigationItem(
-            "Profile", painterResource(R.drawable.round_person),
+            "Profile",
+            icon = Lucide.User,
             route = Routes.Home.Profile
         ),
     )
