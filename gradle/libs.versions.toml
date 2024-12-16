@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+arrowCoreJvm = "2.0.0"
 converterGson = "2.11.0"
 hiltAndroid = "2.53"
 hiltNavigationCompose = "1.2.0"
@@ -23,6 +24,7 @@ retrofit = "2.11.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+arrow-core-jvm = { module = "io.arrow-kt:arrow-core-jvm", version.ref = "arrowCoreJvm" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }

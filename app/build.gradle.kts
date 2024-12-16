@@ -81,7 +81,7 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // functional programming
-    implementation("io.arrow-kt:arrow-core-jvm:2.0.0")
+    implementation(libs.arrow.core.jvm)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

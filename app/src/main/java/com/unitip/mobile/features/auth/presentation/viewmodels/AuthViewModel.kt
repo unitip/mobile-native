@@ -2,6 +2,7 @@ package com.unitip.mobile.features.auth.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unitip.mobile.core.ui.UIStatus
 import com.unitip.mobile.features.auth.data.repositories.AuthRepository
 import com.unitip.mobile.features.auth.presentation.states.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,11 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(AuthUiState())
+    private val _uiState = MutableStateFlow(
+        AuthUiState(
+            status = UIStatus.Initial,
+        )
+    )
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun login(

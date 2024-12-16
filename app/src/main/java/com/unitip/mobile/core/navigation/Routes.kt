@@ -25,6 +25,10 @@ sealed class Routes {
         object Profile
     }
 
+    // auth
+    @Serializable
+    object PickRole
+
     // chat
     @Serializable
     object Chat

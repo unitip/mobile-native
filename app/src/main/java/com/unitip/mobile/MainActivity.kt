@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             UnitipTheme(
                 darkTheme = false,
+                // dynamicColor = false,
             ) {
                 Surface {
                     val navController = rememberNavController()

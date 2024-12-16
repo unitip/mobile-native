@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unitip.mobile.features.auth.presentation.screens.AuthScreen
+import com.unitip.mobile.features.auth.presentation.screens.PickRoleScreen
 import com.unitip.mobile.features.chat.screens.ChatScreen
 import com.unitip.mobile.features.home.presentation.HomeScreen
 import com.unitip.mobile.features.job.screens.CreateJobScreen
@@ -18,7 +19,7 @@ fun ApplicationNavigationGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) Routes.Home else Routes.Auth,
+        startDestination = if (isAuthenticated) Routes.Home else Routes.PickRole,
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
         popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
@@ -26,6 +27,7 @@ fun ApplicationNavigationGraph(
     ) {
         // auth
         composable<Routes.Auth> { AuthScreen() }
+        composable<Routes.PickRole> { PickRoleScreen() }
 
         // home
         composable<Routes.Home> {
