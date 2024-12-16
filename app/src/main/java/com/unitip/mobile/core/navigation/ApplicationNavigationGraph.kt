@@ -12,10 +12,13 @@ import com.unitip.mobile.features.job.screens.CreateJobScreen
 import com.unitip.mobile.features.offer.screens.CreateOfferScreen
 
 @Composable
-fun ApplicationNavigationGraph(navController: NavHostController) {
+fun ApplicationNavigationGraph(
+    navController: NavHostController,
+    isAuthenticated: Boolean,
+) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Home,
+        startDestination = if (isAuthenticated) Routes.Home else Routes.Auth,
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
         popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
