@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class Mqtt @Inject constructor(
     private val application: Application,
 ) {
-    fun instance() = MqttAndroidClient(
+    fun instance(): MqttAndroidClient = MqttAndroidClient(
         application, MqttConfig.MQTT_SERVER_URI,
         MqttConfig.MQTT_CLIENT_ID
     )
