@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.data.sources
+package com.unitip.mobile.shared.data.providers
 
 import android.app.Application
 import javax.inject.Inject
@@ -9,7 +9,7 @@ class Preferences @Inject constructor(
     private val application: Application,
 ) {
     fun instance() = application.getSharedPreferences(
-        "com.unitip.mobile.shared.data.sources.Preferences",
+        "com.unitip.mobile.shared.data.providers.Preferences",
         Application.MODE_PRIVATE,
     )
 }

@@ -4,7 +4,7 @@ import arrow.core.Either
 import com.unitip.mobile.core.failure.Failure
 import com.unitip.mobile.features.auth.data.models.LoginPayload
 import com.unitip.mobile.features.auth.data.sources.AuthApi
-import com.unitip.mobile.shared.data.sources.Preferences
+import com.unitip.mobile.shared.data.providers.Preferences
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -3,7 +3,7 @@ package com.unitip.mobile.shared.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.core.failure.Failure
 import com.unitip.mobile.shared.data.models.Session
-import com.unitip.mobile.shared.data.sources.Preferences
+import com.unitip.mobile.shared.data.providers.Preferences
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.data.sources
+package com.unitip.mobile.shared.data.providers
 
 import android.app.Application
 import com.unitip.mobile.core.config.MqttConfig
