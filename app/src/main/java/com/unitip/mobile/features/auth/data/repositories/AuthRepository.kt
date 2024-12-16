@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.auth.data.repositories
 
+import arrow.core.Either
+import com.unitip.mobile.core.failure.Failure
 import com.unitip.mobile.features.auth.data.models.LoginPayload
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.shared.data.sources.Preferences
@@ -14,8 +16,14 @@ class AuthRepository @Inject constructor(
     suspend fun login(
         email: String,
         password: String,
-    ) {
+    ): Either<Failure, Boolean> {
         val response = authApi.login(LoginPayload(email, password))
+        if (!response.isSuccessful)
+            return Either.Left(Failure(message = response.message()))
+
+        // save session to local storage
+
+        return Either.Right(true)
     }
 
     suspend fun register(
