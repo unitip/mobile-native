@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.states
+package com.unitip.mobile.features.auth.presentation.states
 
 import com.unitip.mobile.core.ui.UIStatus
 

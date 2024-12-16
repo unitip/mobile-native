@@ -1,8 +1,7 @@
-package com.unitip.mobile.features.auth.screens
+package com.unitip.mobile.features.auth.presentation.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.core.ui.UIStatus
 import com.unitip.mobile.core.ui.theme.UnitipTheme
-import com.unitip.mobile.features.auth.viewmodels.AuthViewModel
+import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
 fun AuthScreen(

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.unitip.mobile.features.auth.screens.AuthScreen
+import com.unitip.mobile.features.auth.presentation.screens.AuthScreen
 import com.unitip.mobile.features.chat.screens.ChatScreen
 import com.unitip.mobile.features.home.presentation.HomeScreen
 import com.unitip.mobile.features.job.screens.CreateJobScreen
