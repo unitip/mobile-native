@@ -1,7 +1,7 @@
 package com.unitip.mobile.features.auth.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.unitip.mobile.features.auth.data.AuthRepository
+import com.unitip.mobile.features.auth.data.repositories.AuthRepository
 import com.unitip.mobile.features.auth.states.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
