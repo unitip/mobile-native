@@ -143,7 +143,10 @@ fun AuthScreen(
                     onClick = {
                         with(uiState) {
                             if (status != UIStatus.Loading) {
-                                if (isLogin) viewModel.login()
+                                if (isLogin) viewModel.login(
+                                    email = email,
+                                    password = password,
+                                )
                                 else viewModel.register()
                             }
                         }
