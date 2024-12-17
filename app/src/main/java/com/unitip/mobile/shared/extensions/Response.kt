@@ -1,20 +1,21 @@
 package com.unitip.mobile.shared.extensions
 
+import com.google.gson.Gson
 import com.unitip.mobile.shared.data.models.BadRequestError
 import com.unitip.mobile.shared.data.models.ConflictError
 import com.unitip.mobile.shared.data.models.Failure
 import com.unitip.mobile.shared.data.models.InternalServerError
 import com.unitip.mobile.shared.data.models.NotFoundError
 import com.unitip.mobile.shared.data.models.UnauthorizedError
-import kotlinx.serialization.json.Json
 import retrofit2.Response
 
 fun <T> Response<T>.mapToFailure(): Failure {
     val errorBodyStr = this.errorBody()!!.string()
+    val gson = Gson()
 
     return when (this.code()) {
         400 -> {
-            val badRequestError = Json.decodeFromString<BadRequestError>(errorBodyStr)
+            val badRequestError = gson.fromJson(errorBodyStr, BadRequestError::class.java)
             Failure(
                 message = badRequestError.errors.first().message,
                 code = 400
@@ -22,8 +23,7 @@ fun <T> Response<T>.mapToFailure(): Failure {
         }
 
         401 -> {
-            val unauthorizedError =
-                Json.decodeFromString<UnauthorizedError>(errorBodyStr)
+            val unauthorizedError = gson.fromJson(errorBodyStr, UnauthorizedError::class.java)
             Failure(
                 message = unauthorizedError.message,
                 code = 401
@@ -31,7 +31,7 @@ fun <T> Response<T>.mapToFailure(): Failure {
         }
 
         404 -> {
-            val notFoundError = Json.decodeFromString<NotFoundError>(errorBodyStr)
+            val notFoundError = gson.fromJson(errorBodyStr, NotFoundError::class.java)
             Failure(
                 message = notFoundError.message,
                 code = 404
@@ -39,7 +39,7 @@ fun <T> Response<T>.mapToFailure(): Failure {
         }
 
         409 -> {
-            val conflictError = Json.decodeFromString<ConflictError>(errorBodyStr)
+            val conflictError = gson.fromJson(errorBodyStr, ConflictError::class.java)
             Failure(
                 message = conflictError.message,
                 code = 409
@@ -47,8 +47,7 @@ fun <T> Response<T>.mapToFailure(): Failure {
         }
 
         500 -> {
-            val internalServerError =
-                Json.decodeFromString<InternalServerError>(errorBodyStr)
+            val internalServerError = gson.fromJson(errorBodyStr, InternalServerError::class.java)
             Failure(
                 message = internalServerError.message,
                 code = 500
