@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
+import com.unitip.mobile.core.navigation.Routes
 import com.unitip.mobile.core.ui.UIStatus
 import com.unitip.mobile.features.auth.presentation.states.AuthUiAction
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
@@ -39,7 +40,7 @@ fun AuthScreen(
 ) {
     var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
     var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
-    var password by remember { mutableStateOf("passworda") }
+    var password by remember { mutableStateOf("password") }
     var confirmPassword by remember { mutableStateOf("password") }
 
     val uiState by viewModel.uiState.collectAsState()
@@ -54,9 +55,10 @@ fun AuthScreen(
                 if (status == UIStatus.Failure)
                     Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
                 else if (status == UIStatus.Success) {
-                    if (uiState.needRole)
-                        Toast.makeText(context, "Perlu pilih role", Toast.LENGTH_SHORT).show()
-                    else
+                    if (uiState.needRole) {
+                        onNavigate(Routes.PickRole)
+                        viewModel.resetState()
+                    } else
                         Toast.makeText(context, "Berhasil masuk", Toast.LENGTH_SHORT).show()
                 }
             }
