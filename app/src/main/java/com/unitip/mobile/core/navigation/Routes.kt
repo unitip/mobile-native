@@ -42,5 +42,9 @@ sealed class Routes {
     object CreateOffer
 
     // setting
+
+    // test
+    @Serializable
+    object Test
 }
 
