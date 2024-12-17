@@ -27,7 +27,9 @@ sealed class Routes {
 
     // auth
     @Serializable
-    object PickRole
+    data class PickRole(
+        val roles: List<String>,
+    )
 
     // chat
     @Serializable

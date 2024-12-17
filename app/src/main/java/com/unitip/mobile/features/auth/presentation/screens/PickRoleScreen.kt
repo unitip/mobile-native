@@ -45,7 +45,7 @@ private data class Role(
     val icon: ImageVector,
 )
 
-private val roles = listOf(
+private val defaultRoles = listOf(
     Role(
         title = "Driver",
         subtitle = "Ambil dan tawarkan pekerjaan kepada pengguna lainnya",
@@ -61,7 +61,10 @@ private val roles = listOf(
 )
 
 @Composable
-fun PickRoleScreen() {
+fun PickRoleScreen(
+    roles: List<String>,
+) {
+    val availableRoles = defaultRoles.filter { it.value in roles }
     var selectedRole by remember { mutableStateOf("") }
 
     Scaffold {
@@ -88,8 +91,8 @@ fun PickRoleScreen() {
             )
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(roles.size) { index ->
-                    val role = roles[index]
+                items(availableRoles.size) { index ->
+                    val role = availableRoles[index]
                     RoleListItem(
                         index = index,
                         isSelected = role.value === selectedRole,

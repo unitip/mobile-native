@@ -20,17 +20,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.core.navigation.Routes
-import com.unitip.mobile.core.ui.UIStatus
-import com.unitip.mobile.features.auth.presentation.states.AuthUiAction
+import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
@@ -44,26 +46,27 @@ fun AuthScreen(
     var confirmPassword by remember { mutableStateOf("password") }
 
     val uiState by viewModel.uiState.collectAsState()
+    val isLogin = uiState.isLogin
 
     val context = LocalContext.current
 
-    LaunchedEffect(uiState) {
-        val status = uiState.status
-        val action = uiState.action
-        when (action) {
-            AuthUiAction.Login -> {
-                if (status == UIStatus.Failure)
-                    Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
-                else if (status == UIStatus.Success) {
-                    if (uiState.needRole) {
-                        onNavigate(Routes.PickRole)
-                        viewModel.resetState()
-                    } else
-                        Toast.makeText(context, "Berhasil masuk", Toast.LENGTH_SHORT).show()
-                }
-            }
+    LaunchedEffect(uiState.detail) {
+        with(uiState.detail) {
+            when (this) {
+                is AuthStateDetail.Success -> {}
 
-            else -> {}
+                is AuthStateDetail.SuccessWithPickRole -> {
+                    onNavigate(Routes.PickRole(roles = roles))
+                    viewModel.resetState()
+                }
+
+                is AuthStateDetail.Failure -> {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    viewModel.resetState()
+                }
+
+                else -> {}
+            }
         }
     }
 
@@ -74,26 +77,28 @@ fun AuthScreen(
                 .fillMaxSize()
         ) {
             Text(
-                text = stringResource(
-                    if (uiState.isLogin) R.string.login_title
-                    else R.string.register_title
-                ),
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                ),
+                text = when (isLogin) {
+                    true -> "Masuk"
+                    false -> "Registrasi"
+                },
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 32.dp),
                 style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
             )
             Text(
-                text = stringResource(
-                    if (uiState.isLogin) R.string.login_subtitle
-                    else R.string.register_subtitle
-                ),
+                text = when (isLogin) {
+                    true -> "Selamat datang kembali di aplikasi Unitip! Silahkan masukkan beberapa informasi berikut untuk masuk ke akun Unitip Anda"
+                    false -> "Masukkan beberapa informasi berikut untuk bergabung dan menjadi bagian dari keluarga Unitip!"
+                },
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .align(Alignment.CenterHorizontally)
                     .alpha(.8f),
                 style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
             )
 
             // form
@@ -110,7 +115,7 @@ fun AuthScreen(
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = 16.dp,
+                            top = 32.dp,
                         ),
                     placeholder = {
                         Text(stringResource(R.string.name_placeholder))
@@ -124,7 +129,7 @@ fun AuthScreen(
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = (if (uiState.isLogin) 16 else 8).dp,
+                            top = (if (uiState.isLogin) 32 else 8).dp,
                         ),
                     placeholder = {
                         Text(stringResource(R.string.email_placeholder))
@@ -161,15 +166,12 @@ fun AuthScreen(
             }
 
             Button(
-                enabled = uiState.status != UIStatus.Loading,
+                enabled = uiState.detail !is AuthStateDetail.Loading,
                 onClick = {
-                    with(uiState) {
-                        if (status != UIStatus.Loading) {
-                            if (isLogin) viewModel.login(
-                                email = email,
-                                password = password,
-                            )
-                            else viewModel.register()
+                    if (uiState.detail !is AuthStateDetail.Loading) {
+                        when (isLogin) {
+                            true -> viewModel.login(email = email, password = password)
+                            false -> viewModel.register()
                         }
                     }
                 },
@@ -177,7 +179,7 @@ fun AuthScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp),
             ) {
-                if (uiState.status == UIStatus.Loading)
+                if (uiState.detail is AuthStateDetail.Loading)
                     CircularProgressIndicator(
                         strokeCap = StrokeCap.Round,
                         modifier = Modifier.size(16.dp),
@@ -186,13 +188,13 @@ fun AuthScreen(
                 else
                     Text(
                         text = stringResource(
-                            if (uiState.isLogin) R.string.login
+                            if (isLogin) R.string.login
                             else R.string.register
                         )
                     )
             }
             TextButton(
-                enabled = uiState.status != UIStatus.Loading,
+                enabled = uiState.detail !is AuthStateDetail.Loading,
                 onClick = { viewModel.switchAuthMode() },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,7 +202,7 @@ fun AuthScreen(
             ) {
                 Text(
                     text = stringResource(
-                        if (uiState.isLogin) R.string.register_switch
+                        if (isLogin) R.string.register_switch
                         else R.string.login_switch
                     )
                 )
