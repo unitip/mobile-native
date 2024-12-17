@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.auth.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +23,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.core.ui.UIStatus
+import com.unitip.mobile.features.auth.presentation.states.AuthUiAction
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
@@ -38,12 +41,28 @@ fun AuthScreen(
     var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
     var password by remember { mutableStateOf("passworda") }
     var confirmPassword by remember { mutableStateOf("password") }
-    var isLogin by remember { mutableStateOf(true) }
 
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState) {
+    val context = LocalContext.current
 
+    LaunchedEffect(uiState) {
+        val status = uiState.status
+        val action = uiState.action
+        when (action) {
+            AuthUiAction.Login -> {
+                if (status == UIStatus.Failure)
+                    Toast.makeText(context, uiState.message, Toast.LENGTH_SHORT).show()
+                else if (status == UIStatus.Success) {
+                    if (uiState.needRole)
+                        Toast.makeText(context, "Perlu pilih role", Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(context, "Berhasil masuk", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            else -> {}
+        }
     }
 
     Scaffold {
@@ -54,7 +73,7 @@ fun AuthScreen(
         ) {
             Text(
                 text = stringResource(
-                    if (isLogin) R.string.login_title
+                    if (uiState.isLogin) R.string.login_title
                     else R.string.register_title
                 ),
                 modifier = Modifier.padding(
@@ -66,7 +85,7 @@ fun AuthScreen(
             )
             Text(
                 text = stringResource(
-                    if (isLogin) R.string.login_subtitle
+                    if (uiState.isLogin) R.string.login_subtitle
                     else R.string.register_subtitle
                 ),
                 modifier = Modifier
@@ -81,7 +100,7 @@ fun AuthScreen(
                     .weight(1f)
                     .fillMaxWidth(),
             ) {
-                if (!isLogin) OutlinedTextField(
+                if (!uiState.isLogin) OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     modifier = Modifier
@@ -103,7 +122,7 @@ fun AuthScreen(
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = (if (isLogin) 16 else 8).dp,
+                            top = (if (uiState.isLogin) 16 else 8).dp,
                         ),
                     placeholder = {
                         Text(stringResource(R.string.email_placeholder))
@@ -123,7 +142,7 @@ fun AuthScreen(
                         Text(stringResource(R.string.password_placeholder))
                     }
                 )
-                if (!isLogin) OutlinedTextField(
+                if (!uiState.isLogin) OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     modifier = Modifier
@@ -165,23 +184,21 @@ fun AuthScreen(
                 else
                     Text(
                         text = stringResource(
-                            if (isLogin) R.string.login
+                            if (uiState.isLogin) R.string.login
                             else R.string.register
                         )
                     )
             }
             TextButton(
                 enabled = uiState.status != UIStatus.Loading,
-                onClick = {
-                    isLogin = !isLogin
-                },
+                onClick = { viewModel.switchAuthMode() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
             ) {
                 Text(
                     text = stringResource(
-                        if (isLogin) R.string.register_switch
+                        if (uiState.isLogin) R.string.register_switch
                         else R.string.login_switch
                     )
                 )

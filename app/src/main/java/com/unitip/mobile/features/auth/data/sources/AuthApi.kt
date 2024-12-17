@@ -1,9 +1,9 @@
 package com.unitip.mobile.features.auth.data.sources
 
-import com.unitip.mobile.features.auth.data.models.AuthResponse
-import com.unitip.mobile.features.auth.data.models.LoginPayload
-import com.unitip.mobile.features.auth.data.models.LoginResponse
-import com.unitip.mobile.features.auth.data.models.RegisterPayload
+import com.unitip.mobile.features.auth.data.dtos.AuthResponse
+import com.unitip.mobile.features.auth.data.dtos.LoginPayload
+import com.unitip.mobile.features.auth.data.dtos.LoginResponse
+import com.unitip.mobile.features.auth.data.dtos.RegisterPayload
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

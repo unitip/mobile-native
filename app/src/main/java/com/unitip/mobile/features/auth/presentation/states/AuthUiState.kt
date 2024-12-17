@@ -6,11 +6,15 @@ enum class AuthUiAction {
     Initial,
     Login,
     Register,
+    SwitchAuthMode,
 }
 
 data class AuthUiState(
-    val status: UIStatus = UIStatus.Initial,
     val action: AuthUiAction = AuthUiAction.Initial,
+    val status: UIStatus = UIStatus.Initial,
 
+    val message: String = "",
     val isLogin: Boolean = true,
+    val needRole: Boolean = false,
+    val roles: List<String> = listOf(),
 )

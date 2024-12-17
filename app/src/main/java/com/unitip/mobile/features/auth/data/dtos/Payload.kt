@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.data.models
+package com.unitip.mobile.features.auth.data.dtos
 
 data class LoginPayload(
     val email: String,

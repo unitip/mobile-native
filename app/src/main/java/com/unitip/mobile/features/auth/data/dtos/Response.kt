@@ -1,11 +1,9 @@
-package com.unitip.mobile.features.auth.data.models
+package com.unitip.mobile.features.auth.data.dtos
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class LoginResponse(
-    @SerialName("need_role") val needRole: Boolean,
+    @SerializedName("need_role") val needRole: Boolean,
     val roles: List<String>,
     val id: String,
     val name: String,
