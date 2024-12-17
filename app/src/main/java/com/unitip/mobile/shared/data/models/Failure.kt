@@ -1,4 +1,4 @@
-package com.unitip.mobile.core.failure
+package com.unitip.mobile.shared.data.models
 
 data class Failure(
     val message: String,

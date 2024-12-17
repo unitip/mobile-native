@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,25 +23,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.core.ui.UIStatus
-import com.unitip.mobile.core.ui.theme.UnitipTheme
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
+    onNavigate: (route: Any) -> Unit,
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
+    var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
+    var password by remember { mutableStateOf("passworda") }
+    var confirmPassword by remember { mutableStateOf("password") }
     var isLogin by remember { mutableStateOf(true) }
 
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+
+    }
 
     Scaffold {
         Column(
@@ -77,7 +81,7 @@ fun AuthScreen(
                     .weight(1f)
                     .fillMaxWidth(),
             ) {
-                if (!isLogin) TextField(
+                if (!isLogin) OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     modifier = Modifier
@@ -91,7 +95,7 @@ fun AuthScreen(
                         Text(stringResource(R.string.name_placeholder))
                     }
                 )
-                TextField(
+                OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     modifier = Modifier
@@ -105,7 +109,7 @@ fun AuthScreen(
                         Text(stringResource(R.string.email_placeholder))
                     }
                 )
-                TextField(
+                OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
                     modifier = Modifier
@@ -119,7 +123,7 @@ fun AuthScreen(
                         Text(stringResource(R.string.password_placeholder))
                     }
                 )
-                if (!isLogin) TextField(
+                if (!isLogin) OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     modifier = Modifier
@@ -183,13 +187,5 @@ fun AuthScreen(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun AuthScreenPreview() {
-    UnitipTheme {
-        AuthScreen()
     }
 }

@@ -1,10 +1,12 @@
 package com.unitip.mobile.features.auth.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.core.failure.Failure
 import com.unitip.mobile.features.auth.data.models.LoginPayload
+import com.unitip.mobile.features.auth.data.models.LoginResult
 import com.unitip.mobile.features.auth.data.sources.AuthApi
+import com.unitip.mobile.shared.data.models.Failure
 import com.unitip.mobile.shared.data.providers.Preferences
+import com.unitip.mobile.shared.utils.ApiError
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,14 +18,18 @@ class AuthRepository @Inject constructor(
     suspend fun login(
         email: String,
         password: String,
-    ): Either<Failure, Boolean> {
+    ): Either<Failure, LoginResult> {
         val response = authApi.login(LoginPayload(email, password))
-        if (!response.isSuccessful)
-            return Either.Left(Failure(message = response.message()))
+        val result = response.body()
 
-        // save session to local storage
-
-        return Either.Right(true)
+        return if (response.isSuccessful && result != null)
+            Either.Right(
+                LoginResult(
+                    needRole = result.needRole,
+                    roles = result.roles,
+                )
+            )
+        else Either.Left(ApiError.mapToFailure(response))
     }
 
     suspend fun register(

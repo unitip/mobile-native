@@ -26,7 +26,11 @@ fun ApplicationNavigationGraph(
         popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) },
     ) {
         // auth
-        composable<Routes.Auth> { AuthScreen() }
+        composable<Routes.Auth> {
+            AuthScreen(
+                onNavigate = { navController.navigate(it) }
+            )
+        }
         composable<Routes.PickRole> { PickRoleScreen() }
 
         // home
