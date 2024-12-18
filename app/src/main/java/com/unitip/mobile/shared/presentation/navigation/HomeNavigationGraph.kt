@@ -1,6 +1,7 @@
 package com.unitip.mobile.shared.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,12 +13,14 @@ import com.unitip.mobile.features.setting.presentation.screens.ProfileScreen
 
 @Composable
 fun HomeNavigationGraph(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     onNavigate: (route: Any) -> Unit = {},
     onLogout: () -> Unit = {},
     onUnauthorized: () -> Unit = {},
 ) {
     NavHost(
+        modifier = modifier,
         navController = navController,
         startDestination = Routes.Home.Dashboard,
     ) {

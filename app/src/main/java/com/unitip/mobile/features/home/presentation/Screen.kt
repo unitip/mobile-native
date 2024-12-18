@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.home.presentation
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -9,6 +8,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,6 +24,7 @@ import com.composables.icons.lucide.LayoutDashboard
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessagesSquare
 import com.composables.icons.lucide.User
+import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
 import com.unitip.mobile.shared.presentation.navigation.HomeNavigationGraph
 import com.unitip.mobile.shared.presentation.navigation.Routes
 
@@ -99,8 +100,9 @@ fun HomeScreen(
             }
         }
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        CompositionLocalProvider(LocalHomeNavController provides homeNavController) {
             HomeNavigationGraph(
+                modifier = Modifier.padding(it),
                 navController = homeNavController,
                 onNavigate = onNavigate,
                 onLogout = onLogout,
