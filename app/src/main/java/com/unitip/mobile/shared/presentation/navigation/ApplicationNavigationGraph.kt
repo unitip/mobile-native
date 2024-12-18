@@ -14,7 +14,6 @@ import com.unitip.mobile.features.home.presentation.HomeScreen
 import com.unitip.mobile.features.job.screens.CreateJobScreen
 import com.unitip.mobile.features.offer.screens.CreateOfferScreen
 import com.unitip.mobile.features.test.TestScreen
-import com.unitip.mobile.shared.utils.extensions.redirectToUnauthorized
 
 @Composable
 fun ApplicationNavigationGraph(
@@ -61,12 +60,6 @@ fun ApplicationNavigationGraph(
         composable<Routes.Home> {
             HomeScreen(
                 onNavigate = { navController.navigate(it) },
-                onLogout = {
-                    navController.navigate(Routes.Auth) {
-                        popUpTo(Routes.Home) { inclusive = true }
-                    }
-                },
-                onUnauthorized = { navController.redirectToUnauthorized() }
             )
         }
 

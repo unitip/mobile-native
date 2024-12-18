@@ -36,8 +36,6 @@ private data class NavigationItem<T : Any>(
 @Composable
 fun HomeScreen(
     onNavigate: (route: Any) -> Unit = {},
-    onLogout: () -> Unit = {},
-    onUnauthorized: () -> Unit = {}
 ) {
     val navigationItems = listOf(
         NavigationItem(
@@ -103,8 +101,6 @@ fun HomeScreen(
                 modifier = Modifier.padding(it),
                 navController = homeNavController,
                 onNavigate = onNavigate,
-                onLogout = onLogout,
-                onUnauthorized = onUnauthorized,
             )
         }
     }

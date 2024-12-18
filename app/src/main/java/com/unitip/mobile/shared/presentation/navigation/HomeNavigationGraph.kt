@@ -16,13 +16,11 @@ fun HomeNavigationGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onNavigate: (route: Any) -> Unit = {},
-    onLogout: () -> Unit = {},
-    onUnauthorized: () -> Unit = {},
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Routes.Home.Dashboard,
+        startDestination = Routes.Home.Profile,
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
         composable<Routes.Home.Jobs> {
@@ -41,11 +39,7 @@ fun HomeNavigationGraph(
             )
         }
         composable<Routes.Home.Profile> {
-            ProfileScreen(
-                onNavigate = onNavigate,
-                onLogout = onLogout,
-                onUnauthorized = onUnauthorized
-            )
+            ProfileScreen()
         }
     }
 }
