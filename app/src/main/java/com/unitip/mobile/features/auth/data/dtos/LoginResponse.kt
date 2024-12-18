@@ -10,9 +10,3 @@ data class LoginResponse(
     val email: String,
     val token: String,
 )
-
-data class AuthResponse(
-    val name: String,
-    val email: String,
-    val token: String,
-)
