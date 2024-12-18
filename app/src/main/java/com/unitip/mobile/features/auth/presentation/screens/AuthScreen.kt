@@ -34,9 +34,11 @@ import com.unitip.mobile.R
 import com.unitip.mobile.core.navigation.Routes
 import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
+import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
 
 @Composable
 fun AuthScreen(
+    sessionViewModel: SessionViewModel = hiltViewModel(),
     viewModel: AuthViewModel = hiltViewModel(),
     onNavigate: (route: Any) -> Unit,
     onDone: () -> Unit,
@@ -55,6 +57,7 @@ fun AuthScreen(
         with(uiState.detail) {
             when (this) {
                 is AuthStateDetail.Success -> {
+                    sessionViewModel.refresh()
                     onDone()
                     viewModel.resetState()
                 }
