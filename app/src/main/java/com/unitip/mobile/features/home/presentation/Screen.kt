@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.home.presentation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -34,7 +33,6 @@ private data class NavigationItem<T : Any>(
     val route: T
 )
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     onNavigate: (route: Any) -> Unit = {},
@@ -71,36 +69,36 @@ fun HomeScreen(
 
     val homeNavController = rememberNavController()
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
-        bottomBar = {
-            NavigationBar {
-                val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+    CompositionLocalProvider(LocalHomeNavController provides homeNavController) {
+        Scaffold(
+            contentWindowInsets = WindowInsets(0.dp),
+            bottomBar = {
+                NavigationBar {
+                    val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
-                navigationItems.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        modifier = Modifier.padding(
-                            start = (if (index == 0) 16 else 0).dp,
-                            end = (if (index == navigationItems.size - 1) 16 else 0).dp
-                        ),
-                        selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
-                        onClick = {
-                            homeNavController.navigate(item.route) {
-                                popUpTo(homeNavController.graph.findStartDestination().id) {
-                                    saveState = true
+                    navigationItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            modifier = Modifier.padding(
+                                start = (if (index == 0) 16 else 0).dp,
+                                end = (if (index == navigationItems.size - 1) 16 else 0).dp
+                            ),
+                            selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
+                            onClick = {
+                                homeNavController.navigate(item.route) {
+                                    popUpTo(homeNavController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Icon(item.icon, contentDescription = null) }
-                    )
+                            },
+                            icon = { Icon(item.icon, contentDescription = null) }
+                        )
+                    }
                 }
             }
-        }
-    ) {
-        CompositionLocalProvider(LocalHomeNavController provides homeNavController) {
+        ) {
             HomeNavigationGraph(
                 modifier = Modifier.padding(it),
                 navController = homeNavController,
