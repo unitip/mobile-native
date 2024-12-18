@@ -5,13 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -22,7 +21,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,11 +33,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.User
+import com.unitip.mobile.R
+import com.unitip.mobile.features.setting.presentation.states.ProfileDetail
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
+import com.unitip.mobile.shared.presentation.components.LoadingBottomSheet
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,10 +52,34 @@ fun ProfileScreen(
     onNavigate: (route: Any) -> Unit = {},
 ) {
     var isDialogConfirmLogoutVisible by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        confirmValueChange = { false },
+        skipPartiallyExpanded = true,
+    )
+    var isLoadingVisible by remember { mutableStateOf(true) }
 
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.detail) {
+        with(uiState.detail) {
+            when (this) {
+                is ProfileDetail.Loading -> {
+                    isLoadingVisible = true
+                    sheetState.show()
+                }
+
+                is ProfileDetail.Success -> {
+                    launch { sheetState.hide() }
+                        .invokeOnCompletion { isLoadingVisible = false }
+                }
+
+                else -> {}
+            }
+        }
+    }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             TopAppBar(
                 title = {
@@ -75,12 +106,12 @@ fun ProfileScreen(
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                 ) {
                     Icon(
-                        imageVector = Icons.TwoTone.Person,
+                        Lucide.User,
                         contentDescription = null,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                with(uiState.value) {
+                with(uiState) {
                     Column(modifier = Modifier.padding(start = 16.dp)) {
                         Text(
                             text = name,
@@ -112,7 +143,7 @@ fun ProfileScreen(
                 },
                 headlineContent = { Text(text = "Keluar") },
                 modifier = Modifier.clickable {
-                    isDialogConfirmLogoutVisible = true
+                    viewModel.logout()
                 }
             )
         }
@@ -140,4 +171,13 @@ fun ProfileScreen(
                 }
             )
     }
+
+    // bottom sheet loading
+    if (isLoadingVisible)
+        LoadingBottomSheet(
+            sheetState = sheetState,
+            image = painterResource(R.drawable.undraw_clean_up),
+            title = "Mohon tunggu sebentar",
+            subtitle = "Kami sedang memproses permintaan keluar Anda dari akun Unitip",
+        )
 }
