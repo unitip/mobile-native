@@ -14,6 +14,7 @@ import com.unitip.mobile.features.setting.presentation.screens.ProfileScreen
 fun HomeNavigationGraph(
     navController: NavHostController,
     onNavigate: (route: Any) -> Unit = {},
+    onLogout: () -> Unit = {},
 ) {
     NavHost(
         navController = navController,
@@ -38,6 +39,7 @@ fun HomeNavigationGraph(
         composable<Routes.Home.Profile> {
             ProfileScreen(
                 onNavigate = onNavigate,
+                onLogout = onLogout,
             )
         }
     }

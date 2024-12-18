@@ -49,7 +49,12 @@ fun ApplicationNavigationGraph(
         // home
         composable<Routes.Home> {
             HomeScreen(
-                onNavigate = { navController.navigate(it) }
+                onNavigate = { navController.navigate(it) },
+                onLogout = {
+                    navController.navigate(Routes.Auth) {
+                        popUpTo(Routes.Home) { inclusive = true }
+                    }
+                }
             )
         }
 
