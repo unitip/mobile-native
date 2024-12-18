@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation
+package com.unitip.mobile.features.setting.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,17 +36,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
+import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    sessionViewModel: SessionViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel = hiltViewModel(),
     onNavigate: (route: Any) -> Unit = {},
 ) {
     var isDialogConfirmLogoutVisible by remember { mutableStateOf(false) }
 
-    val session = sessionViewModel.session.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -80,21 +80,23 @@ fun ProfileScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                Column(modifier = Modifier.padding(start = 16.dp)) {
-                    Text(
-                        text = session.value?.name ?: "Tidak ada nama",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = session.value?.email ?: "Tidak ada alamat email",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.alpha(.8f)
-                    )
-                    Text(
-                        text = session.value?.token ?: "Tidak ada alamat email",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.alpha(.8f)
-                    )
+                with(uiState.value) {
+                    Column(modifier = Modifier.padding(start = 16.dp)) {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = email,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.alpha(.8f)
+                        )
+                        Text(
+                            text = token,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.alpha(.8f)
+                        )
+                    }
                 }
             }
 

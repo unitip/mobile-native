@@ -8,7 +8,7 @@ import com.unitip.mobile.features.chat.screens.ChatsScreen
 import com.unitip.mobile.features.dashboard.screens.DashboardScreen
 import com.unitip.mobile.features.job.screens.JobsScreen
 import com.unitip.mobile.features.offer.screens.OffersScreen
-import com.unitip.mobile.features.setting.presentation.ProfileScreen
+import com.unitip.mobile.features.setting.presentation.screens.ProfileScreen
 
 @Composable
 fun HomeNavigationGraph(

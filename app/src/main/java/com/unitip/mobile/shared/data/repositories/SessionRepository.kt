@@ -8,6 +8,7 @@ import com.unitip.mobile.shared.data.providers.Preferences
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Deprecated("Use SessionManager from shared module for simple session management")
 @Singleton
 class SessionRepository @Inject constructor(
     private val preferences: Preferences,
