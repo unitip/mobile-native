@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.setting.data.repositories.AuthRepository
 import com.unitip.mobile.features.setting.presentation.states.ProfileDetail
 import com.unitip.mobile.features.setting.presentation.states.ProfileState
-import com.unitip.mobile.shared.helper.SessionManager
+import com.unitip.mobile.shared.core.helpers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

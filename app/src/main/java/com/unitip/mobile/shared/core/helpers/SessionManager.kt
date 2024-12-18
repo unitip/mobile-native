@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.helper
+package com.unitip.mobile.shared.core.helpers
 
 import com.google.gson.Gson
 import com.unitip.mobile.shared.data.models.Session

@@ -24,8 +24,8 @@ import com.composables.icons.lucide.LayoutDashboard
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessagesSquare
 import com.composables.icons.lucide.User
-import com.unitip.mobile.core.navigation.HomeNavigationGraph
-import com.unitip.mobile.core.navigation.Routes
+import com.unitip.mobile.shared.core.navigation.HomeNavigationGraph
+import com.unitip.mobile.shared.core.navigation.Routes
 
 private data class NavigationItem<T : Any>(
     val title: String,

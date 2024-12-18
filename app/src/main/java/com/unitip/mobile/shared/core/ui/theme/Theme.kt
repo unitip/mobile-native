@@ -1,4 +1,4 @@
-package com.unitip.mobile.core.ui.theme
+package com.unitip.mobile.shared.core.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.extensions
+package com.unitip.mobile.shared.core.extensions
 
 import com.google.gson.Gson
 import com.unitip.mobile.shared.data.models.BadRequestError

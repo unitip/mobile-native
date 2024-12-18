@@ -2,9 +2,9 @@ package com.unitip.mobile.features.setting.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.setting.data.sources.AuthApi
+import com.unitip.mobile.shared.core.extensions.mapToFailure
+import com.unitip.mobile.shared.core.helpers.SessionManager
 import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.extensions.mapToFailure
-import com.unitip.mobile.shared.helper.SessionManager
 import javax.inject.Inject
 import javax.inject.Singleton
 

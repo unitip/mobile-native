@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
-import com.unitip.mobile.core.navigation.Routes
 import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
+import com.unitip.mobile.shared.core.navigation.Routes
 
 @Composable
 fun AuthScreen(

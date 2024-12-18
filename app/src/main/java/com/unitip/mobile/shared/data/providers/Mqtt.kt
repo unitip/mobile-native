@@ -1,7 +1,7 @@
 package com.unitip.mobile.shared.data.providers
 
 import android.app.Application
-import com.unitip.mobile.core.config.MqttConfig
+import com.unitip.mobile.shared.core.configs.MqttConfig
 import org.eclipse.paho.android.service.MqttAndroidClient
 import javax.inject.Inject
 import javax.inject.Singleton

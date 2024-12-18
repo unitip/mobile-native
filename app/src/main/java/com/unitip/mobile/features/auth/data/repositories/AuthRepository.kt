@@ -4,10 +4,10 @@ import arrow.core.Either
 import com.unitip.mobile.features.auth.data.dtos.LoginPayload
 import com.unitip.mobile.features.auth.data.models.LoginResult
 import com.unitip.mobile.features.auth.data.sources.AuthApi
+import com.unitip.mobile.shared.core.extensions.mapToFailure
+import com.unitip.mobile.shared.core.helpers.SessionManager
 import com.unitip.mobile.shared.data.models.Failure
 import com.unitip.mobile.shared.data.models.Session
-import com.unitip.mobile.shared.extensions.mapToFailure
-import com.unitip.mobile.shared.helper.SessionManager
 import javax.inject.Inject
 import javax.inject.Singleton
 

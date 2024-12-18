@@ -1,4 +1,4 @@
-package com.unitip.mobile.core.ui.theme
+package com.unitip.mobile.shared.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
