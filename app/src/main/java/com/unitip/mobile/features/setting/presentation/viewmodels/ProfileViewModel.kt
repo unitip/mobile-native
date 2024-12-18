@@ -33,9 +33,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun resetState() {
-        _uiState.value = ProfileState(
-            detail = ProfileDetail.Initial
-        )
+        _uiState.value = with(uiState.value) {
+            copy(detail = ProfileDetail.Initial)
+        }
     }
 
     fun logout() {

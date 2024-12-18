@@ -85,6 +85,7 @@ fun ProfileScreen(
                         .invokeOnCompletion {
                             isLogoutSheetVisible = false
                             onLogout()
+                            viewModel.resetState()
                         }
                 }
 
@@ -98,6 +99,7 @@ fun ProfileScreen(
                             }
 
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            viewModel.resetState()
                         }
                 }
 
