@@ -3,6 +3,7 @@ package com.unitip.mobile.features.setting.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.setting.data.sources.AuthApi
 import com.unitip.mobile.shared.data.models.Failure
+import com.unitip.mobile.shared.extensions.mapToFailure
 import com.unitip.mobile.shared.helper.SessionManager
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,7 +20,12 @@ class AuthRepository @Inject constructor(
             val response = authApi.logout(token = "Bearer $token")
             val result = response.body()
 
-            return Either.Right(true)
+            if (response.isSuccessful && result != null) {
+                sessionManager.delete()
+                return Either.Right(true)
+            }
+
+            return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
