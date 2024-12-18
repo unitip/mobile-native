@@ -18,10 +18,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
+import com.unitip.mobile.features.auth.presentation.viewmodels.UnauthorizedViewModel
 
 @Composable
-fun UnauthorizedScreen() {
+fun UnauthorizedScreen(
+    viewModel: UnauthorizedViewModel = hiltViewModel(),
+    onSignedIn: () -> Unit = {},
+) {
     Scaffold {
         Column(
             modifier = Modifier
@@ -56,7 +61,13 @@ fun UnauthorizedScreen() {
                 )
             }
 
-            Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = {
+                    viewModel.clearSession()
+                    onSignedIn()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = "Masuk")
             }
         }

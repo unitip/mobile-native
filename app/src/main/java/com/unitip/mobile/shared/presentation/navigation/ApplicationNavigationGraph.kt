@@ -48,7 +48,13 @@ fun ApplicationNavigationGraph(
             PickRoleScreen(roles = data.roles)
         }
         composable<Routes.Unauthorized> {
-            UnauthorizedScreen()
+            UnauthorizedScreen(
+                onSignedIn = {
+                    navController.navigate(Routes.Auth) {
+                        popUpTo(Routes.Unauthorized) { inclusive = true }
+                    }
+                }
+            )
         }
 
         // home
