@@ -22,6 +22,7 @@ class AuthRepository @Inject constructor(
 
             if (response.isSuccessful && result != null) {
                 sessionManager.delete()
+
                 return Either.Right(true)
             }
 

@@ -5,15 +5,16 @@ import com.unitip.mobile.features.auth.data.dtos.LoginPayload
 import com.unitip.mobile.features.auth.data.models.LoginResult
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.data.repositories.SessionRepository
+import com.unitip.mobile.shared.data.models.Session
 import com.unitip.mobile.shared.extensions.mapToFailure
+import com.unitip.mobile.shared.helper.SessionManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
     private val authApi: AuthApi,
-    private val sessionRepository: SessionRepository,
+    private val sessionManager: SessionManager,
 ) {
     suspend fun login(
         email: String,
@@ -24,20 +25,19 @@ class AuthRepository @Inject constructor(
             val result = response.body()
 
             if (response.isSuccessful && result != null) {
-                return sessionRepository.create(
-                    name = result.name,
-                    email = result.email,
-                    token = result.token,
-                ).fold(
-                    ifLeft = { Either.Left(Failure(message = it.message)) },
-                    ifRight = {
-                        Either.Right(
-                            LoginResult(
-                                needRole = result.needRole,
-                                roles = result.roles,
-                            )
-                        )
-                    }
+                sessionManager.create(
+                    Session(
+                        name = result.name,
+                        email = result.email,
+                        token = result.token
+                    )
+                )
+
+                return Either.Right(
+                    LoginResult(
+                        needRole = result.needRole,
+                        roles = result.roles,
+                    )
                 )
             }
 
