@@ -53,6 +53,7 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onNavigate: (route: Any) -> Unit = {},
     onLogout: () -> Unit = {},
+    onUnauthorized: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -91,6 +92,11 @@ fun ProfileScreen(
                     launch { logoutSheetState.hide() }
                         .invokeOnCompletion {
                             isLogoutSheetVisible = false
+                            if (code == 401) {
+                                onUnauthorized()
+                                return@invokeOnCompletion
+                            }
+
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         }
                 }

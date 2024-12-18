@@ -31,6 +31,9 @@ sealed class Routes {
         val roles: List<String>,
     )
 
+    @Serializable
+    object Unauthorized
+
     // chat
     @Serializable
     object Chat
