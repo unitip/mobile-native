@@ -6,9 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.shared.core.navigation.ApplicationNavigationGraph
-import com.unitip.mobile.shared.core.ui.theme.UnitipTheme
 import com.unitip.mobile.shared.data.repositories.SessionRepository
+import com.unitip.mobile.shared.presentation.navigation.ApplicationNavigationGraph
+import com.unitip.mobile.shared.presentation.ui.theme.UnitipTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

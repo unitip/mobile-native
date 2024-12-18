@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.core.configs
+package com.unitip.mobile.shared.configs
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

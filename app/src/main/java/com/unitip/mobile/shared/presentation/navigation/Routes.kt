@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.core.navigation
+package com.unitip.mobile.shared.presentation.navigation
 
 import kotlinx.serialization.Serializable
 

@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
-import com.unitip.mobile.shared.core.navigation.Routes
+import com.unitip.mobile.shared.presentation.navigation.Routes
 
 @Composable
 fun AuthScreen(
