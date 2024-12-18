@@ -1,11 +1,10 @@
 package com.unitip.mobile.shared.data.repositories
 
 import arrow.core.Either
+import com.google.gson.Gson
 import com.unitip.mobile.shared.data.models.Failure
 import com.unitip.mobile.shared.data.models.Session
 import com.unitip.mobile.shared.data.providers.Preferences
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,6 +12,8 @@ import javax.inject.Singleton
 class SessionRepository @Inject constructor(
     private val preferences: Preferences,
 ) {
+    private val gson = Gson()
+
     companion object {
         private const val SESSION_KEY = "com.unitip.mobile.SESSION"
     }
@@ -21,18 +22,15 @@ class SessionRepository @Inject constructor(
         name: String,
         email: String,
         token: String,
-    ): Either<Failure, Boolean> =
+    ): Either<Failure, Session> =
         try {
-            preferences.instance().edit().putString(
-                SESSION_KEY, Json.encodeToString(
-                    Session(
-                        name = name,
-                        email = email,
-                        token = token
-                    )
-                )
-            ).apply()
-            Either.Right(true)
+            val session = Session(
+                name = name,
+                email = email,
+                token = token
+            )
+            preferences.instance().edit().putString(SESSION_KEY, gson.toJson(session)).apply()
+            Either.Right(session)
         } catch (e: Exception) {
             Either.Left(
                 Failure(
@@ -43,8 +41,8 @@ class SessionRepository @Inject constructor(
 
     fun read(): Either<Failure, Session> =
         when (val sessionStr = preferences.instance().getString(SESSION_KEY, null)) {
-            null -> Either.Left(Failure(message = "session-not-found"))
-            else -> Either.Right(Json.decodeFromString<Session>(sessionStr))
+            null -> Either.Left(Failure(message = "Session tidak ditemukan!"))
+            else -> Either.Right(gson.fromJson(sessionStr, Session::class.java))
         }
 
 

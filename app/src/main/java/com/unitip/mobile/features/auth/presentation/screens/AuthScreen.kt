@@ -39,6 +39,7 @@ import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     onNavigate: (route: Any) -> Unit,
+    onDone: () -> Unit,
 ) {
     var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
     var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
@@ -53,7 +54,10 @@ fun AuthScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is AuthStateDetail.Success -> {}
+                is AuthStateDetail.Success -> {
+                    onDone()
+                    viewModel.resetState()
+                }
 
                 is AuthStateDetail.SuccessWithPickRole -> {
                     onNavigate(Routes.PickRole(roles = roles))

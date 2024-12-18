@@ -21,7 +21,10 @@ fun ApplicationNavigationGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) Routes.Home else Routes.Auth,
+        startDestination = when (isAuthenticated) {
+            true -> Routes.Home
+            false -> Routes.Auth
+        },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
         popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) },
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
@@ -30,7 +33,12 @@ fun ApplicationNavigationGraph(
         // auth
         composable<Routes.Auth> {
             AuthScreen(
-                onNavigate = { navController.navigate(it) }
+                onNavigate = { navController.navigate(it) },
+                onDone = {
+                    navController.navigate(Routes.Home) {
+                        popUpTo(Routes.Auth) { inclusive = true }
+                    }
+                }
             )
         }
         composable<Routes.PickRole> {

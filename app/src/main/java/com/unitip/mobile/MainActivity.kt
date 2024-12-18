@@ -21,7 +21,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // check auth status
         val isAuthenticated = sessionRepository.read().fold(
             ifLeft = { false },
             ifRight = { true }
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     ApplicationNavigationGraph(
                         navController = navController,
-                        isAuthenticated = isAuthenticated
+                        isAuthenticated = isAuthenticated,
                     )
                 }
             }

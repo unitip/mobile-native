@@ -1,12 +1,11 @@
 package com.unitip.mobile.features.auth.data.repositories
 
-import android.util.Log
 import arrow.core.Either
 import com.unitip.mobile.features.auth.data.dtos.LoginPayload
 import com.unitip.mobile.features.auth.data.models.LoginResult
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.data.providers.Preferences
+import com.unitip.mobile.shared.data.repositories.SessionRepository
 import com.unitip.mobile.shared.extensions.mapToFailure
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepository @Inject constructor(
     private val authApi: AuthApi,
-    private val preferences: Preferences,
+    private val sessionRepository: SessionRepository,
 ) {
     suspend fun login(
         email: String,
@@ -24,16 +23,25 @@ class AuthRepository @Inject constructor(
             val response = authApi.login(LoginPayload(email, password))
             val result = response.body()
 
-            Log.d("AuthRepository", "login: ${result?.needRole}")
-
-            return if (response.isSuccessful && result != null)
-                Either.Right(
-                    LoginResult(
-                        needRole = result.needRole,
-                        roles = result.roles,
-                    )
+            if (response.isSuccessful && result != null) {
+                return sessionRepository.create(
+                    name = result.name,
+                    email = result.email,
+                    token = result.token,
+                ).fold(
+                    ifLeft = { Either.Left(Failure(message = it.message)) },
+                    ifRight = {
+                        Either.Right(
+                            LoginResult(
+                                needRole = result.needRole,
+                                roles = result.roles,
+                            )
+                        )
+                    }
                 )
-            else Either.Left(response.mapToFailure())
+            }
+
+            return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
