@@ -37,7 +37,7 @@ fun DashboardScreen() {
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp),
                     colors = CardDefaults.outlinedCardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ),
                 ) {
                     Row(

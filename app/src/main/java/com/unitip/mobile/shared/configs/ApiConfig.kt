@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiConfig {
     companion object {
-        private const val BASE_URL = "http://192.168.1.15:3000/api/v1/"
+        private const val BASE_URL = "http://a3b5-103-171-159-154.ngrok-free.app/api/v1/"
 
         private val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
