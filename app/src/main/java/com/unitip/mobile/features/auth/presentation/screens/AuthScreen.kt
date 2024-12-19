@@ -5,26 +5,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,8 +34,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
 import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
+import com.unitip.mobile.shared.presentation.components.LoadingBottomSheet
 import com.unitip.mobile.shared.presentation.navigation.Routes
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
@@ -43,30 +47,60 @@ fun AuthScreen(
 ) {
     var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
     var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
-    var password by remember { mutableStateOf("password") }
+    var password by remember { mutableStateOf("passworda") }
     var confirmPassword by remember { mutableStateOf("password") }
+
+    var isLoadingSheetVisible by remember { mutableStateOf(false) }
+    val loadingSheetState = rememberModalBottomSheetState(
+        confirmValueChange = { false },
+        skipPartiallyExpanded = true,
+    )
 
     val uiState by viewModel.uiState.collectAsState()
     val isLogin = uiState.isLogin
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
+                is AuthStateDetail.Loading -> {
+                    scope.launch {
+                        loadingSheetState.show()
+                    }.invokeOnCompletion {
+                        isLoadingSheetVisible = true
+                    }
+                }
+
                 is AuthStateDetail.Success -> {
-                    onDone()
-                    viewModel.resetState()
+                    scope.launch {
+                        loadingSheetState.hide()
+                    }.invokeOnCompletion {
+                        isLoadingSheetVisible = false
+                        onDone()
+                        viewModel.resetState()
+                    }
                 }
 
                 is AuthStateDetail.SuccessWithPickRole -> {
-                    onNavigate(Routes.PickRole(roles = roles))
-                    viewModel.resetState()
+                    scope.launch {
+                        loadingSheetState.hide()
+                    }.invokeOnCompletion {
+                        isLoadingSheetVisible = false
+                        onNavigate(Routes.PickRole(roles = roles))
+                        viewModel.resetState()
+                    }
                 }
 
                 is AuthStateDetail.Failure -> {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                    viewModel.resetState()
+                    scope.launch {
+                        loadingSheetState.hide()
+                    }.invokeOnCompletion {
+                        isLoadingSheetVisible = false
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        viewModel.resetState()
+                    }
                 }
 
                 else -> {}
@@ -183,19 +217,12 @@ fun AuthScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp),
             ) {
-                if (uiState.detail is AuthStateDetail.Loading)
-                    CircularProgressIndicator(
-                        strokeCap = StrokeCap.Round,
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
+                Text(
+                    text = stringResource(
+                        if (isLogin) R.string.login
+                        else R.string.register
                     )
-                else
-                    Text(
-                        text = stringResource(
-                            if (isLogin) R.string.login
-                            else R.string.register
-                        )
-                    )
+                )
             }
             TextButton(
                 enabled = uiState.detail !is AuthStateDetail.Loading,
@@ -213,4 +240,13 @@ fun AuthScreen(
             }
         }
     }
+
+    // bottom sheet loading
+    if (isLoadingSheetVisible)
+        LoadingBottomSheet(
+            sheetState = loadingSheetState,
+            image = painterResource(R.drawable.undraw_login),
+            title = "Mohon tunggu sebentar",
+            subtitle = "Kami sedang memproses permintaan Anda untuk masuk ke akun Unitip"
+        )
 }

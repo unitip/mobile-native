@@ -5,8 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.rememberNavController
 import com.unitip.mobile.shared.data.managers.SessionManager
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.navigation.ApplicationNavigationGraph
 import com.unitip.mobile.shared.presentation.ui.theme.UnitipTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,10 +32,13 @@ class MainActivity : ComponentActivity() {
             ) {
                 Surface {
                     val navController = rememberNavController()
-                    ApplicationNavigationGraph(
-                        navController = navController,
-                        isAuthenticated = isAuthenticated,
-                    )
+
+                    CompositionLocalProvider(LocalNavController provides navController) {
+                        ApplicationNavigationGraph(
+                            navController = navController,
+                            isAuthenticated = isAuthenticated,
+                        )
+                    }
                 }
             }
         }

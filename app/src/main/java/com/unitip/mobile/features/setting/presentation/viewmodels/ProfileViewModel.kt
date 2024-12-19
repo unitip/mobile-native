@@ -33,9 +33,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun resetState() {
-        _uiState.value = ProfileState(
-            detail = ProfileDetail.Initial
-        )
+        _uiState.value = with(uiState.value) {
+            copy(detail = ProfileDetail.Initial)
+        }
     }
 
     fun logout() {
@@ -47,7 +47,12 @@ class ProfileViewModel @Inject constructor(
             authRepository.logout().fold(
                 ifLeft = {
                     _uiState.value = with(uiState.value) {
-                        copy(detail = ProfileDetail.Failure(message = it.message))
+                        copy(
+                            detail = ProfileDetail.Failure(
+                                message = it.message,
+                                code = it.code,
+                            )
+                        )
                     }
                 },
                 ifRight = {

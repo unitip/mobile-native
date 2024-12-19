@@ -11,5 +11,8 @@ sealed interface ProfileDetail {
     data object Initial : ProfileDetail
     data object Loading : ProfileDetail
     data object Success : ProfileDetail
-    data class Failure(val message: String) : ProfileDetail
+    data class Failure(
+        val message: String,
+        val code: Int? = null
+    ) : ProfileDetail
 }

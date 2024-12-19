@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.unitip.mobile.features.auth.presentation.screens.AuthScreen
 import com.unitip.mobile.features.auth.presentation.screens.PickRoleScreen
+import com.unitip.mobile.features.auth.presentation.screens.UnauthorizedScreen
 import com.unitip.mobile.features.chat.screens.ChatScreen
 import com.unitip.mobile.features.home.presentation.HomeScreen
 import com.unitip.mobile.features.job.screens.CreateJobScreen
@@ -45,16 +46,20 @@ fun ApplicationNavigationGraph(
             val data: Routes.PickRole = it.toRoute()
             PickRoleScreen(roles = data.roles)
         }
+        composable<Routes.Unauthorized> {
+            UnauthorizedScreen(
+                onSignedIn = {
+                    navController.navigate(Routes.Auth) {
+                        popUpTo(Routes.Unauthorized) { inclusive = true }
+                    }
+                }
+            )
+        }
 
         // home
         composable<Routes.Home> {
             HomeScreen(
                 onNavigate = { navController.navigate(it) },
-                onLogout = {
-                    navController.navigate(Routes.Auth) {
-                        popUpTo(Routes.Home) { inclusive = true }
-                    }
-                }
             )
         }
 

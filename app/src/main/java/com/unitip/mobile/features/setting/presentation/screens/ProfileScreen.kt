@@ -45,16 +45,18 @@ import com.unitip.mobile.features.setting.presentation.states.ProfileDetail
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.presentation.components.ConfirmBottomSheet
 import com.unitip.mobile.shared.presentation.components.LoadingBottomSheet
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.presentation.navigation.Routes
+import com.unitip.mobile.shared.utils.extensions.redirectToUnauthorized
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    onNavigate: (route: Any) -> Unit = {},
-    onLogout: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
@@ -83,7 +85,10 @@ fun ProfileScreen(
                     launch { logoutSheetState.hide() }
                         .invokeOnCompletion {
                             isLogoutSheetVisible = false
-                            onLogout()
+                            viewModel.resetState()
+                            navController.navigate(Routes.Auth) {
+                                popUpTo(Routes.Home) { inclusive = true }
+                            }
                         }
                 }
 
@@ -91,6 +96,13 @@ fun ProfileScreen(
                     launch { logoutSheetState.hide() }
                         .invokeOnCompletion {
                             isLogoutSheetVisible = false
+                            viewModel.resetState()
+
+                            if (code == 401) {
+                                navController.redirectToUnauthorized()
+                                return@invokeOnCompletion
+                            }
+
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         }
                 }

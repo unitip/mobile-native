@@ -43,6 +43,7 @@ fun JobsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onNavigate(Routes.CreateJob) },
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer
             ) {
                 Icon(Icons.TwoTone.Add, contentDescription = null)
             }
