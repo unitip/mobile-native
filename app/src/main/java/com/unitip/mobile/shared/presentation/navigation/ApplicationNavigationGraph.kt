@@ -23,6 +23,7 @@ fun ApplicationNavigationGraph(
     NavHost(
         navController = navController,
         startDestination = when (isAuthenticated) {
+//            true -> Routes.PickRole(roles = listOf("customer", "driver"))
             true -> Routes.Home
             false -> Routes.Auth
         },

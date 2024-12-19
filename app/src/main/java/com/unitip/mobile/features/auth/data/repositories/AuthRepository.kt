@@ -25,13 +25,14 @@ class AuthRepository @Inject constructor(
             val result = response.body()
 
             if (response.isSuccessful && result != null) {
-                sessionManager.create(
-                    Session(
-                        name = result.name,
-                        email = result.email,
-                        token = result.token
+                if (!result.needRole)
+                    sessionManager.create(
+                        Session(
+                            name = result.name,
+                            email = result.email,
+                            token = result.token
+                        )
                     )
-                )
 
                 return Either.Right(
                     LoginResult(
