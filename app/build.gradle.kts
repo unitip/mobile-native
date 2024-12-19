@@ -66,6 +66,7 @@ dependencies {
     // hilt dagger
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.hilt.android.compiler)
 
     // lucide icons

@@ -1,6 +1,8 @@
 package com.unitip.mobile.features.home.presentation
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -9,12 +11,15 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -75,8 +80,8 @@ fun HomeScreen(
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
                 NavigationBar (
-                    modifier = Modifier,
-                    containerColor = MaterialTheme.colorScheme.onPrimary
+                    modifier = Modifier.height(105.dp),
+                    containerColor = Color.Transparent
                 ){
                     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
@@ -84,8 +89,8 @@ fun HomeScreen(
                     navigationItems.forEachIndexed { index, item ->
                         NavigationBarItem(
                             modifier = Modifier.padding(
-                                start = (if (index == 0) 16 else 0).dp,
-                                end = (if (index == navigationItems.size - 1) 16 else 0).dp
+                                start = (if (index == 0) 10 else 0).dp,
+                                end = (if (index == navigationItems.size - 1) 10 else 0).dp
                             ),
                             selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
                             onClick = {
@@ -97,9 +102,28 @@ fun HomeScreen(
                                     restoreState = true
                                 }
                             },
-                            icon = { Icon(item.icon, contentDescription = null,modifier = Modifier.size(22.dp)) },
+                            icon = {
+                                Icon(item.icon,
+                                contentDescription = item.title,
+                                modifier = Modifier.size(22.dp).absoluteOffset(y=4.dp))
+                                   },
+                            label = {
+                                // Menampilkan teks hanya jika item dipilih
+                                if (currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true) {
+                                    Text(
+                                        text = item.title,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontSize = 9.sp,
+                                        modifier = Modifier.absoluteOffset(y = -6.dp)
+                                    )
+                                }
+                            },
                             colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = MaterialTheme.colorScheme.tertiaryContainer // Warna background luar saat dipilih
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                indicatorColor = Color.Transparent
 
                             )
                         )
@@ -115,3 +139,4 @@ fun HomeScreen(
         }
     }
 }
+
