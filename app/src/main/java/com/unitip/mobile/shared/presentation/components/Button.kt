@@ -18,12 +18,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.compose.UnitipTheme
+import com.unitip.mobile.shared.presentation.ui.theme.UnitipTheme
 
 private enum class ButtonType {
     Default,
     Outlined,
-    Text, 
+    Text,
 }
 
 @Composable
