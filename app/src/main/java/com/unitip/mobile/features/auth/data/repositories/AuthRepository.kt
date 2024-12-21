@@ -30,7 +30,8 @@ class AuthRepository @Inject constructor(
                         Session(
                             name = result.name,
                             email = result.email,
-                            token = result.token
+                            token = result.token,
+                            role = result.role,
                         )
                     )
 

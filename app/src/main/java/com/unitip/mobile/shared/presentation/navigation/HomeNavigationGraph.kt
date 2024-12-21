@@ -20,7 +20,7 @@ fun HomeNavigationGraph(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Routes.Home.Jobs,
+        startDestination = Routes.Home.Profile,
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
         composable<Routes.Home.Jobs> {

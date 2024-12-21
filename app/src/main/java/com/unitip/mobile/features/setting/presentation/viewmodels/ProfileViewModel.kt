@@ -3,10 +3,11 @@ package com.unitip.mobile.features.setting.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.setting.data.repositories.AuthRepository
-import com.unitip.mobile.features.setting.presentation.states.ProfileDetail
 import com.unitip.mobile.features.setting.presentation.states.ProfileState
+import com.unitip.mobile.features.setting.presentation.states.ProfileStateDetail
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +27,8 @@ class ProfileViewModel @Inject constructor(
                 copy(
                     name = session.name,
                     email = session.email,
-                    token = session.token
+                    token = session.token,
+                    role = session.role,
                 )
             }
 
@@ -34,21 +36,22 @@ class ProfileViewModel @Inject constructor(
 
     fun resetState() {
         _uiState.value = with(uiState.value) {
-            copy(detail = ProfileDetail.Initial)
+            copy(detail = ProfileStateDetail.Initial)
         }
     }
 
     fun logout() {
         _uiState.value = with(uiState.value) {
-            copy(detail = ProfileDetail.Loading)
+            copy(detail = ProfileStateDetail.Loading)
         }
 
         viewModelScope.launch {
+            delay(2000)
             authRepository.logout().fold(
                 ifLeft = {
                     _uiState.value = with(uiState.value) {
                         copy(
-                            detail = ProfileDetail.Failure(
+                            detail = ProfileStateDetail.Failure(
                                 message = it.message,
                                 code = it.code,
                             )
@@ -57,7 +60,7 @@ class ProfileViewModel @Inject constructor(
                 },
                 ifRight = {
                     _uiState.value = with(uiState.value) {
-                        copy(detail = ProfileDetail.Success)
+                        copy(detail = ProfileStateDetail.Success)
                     }
                 }
             )

@@ -1,23 +1,29 @@
 package com.unitip.mobile.features.setting.presentation.screens
 
-import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -33,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -41,10 +48,9 @@ import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.unitip.mobile.R
-import com.unitip.mobile.features.setting.presentation.states.ProfileDetail
+import com.unitip.mobile.features.setting.presentation.states.ProfileStateDetail
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.presentation.components.ConfirmBottomSheet
-import com.unitip.mobile.shared.presentation.components.LoadingBottomSheet
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.navigation.Routes
 import com.unitip.mobile.shared.utils.extensions.redirectToUnauthorized
@@ -59,16 +65,11 @@ fun ProfileScreen(
     val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+    val snackbarHost = remember { SnackbarHostState() }
 
     var isConfirmLogoutSheetVisible by remember { mutableStateOf(false) }
     val confirmLogoutSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
-    )
-
-    var isLogoutSheetVisible by remember { mutableStateOf(false) }
-    val logoutSheetState = rememberModalBottomSheetState(
-        confirmValueChange = { false },
-        skipPartiallyExpanded = true,
     )
 
     val uiState by viewModel.uiState.collectAsState()
@@ -76,35 +77,24 @@ fun ProfileScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is ProfileDetail.Loading -> {
-                    isLogoutSheetVisible = true
-                    logoutSheetState.show()
+                is ProfileStateDetail.Success -> {
+                    navController.navigate(Routes.Auth) {
+                        popUpTo(Routes.Home) { inclusive = true }
+                    }
                 }
 
-                is ProfileDetail.Success -> {
-                    launch { logoutSheetState.hide() }
-                        .invokeOnCompletion {
-                            isLogoutSheetVisible = false
+                is ProfileStateDetail.Failure -> {
+                    when (code) {
+                        401 -> navController.redirectToUnauthorized()
+                        else -> {
+                            snackbarHost.showSnackbar(
+                                message = message,
+                                actionLabel = "Oke",
+                                duration = SnackbarDuration.Indefinite
+                            )
                             viewModel.resetState()
-                            navController.navigate(Routes.Auth) {
-                                popUpTo(Routes.Home) { inclusive = true }
-                            }
                         }
-                }
-
-                is ProfileDetail.Failure -> {
-                    launch { logoutSheetState.hide() }
-                        .invokeOnCompletion {
-                            isLogoutSheetVisible = false
-                            viewModel.resetState()
-
-                            if (code == 401) {
-                                navController.redirectToUnauthorized()
-                                return@invokeOnCompletion
-                            }
-
-                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                        }
+                    }
                 }
 
                 else -> {}
@@ -114,12 +104,23 @@ fun ProfileScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) },
         topBar = {
-            TopAppBar(
-                title = {
-                    Text("Profile")
+            Column(modifier = Modifier.fillMaxWidth()) {
+                TopAppBar(
+                    title = {
+                        Text("Profile")
+                    }
+                )
+                AnimatedVisibility(visible = uiState.detail is ProfileStateDetail.Loading) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(),
+                        strokeCap = StrokeCap.Round,
+                    )
                 }
-            )
+            }
         }
     ) {
         Column(
@@ -159,6 +160,12 @@ fun ProfileScreen(
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.alpha(.8f)
                         )
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ) {
+                            Text(text = "customer")
+                        }
                     }
                 }
             }
@@ -174,7 +181,9 @@ fun ProfileScreen(
                     )
                 },
                 headlineContent = { Text(text = "Keluar") },
-                modifier = Modifier.clickable {
+                modifier = Modifier.clickable(
+                    enabled = uiState.detail !is ProfileStateDetail.Loading
+                ) {
                     scope.launch {
                         isConfirmLogoutSheetVisible = true
                         confirmLogoutSheetState.show()
@@ -183,15 +192,6 @@ fun ProfileScreen(
             )
         }
     }
-
-    // bottom sheet loading
-    if (isLogoutSheetVisible)
-        LoadingBottomSheet(
-            sheetState = logoutSheetState,
-            image = painterResource(R.drawable.undraw_clean_up),
-            title = "Mohon tunggu sebentar",
-            subtitle = "Kami sedang memproses permintaan keluar Anda dari akun Unitip",
-        )
 
     if (isConfirmLogoutSheetVisible)
         ConfirmBottomSheet(
