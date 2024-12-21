@@ -50,35 +50,6 @@ fun JobsScreen(
         },
     ) {
         LazyColumn(modifier = Modifier.padding(it)) {
-            // summary of online driver count
-            item {
-                OutlinedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Online Drivers",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = "Terdapat 12 orang driver yang sedang aktif menggunakan aplikasi Unitip",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-
-            // list of jobs
-            item {
-                Text(
-                    text = "Berikut beberapa jobs yang menunggu untuk diambil oleh driver",
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-
             items(20) {
                 JobItem(index = it)
             }
