@@ -13,7 +13,6 @@ import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,13 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobsScreen(
-    onNavigate: (route: Any) -> Unit = {},
-) {
+fun JobsScreen() {
+    val navController = LocalNavController.current
+
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.padding(bottom = 0.dp),
@@ -42,8 +42,7 @@ fun JobsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onNavigate(Routes.CreateJob) },
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                onClick = { navController.navigate(Routes.CreateJob) },
             ) {
                 Icon(Icons.TwoTone.Add, contentDescription = null)
             }

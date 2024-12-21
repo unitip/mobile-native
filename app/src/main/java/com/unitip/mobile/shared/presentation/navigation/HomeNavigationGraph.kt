@@ -24,9 +24,7 @@ fun HomeNavigationGraph(
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
         composable<Routes.Home.Jobs> {
-            JobsScreen(
-                onNavigate = onNavigate,
-            )
+            JobsScreen()
         }
         composable<Routes.Home.Offers> {
             OffersScreen(
