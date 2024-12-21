@@ -11,7 +11,7 @@ import com.unitip.mobile.features.auth.presentation.screens.PickRoleScreen
 import com.unitip.mobile.features.auth.presentation.screens.UnauthorizedScreen
 import com.unitip.mobile.features.chat.screens.ChatScreen
 import com.unitip.mobile.features.home.presentation.sceens.HomeScreen
-import com.unitip.mobile.features.job.screens.CreateJobScreen
+import com.unitip.mobile.features.job.presentation.screens.CreateJobScreen
 import com.unitip.mobile.features.offer.screens.CreateOfferScreen
 import com.unitip.mobile.features.test.TestScreen
 

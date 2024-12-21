@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.screens
+package com.unitip.mobile.features.job.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
