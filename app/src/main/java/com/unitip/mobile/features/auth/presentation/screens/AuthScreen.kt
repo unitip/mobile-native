@@ -45,8 +45,8 @@ fun AuthScreen(
     onDone: () -> Unit,
 ) {
     var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
-    var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
-    var password by remember { mutableStateOf("passworda") }
+    var email by remember { mutableStateOf("customer@unitip.com") }
+    var password by remember { mutableStateOf("password") }
     var confirmPassword by remember { mutableStateOf("password") }
 
     val uiState by viewModel.uiState.collectAsState()

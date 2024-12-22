@@ -25,7 +25,7 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
 //            true -> Routes.PickRole(roles = listOf("customer", "driver"))
-            true -> Routes.CreateJob
+            true -> Routes.Home
             false -> Routes.Auth
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
