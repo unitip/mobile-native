@@ -86,57 +86,63 @@ fun HomeScreen(
         Scaffold(
             contentWindowInsets = WindowInsets(0.dp),
             bottomBar = {
-               Column {
-                   HorizontalDivider(
-                       color = MaterialTheme.colorScheme.secondaryContainer,
-                       thickness = 1.dp,
-                       modifier = Modifier.fillMaxWidth()
-                   )
-                   NavigationBar(
-                       modifier = Modifier
-                           .height(100.dp)
-                           .padding(top = 1.dp),
-                       containerColor = Color.Transparent
-                   ) {
-                       val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
-                       val currentDestination = navBackStackEntry?.destination
+                Column {
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        thickness = 1.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    NavigationBar(
+                        modifier = Modifier
+                            .height(100.dp)
+                            .padding(top = 1.dp),
+                        containerColor = Color.Transparent
+                    ) {
+                        val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
 
-                       navigationItems.forEachIndexed { index, item ->
-                           NavigationBarItem(
-                               modifier = Modifier.padding(
-                                   start = (if (index == 0) 16 else 0).dp,
-                                   end = (if (index == navigationItems.size - 1) 16 else 0).dp
-                               ),
-                               selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
-                               onClick = {
-                                   homeNavController.navigate(item.route) {
-                                       popUpTo(homeNavController.graph.findStartDestination().id) {
-                                           saveState = true
-                                       }
-                                       launchSingleTop = true
-                                       restoreState = true
-                                   }
-                               },
-                               icon = {
-                                   Icon(
-                                       item.icon,
-                                       contentDescription = item.title,
-                                       modifier = if (currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true) {
-                                           Modifier.size(26.dp)
-                                       } else {
-                                           Modifier.size(22.dp)
-                                       },
-                                   )
-                               },
-                               colors = NavigationBarItemDefaults.colors(
-                                   selectedIconColor = MaterialTheme.colorScheme.primary,
-                                   unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                   indicatorColor = Color.Transparent
-                               )
-                           )
-                       }
-                   }
-               }
+                        navigationItems.forEachIndexed { index, item ->
+                            NavigationBarItem(
+                                modifier = Modifier.padding(
+                                    start = (if (index == 0) 16 else 0).dp,
+                                    end = (if (index == navigationItems.size - 1) 16 else 0).dp
+                                ),
+                                selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
+                                onClick = {
+                                    homeNavController.navigate(item.route) {
+                                        popUpTo(homeNavController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        item.icon,
+                                        contentDescription = item.title,
+                                        modifier = if (currentDestination?.hierarchy?.any {
+                                                it.hasRoute(
+                                                    item.route::class
+                                                )
+                                            } == true) {
+                                            Modifier.size(24.dp)
+                                        } else {
+                                            Modifier.size(22.dp)
+                                        },
+                                    )
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.5f
+                                    ),
+                                    indicatorColor = Color.Transparent
+                                )
+                            )
+                        }
+                    }
+                }
             }
         ) {
             HomeNavigationGraph(
