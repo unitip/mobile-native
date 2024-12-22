@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,25 +23,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Lucide
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateJobScreen(
-    onNavigateBack: () -> Unit,
-) {
+fun CreateJobScreen() {
+    val navController = LocalNavController.current
+
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text("Create Job")
-                },
+                title = { Text("Create Job") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBack,
+                            Lucide.ArrowLeft,
                             contentDescription = null
                         )
                     }
@@ -78,7 +77,7 @@ fun CreateJobScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton(onClick = onNavigateBack) {
+                OutlinedButton(onClick = { navController.popBackStack() }) {
                     Text("Cancel")
                 }
                 Spacer(modifier = Modifier.width(8.dp))
