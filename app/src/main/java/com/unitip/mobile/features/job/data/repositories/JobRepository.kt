@@ -3,6 +3,7 @@ package com.unitip.mobile.features.job.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.models.CreateJobResult
+import com.unitip.mobile.features.job.data.models.GetAllJobsResult
 import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.models.Failure
@@ -41,6 +42,47 @@ class JobRepository @Inject constructor(
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
+    suspend fun getAll(): Either<Failure, GetAllJobsResult> {
+        try {
+            val token = sessionManager.read()?.token
+            val response = jobApi.getAll(token = "Bearer $token")
+            val result = response.body()
+
+            return when (response.isSuccessful && result != null) {
+                true -> Either.Right(
+                    GetAllJobsResult(
+                        jobs = result.jobs.map {
+                            GetAllJobsResult.Job(
+                                id = it.id,
+                                title = it.title,
+                                destination = it.destination,
+                                note = it.note,
+                                type = it.type,
+                                pickupLocation = it.pickupLocation,
+                                customer = GetAllJobsResult.Job.Customer(
+                                    name = it.customer.name
+                                ),
+                            )
+                        },
+                        pageInfo = result.pageInfo.let {
+                            GetAllJobsResult.PageInfo(
+                                count = it.count,
+                                page = it.page,
+                                totalPages = it.totalPages
+                            )
+                        }
+                    )
+                )
+
+                false -> Either.Left(response.mapToFailure())
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
     }

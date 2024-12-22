@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Users
@@ -22,12 +21,18 @@ import com.composables.icons.lucide.Users
 @Composable
 fun JobListItem(
     modifier: Modifier = Modifier,
+    customerName: String,
+    title: String,
+    note: String,
+    type: String,
+    pickupLocation: String,
+    destination: String,
 ) {
     OutlinedCard(modifier = modifier) {
         Column {
             Row(modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)) {
                 Text(
-                    text = "Rizal Dwi Anggoro",
+                    text = customerName,
                     style = MaterialTheme.typography.labelMedium
                 )
             }
@@ -35,18 +40,18 @@ fun JobListItem(
 
             // title and note
             Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                Text(text = "Anjem ke manahan", style = MaterialTheme.typography.titleMedium)
+                Text(text = title, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = "tolong bawakan helm 2 karena saya tidak punya helm di kos",
+                    text = note,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
 
             // detail
             Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                DetailListItem(title = "Type", content = "Antar jemput")
-                DetailListItem(title = "Jemput", content = "Kos Griya Khansa 2")
-                DetailListItem(title = "Tujuan", content = "Stadion Manahan")
+                DetailListItem(title = "Type", content = type)
+                DetailListItem(title = "Jemput", content = pickupLocation)
+                DetailListItem(title = "Tujuan", content = destination)
             }
 
             // applicants and button apply
@@ -98,10 +103,4 @@ private fun DetailListItem(
             style = MaterialTheme.typography.bodyMedium
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun JobListItemPreview() {
-    JobListItem()
 }
