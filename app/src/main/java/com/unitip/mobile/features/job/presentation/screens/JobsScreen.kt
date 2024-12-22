@@ -1,11 +1,7 @@
 package com.unitip.mobile.features.job.presentation.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -13,7 +9,7 @@ import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,6 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.RefreshCcw
+import com.unitip.mobile.features.job.presentation.components.JobListItem
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.navigation.Routes
 
@@ -37,6 +36,14 @@ fun JobsScreen() {
                 modifier = Modifier.background(Color.Red),
                 title = {
                     Text("Jobs")
+                },
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            Lucide.RefreshCcw,
+                            contentDescription = null
+                        )
+                    }
                 }
             )
         },
@@ -50,25 +57,13 @@ fun JobsScreen() {
     ) {
         LazyColumn(modifier = Modifier.padding(it)) {
             items(20) {
-                JobItem(index = it)
-            }
-        }
-    }
-}
-
-@Composable
-private fun JobItem(index: Int) {
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 4.dp)
-            .clickable { }
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row {
-                Text(text = "$index. Rizal Dwi Anggoro")
+                JobListItem(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = if (it > 0) 8.dp else 0.dp
+                    )
+                )
             }
         }
     }
