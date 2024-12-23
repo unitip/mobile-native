@@ -4,6 +4,8 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.models.CreateJobResult
 import com.unitip.mobile.features.job.data.models.GetAllJobsResult
+import com.unitip.mobile.features.job.data.models.Job
+import com.unitip.mobile.features.job.data.models.JobCustomer
 import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.models.Failure
@@ -56,25 +58,19 @@ class JobRepository @Inject constructor(
                 true -> Either.Right(
                     GetAllJobsResult(
                         jobs = result.jobs.map {
-                            GetAllJobsResult.Job(
+                            Job(
                                 id = it.id,
                                 title = it.title,
-                                destination = it.destination,
                                 note = it.note,
                                 type = it.type,
                                 pickupLocation = it.pickupLocation,
-                                customer = GetAllJobsResult.Job.Customer(
+                                destination = it.destination,
+                                customer = JobCustomer(
                                     name = it.customer.name
-                                ),
+                                )
                             )
                         },
-                        pageInfo = result.pageInfo.let {
-                            GetAllJobsResult.PageInfo(
-                                count = it.count,
-                                page = it.page,
-                                totalPages = it.totalPages
-                            )
-                        }
+                        hasNext = result.pageInfo.page < result.pageInfo.totalPages
                     )
                 )
 
