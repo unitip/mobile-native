@@ -82,4 +82,12 @@ class JobRepository @Inject constructor(
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
     }
+
+    suspend fun get(id: String): Either<Failure, Job> {
+        try {
+            throw NotImplementedError()
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
 }

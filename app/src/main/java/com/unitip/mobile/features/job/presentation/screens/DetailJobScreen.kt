@@ -18,7 +18,9 @@ import com.composables.icons.lucide.Lucide
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailJobScreen() {
+fun DetailJobScreen(
+    id: String
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,11 +39,11 @@ fun DetailJobScreen() {
         Column(modifier = Modifier.padding(it)) {
             Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
                 Text(
-                    text = "Judul job yang dibuat oleh customer",
+                    text = "job.title",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "Catatan yang diberikan oleh customer ke driver",
+                    text = "job.note",
                     style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline)
                 )
             }

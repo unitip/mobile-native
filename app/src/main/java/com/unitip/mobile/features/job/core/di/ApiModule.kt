@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.di
+package com.unitip.mobile.features.job.core.di
 
 import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.shared.configs.ApiConfig

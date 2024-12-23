@@ -30,11 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
+import com.unitip.mobile.features.job.core.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.JobListItem
 import com.unitip.mobile.features.job.presentation.states.JobsStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
-import com.unitip.mobile.shared.presentation.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +80,7 @@ fun JobsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Routes.CreateJob) },
+                onClick = { navController.navigate(JobRoutes.Create) },
             ) {
                 Icon(Icons.TwoTone.Add, contentDescription = null)
             }

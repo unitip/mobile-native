@@ -1,5 +1,8 @@
 package com.unitip.mobile.features.job.data.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Job(
     val id: String,
     val title: String,

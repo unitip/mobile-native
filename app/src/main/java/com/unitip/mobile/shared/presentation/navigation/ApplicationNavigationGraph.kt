@@ -11,9 +11,7 @@ import com.unitip.mobile.features.auth.presentation.screens.PickRoleScreen
 import com.unitip.mobile.features.auth.presentation.screens.UnauthorizedScreen
 import com.unitip.mobile.features.chat.screens.ChatScreen
 import com.unitip.mobile.features.home.presentation.sceens.HomeScreen
-import com.unitip.mobile.features.job.presentation.screens.CreateJobScreen
-import com.unitip.mobile.features.job.presentation.screens.DetailJobScreen
-import com.unitip.mobile.features.job.presentation.screens.JobApplicantsScreen
+import com.unitip.mobile.features.job.core.jobNavigation
 import com.unitip.mobile.features.offer.screens.CreateOfferScreen
 import com.unitip.mobile.features.test.TestScreen
 
@@ -66,10 +64,7 @@ fun ApplicationNavigationGraph(
             )
         }
 
-        // job
-        composable<Routes.CreateJob> { CreateJobScreen() }
-        composable<Routes.DetailJob> { DetailJobScreen() }
-        composable<Routes.JobApplicants> { JobApplicantsScreen() }
+        jobNavigation()
 
         // offer
         composable<Routes.CreateOffer> {

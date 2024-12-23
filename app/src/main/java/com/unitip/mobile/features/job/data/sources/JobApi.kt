@@ -23,4 +23,6 @@ interface JobApi {
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1
     ): Response<GetAllJobsResponse>
+
+    suspend fun get(): Response<Any>
 }
