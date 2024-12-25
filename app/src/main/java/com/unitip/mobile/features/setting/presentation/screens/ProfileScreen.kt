@@ -48,11 +48,12 @@ import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.unitip.mobile.R
+import com.unitip.mobile.features.auth.core.AuthRoutes
+import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.setting.presentation.states.ProfileStateDetail
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.presentation.components.ConfirmBottomSheet
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
-import com.unitip.mobile.shared.presentation.navigation.Routes
 import com.unitip.mobile.shared.utils.extensions.redirectToUnauthorized
 import kotlinx.coroutines.launch
 
@@ -78,8 +79,8 @@ fun ProfileScreen(
         with(uiState.detail) {
             when (this) {
                 is ProfileStateDetail.Success -> {
-                    navController.navigate(Routes.Auth) {
-                        popUpTo(Routes.Home) { inclusive = true }
+                    navController.navigate(AuthRoutes.Index) {
+                        popUpTo(HomeRoutes.Index) { inclusive = true }
                     }
                 }
 

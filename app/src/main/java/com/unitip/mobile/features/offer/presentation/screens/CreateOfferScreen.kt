@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.offer.screens
+package com.unitip.mobile.features.offer.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,18 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateOfferScreen(
-    onNavigateBack: () -> Unit,
-) {
+fun CreateOfferScreen() {
+    val navController = LocalNavController.current
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Create Offer") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
                     }
                 }
@@ -150,7 +151,7 @@ fun CreateOfferScreen(
                     .fillMaxWidth()
                     .padding(end = 16.dp, top = 16.dp),
             ) {
-                OutlinedButton(onClick = onNavigateBack) {
+                OutlinedButton(onClick = { navController.popBackStack() }) {
                     Text(text = "Batal")
                 }
                 Spacer(modifier = Modifier.width(8.dp))

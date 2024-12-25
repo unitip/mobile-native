@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.offer.screens
+package com.unitip.mobile.features.offer.presentation.screens
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,14 +16,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.unitip.mobile.features.offer.components.OfferCardItem
-import com.unitip.mobile.shared.presentation.navigation.Routes
+import com.unitip.mobile.features.offer.core.OfferRoutes
+import com.unitip.mobile.features.offer.presentation.components.OfferCardItem
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OffersScreen(
-    onNavigate: (Any) -> Unit
-) {
+fun OffersScreen() {
+    val navController = LocalNavController.current
+
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -35,7 +36,7 @@ fun OffersScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onNavigate(Routes.CreateOffer) }
+                onClick = { navController.navigate(OfferRoutes.Create) }
             ) {
                 Icon(
                     Icons.Rounded.Add,

@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.offer.components
+package com.unitip.mobile.features.offer.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.dashboard.screens
+package com.unitip.mobile.features.home.presentation.sceens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

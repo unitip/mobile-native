@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.chat.screens
+package com.unitip.mobile.features.chat.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,8 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 import kotlin.random.Random
 
 private data class ChatItem(
@@ -49,9 +49,9 @@ private data class ChatItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(
-    onNavigateBack: () -> Unit,
-) {
+fun ConversationScreen() {
+    val navController = LocalNavController.current
+
     var title by remember { mutableStateOf("Rijal Anggoro") }
     var message by remember { mutableStateOf(TextFieldValue("")) }
     var messages = remember { mutableStateListOf<ChatItem>() }
@@ -61,7 +61,7 @@ fun ChatScreen(
             TopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
                     }
                 }
@@ -161,10 +161,4 @@ fun MessageBubble(sender: String, text: String) {
                 )
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ChatScreenPreview() {
-    ChatScreen(onNavigateBack = {})
 }
