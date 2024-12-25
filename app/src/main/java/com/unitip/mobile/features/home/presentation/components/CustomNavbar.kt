@@ -32,8 +32,8 @@ import com.composables.icons.lucide.LayoutDashboard
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessagesSquare
 import com.composables.icons.lucide.User
+import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
-import com.unitip.mobile.shared.presentation.navigation.Routes
 
 private data class NavigationItem<T : Any>(
     val title: String,
@@ -47,27 +47,27 @@ fun CustomNavbar() {
         NavigationItem(
             "Dashboard",
             icon = Lucide.LayoutDashboard,
-            route = Routes.Home.Dashboard
+            route = HomeRoutes.Dashboard
         ),
         NavigationItem(
             "Jobs",
             icon = Lucide.BriefcaseBusiness,
-            route = Routes.Home.Jobs
+            route = HomeRoutes.Jobs
         ),
         NavigationItem(
             "Offers",
             icon = Lucide.BadgeHelp,
-            route = Routes.Home.Offers
+            route = HomeRoutes.Offers
         ),
         NavigationItem(
             "Chats",
             icon = Lucide.MessagesSquare,
-            route = Routes.Home.Chats
+            route = HomeRoutes.Chats
         ),
         NavigationItem(
             "Profile",
             icon = Lucide.User,
-            route = Routes.Home.Profile
+            route = HomeRoutes.Profile
         ),
     )
 
@@ -113,7 +113,6 @@ fun CustomNavbar() {
                             true -> MaterialTheme.colorScheme.primary
                             false -> MaterialTheme.colorScheme.outline.copy(alpha = .64f)
                         },
-                       // modifier = Modifier.size(if (isSelected) 24.dp else 20.dp)
                     )
                 }
             }

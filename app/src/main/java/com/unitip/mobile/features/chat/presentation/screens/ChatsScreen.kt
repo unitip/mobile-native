@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.chat.screens
+package com.unitip.mobile.features.chat.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.unitip.mobile.shared.presentation.navigation.Routes
+import com.unitip.mobile.features.chat.core.ChatRoutes
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatsScreen(
-    onNavigate: (route: Any) -> Unit = {}
-) {
+fun ChatsScreen() {
+    val navController = LocalNavController.current
+
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -62,10 +63,9 @@ fun ChatsScreen(
                     supportingContent = { Text("${if (it % 2 == 0) "Anda: " else ""}how are you?") },
                     trailingContent = { Text("10.10") },
                     modifier = Modifier.clickable {
-                        onNavigate(Routes.Chat)
+                        navController.navigate(ChatRoutes.Conversation)
                     },
-
-                    )
+                )
             }
 
             item {

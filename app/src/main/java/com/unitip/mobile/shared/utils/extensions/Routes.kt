@@ -1,10 +1,11 @@
 package com.unitip.mobile.shared.utils.extensions
 
 import androidx.navigation.NavController
-import com.unitip.mobile.shared.presentation.navigation.Routes
+import com.unitip.mobile.features.auth.core.AuthRoutes
+import com.unitip.mobile.features.home.core.HomeRoutes
 
 fun NavController.redirectToUnauthorized() {
-    navigate(Routes.Unauthorized) {
-        popUpTo(Routes.Home) { inclusive = true }
+    navigate(AuthRoutes.Unauthorized) {
+        popUpTo(HomeRoutes.Index) { inclusive = true }
     }
 }
