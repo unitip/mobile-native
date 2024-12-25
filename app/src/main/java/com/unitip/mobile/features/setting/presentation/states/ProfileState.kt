@@ -4,15 +4,16 @@ data class ProfileState(
     val name: String = "",
     val email: String = "",
     val token: String = "",
-    val detail: ProfileDetail = ProfileDetail.Initial,
+    val role: String = "",
+    val detail: ProfileStateDetail = ProfileStateDetail.Initial,
 )
 
-sealed interface ProfileDetail {
-    data object Initial : ProfileDetail
-    data object Loading : ProfileDetail
-    data object Success : ProfileDetail
+sealed interface ProfileStateDetail {
+    data object Initial : ProfileStateDetail
+    data object Loading : ProfileStateDetail
+    data object Success : ProfileStateDetail
     data class Failure(
         val message: String,
         val code: Int? = null
-    ) : ProfileDetail
+    ) : ProfileStateDetail
 }

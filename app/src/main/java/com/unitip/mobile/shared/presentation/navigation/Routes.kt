@@ -42,6 +42,9 @@ sealed class Routes {
     @Serializable
     object CreateJob
 
+    @Serializable
+    object JobApplicants
+
     // offer
     @Serializable
     object CreateOffer

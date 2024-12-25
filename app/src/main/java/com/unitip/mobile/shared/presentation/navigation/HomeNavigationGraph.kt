@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unitip.mobile.features.chat.screens.ChatsScreen
 import com.unitip.mobile.features.dashboard.screens.DashboardScreen
-import com.unitip.mobile.features.job.screens.JobsScreen
+import com.unitip.mobile.features.job.presentation.screens.JobsScreen
 import com.unitip.mobile.features.offer.screens.OffersScreen
 import com.unitip.mobile.features.setting.presentation.screens.ProfileScreen
 
@@ -20,13 +20,11 @@ fun HomeNavigationGraph(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Routes.Home.Profile,
+        startDestination = Routes.Home.Jobs,
     ) {
         composable<Routes.Home.Dashboard> { DashboardScreen() }
         composable<Routes.Home.Jobs> {
-            JobsScreen(
-                onNavigate = onNavigate,
-            )
+            JobsScreen()
         }
         composable<Routes.Home.Offers> {
             OffersScreen(
