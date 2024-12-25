@@ -38,13 +38,6 @@ sealed class Routes {
     @Serializable
     object Chat
 
-    // job
-    @Serializable
-    object CreateJob
-
-    @Serializable
-    object JobApplicants
-
     // offer
     @Serializable
     object CreateOffer
