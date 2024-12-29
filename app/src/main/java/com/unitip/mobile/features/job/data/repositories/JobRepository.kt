@@ -2,6 +2,7 @@ package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
+import com.unitip.mobile.features.job.data.models.Applicant
 import com.unitip.mobile.features.job.data.models.CreateJobResult
 import com.unitip.mobile.features.job.data.models.GetAllJobsResult
 import com.unitip.mobile.features.job.data.models.GetJobResult
@@ -93,14 +94,27 @@ class JobRepository @Inject constructor(
             return when (response.isSuccessful && result != null) {
                 true -> Either.Right(
                     GetJobResult(
-                        job = Unit,
-                        applicants = listOf(),
+                        job = Job(
+                            id = result.id,
+                            title = result.title,
+                            note = result.note,
+                            pickupLocation = result.pickupLocation,
+                            destination = result.destination,
+                            type = result.type,
+                            customer = JobCustomer(name = "no data")
+                        ),
+                        applicants = result.applicants.map {
+                            Applicant(
+                                id = it.id,
+                                name = it.name,
+                                price = it.price
+                            )
+                        },
                     )
                 )
 
                 false -> Either.Left(response.mapToFailure())
             }
-
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }

@@ -2,11 +2,13 @@ package com.unitip.mobile.features.job.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -15,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,6 +31,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
@@ -88,48 +92,69 @@ fun DetailJobScreen(
             }
 
             if (uiState.detail is DetailJobStateDetail.Success) {
-                val result = uiState.detail as DetailJobStateDetail.Success
+                val result = (uiState.detail as DetailJobStateDetail.Success).result
 
-                Box(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    Column {
+                    item {
                         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
                             Text(
-                                text = "job.title",
+                                text = result.job.title,
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "job.note",
+                                text = result.job.note,
                                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline)
-                            )
-                        }
-
-                        HorizontalDivider()
-
-                        Column(
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp
-                            )
-                        ) {
-                            Text(
-                                text = "Daftar Applicants",
-                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
 
+                    item {
+                        HorizontalDivider()
+                        Text(
+                            text = "Daftar Applicants",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+
+                    // list applicants
+                    items(result.applicants) { applicant ->
+                        OutlinedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(
+                                            horizontal = 16.dp,
+                                            vertical = 12.dp
+                                        )
+                                        .weight(1f)
+                                ) {
+                                    Text(text = applicant.name)
+                                    Text(text = "Rp ${applicant.price}")
+                                }
+
+                                IconButton(onClick = {}) {
+                                    Icon(Lucide.Check, contentDescription = null)
+                                }
+                            }
+                        }
+                    }
+
                     // button apply for driver
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) { Text(text = "Apply") }
+                    item {
+                        Button(
+                            onClick = {},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) { Text(text = "Apply") }
+                    }
                 }
             }
 
