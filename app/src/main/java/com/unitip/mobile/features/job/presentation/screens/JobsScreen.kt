@@ -3,6 +3,7 @@ package com.unitip.mobile.features.job.presentation.screens
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -102,11 +103,20 @@ fun JobsScreen(
             if (!isLoading && uiState.detail is JobsStateDetail.Success) {
                 itemsIndexed((uiState.detail as JobsStateDetail.Success).result.jobs) { index, job ->
                     JobListItem(
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = if (index > 0) 8.dp else 0.dp
-                        ),
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = if (index > 0) 8.dp else 0.dp
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    JobRoutes.Detail(
+                                        id = job.id,
+                                        type = job.type
+                                    )
+                                )
+                            },
                         customerName = job.customer.name,
                         title = job.title,
                         note = job.note,
