@@ -64,7 +64,7 @@ private val defaultRoles = listOf(
 @Composable
 fun PickRoleScreen(
     roles: List<String>,
-    onRoleSelected: (String) -> Unit,
+//    onRoleSelected: (String) -> Unit,
 ) {
     val availableRoles = defaultRoles.filter { it.value in roles }
     var selectedRole by remember { mutableStateOf("") }
@@ -106,7 +106,7 @@ fun PickRoleScreen(
 
             Button(
                 onClick = {
-                    onRoleSelected(selectedRole)
+//                    onRoleSelected(selectedRole)
                 },
                 modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Selesai")
