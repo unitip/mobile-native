@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,6 +24,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(rootProject.file(".env").inputStream())
+
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"${properties.getProperty("API_BASE_URL")}\""
+        )
     }
 
     buildTypes {
@@ -43,6 +54,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
