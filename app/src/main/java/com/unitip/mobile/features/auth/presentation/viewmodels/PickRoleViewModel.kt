@@ -6,14 +6,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickRoleViewModel @Inject constructor(
-    private val role: String
+//    private val role: String
 ) : ViewModel() {
 
-    fun loginWithRole(
-        email: String,
-        password: String,
-        role: String
-    ){
-
-    }
+//    fun loginWithRole(
+//        email: String,
+//        password: String,
+//        role: String
+//    ){
+//
+//    }
 }

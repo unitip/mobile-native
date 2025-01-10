@@ -10,6 +10,7 @@ import com.unitip.mobile.features.auth.core.authNavigation
 import com.unitip.mobile.features.chat.core.chatNavigation
 import com.unitip.mobile.features.example.utils.ExampleRoutes
 import com.unitip.mobile.features.example.utils.exampleNavigation
+import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.home.core.homeNavigation
 import com.unitip.mobile.features.job.core.jobNavigation
 import com.unitip.mobile.features.offer.core.offerNavigation
@@ -23,8 +24,8 @@ fun ApplicationNavigationGraph(
     NavHost(
         navController = navController,
         startDestination = when (isAuthenticated) {
-//            true -> HomeRoutes.Index
-            true -> ExampleRoutes.Users
+            true -> HomeRoutes.Index
+            //true -> ExampleRoutes.Users
             false -> AuthRoutes.Index
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
