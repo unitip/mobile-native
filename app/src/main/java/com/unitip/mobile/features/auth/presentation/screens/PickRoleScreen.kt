@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
@@ -63,6 +64,7 @@ private val defaultRoles = listOf(
 @Composable
 fun PickRoleScreen(
     roles: List<String>,
+    onRoleSelected: (String) -> Unit,
 ) {
     val availableRoles = defaultRoles.filter { it.value in roles }
     var selectedRole by remember { mutableStateOf("") }
@@ -102,10 +104,17 @@ fun PickRoleScreen(
                 }
             }
 
-            Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = {
+                    onRoleSelected(selectedRole)
+                },
+                modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Selesai")
             }
-            TextButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+            TextButton(
+                onClick = {
+                },
+                modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Batal")
             }
         }
