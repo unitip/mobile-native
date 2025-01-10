@@ -17,6 +17,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,8 +51,11 @@ import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.shared.presentation.components.DropdownTypeOrders
 import com.unitip.mobile.shared.presentation.components.OrderType
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
-
-
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -197,14 +203,5 @@ fun CreateOfferScreen() {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CreateOfferScreenPreview() {
-    val fakeNavController = rememberNavController()
-    CompositionLocalProvider(LocalNavController provides fakeNavController) {
-        CreateOfferScreen()
     }
 }

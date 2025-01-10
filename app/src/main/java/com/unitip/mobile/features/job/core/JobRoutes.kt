@@ -9,6 +9,7 @@ sealed class JobRoutes {
 
     @Serializable
     data class Detail(
-        val id: String
+        val id: String,
+        val type: String
     )
 }

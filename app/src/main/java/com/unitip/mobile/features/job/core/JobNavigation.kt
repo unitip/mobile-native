@@ -13,6 +13,6 @@ fun NavGraphBuilder.jobNavigation() {
 
     composable<JobRoutes.Detail> {
         val data = it.toRoute<JobRoutes.Detail>()
-        DetailJobScreen(id = data.id)
+        DetailJobScreen(id = data.id, type = data.type)
     }
 }
