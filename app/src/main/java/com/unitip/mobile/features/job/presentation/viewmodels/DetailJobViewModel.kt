@@ -3,6 +3,7 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.job.data.repositories.JobRepository
+import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,9 @@ class DetailJobViewModel @Inject constructor(
     private val jobRepository: JobRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DetailJobState())
+
     val uiState get() = _uiState.asStateFlow()
+
 
     fun fetchData(jobId: String, type: String) = viewModelScope.launch {
         _uiState.value = with(uiState.value) {
@@ -39,4 +42,5 @@ class DetailJobViewModel @Inject constructor(
             }
         )
     }
+
 }
