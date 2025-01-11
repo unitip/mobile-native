@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.auth.data.repositories.AuthRepository
 import com.unitip.mobile.features.auth.presentation.states.AuthState
-import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,47 +16,41 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthState())
-    val uiState: StateFlow<AuthState> get() = _uiState.asStateFlow()
+    val uiState get() = _uiState.asStateFlow()
 
-    fun resetState() {
-        _uiState.value = with(uiState.value) {
-            copy(detail = AuthStateDetail.Initial)
-        }
+    fun resetState() = _uiState.update {
+        it.copy(detail = AuthState.Detail.Initial)
     }
 
-    fun switchAuthMode() {
-        _uiState.value = with(uiState.value) {
-            copy(isLogin = !isLogin)
-        }
+    fun switchAuthMode() = _uiState.update {
+        it.copy(isLogin = !it.isLogin)
     }
 
     fun login(
         email: String,
         password: String,
-    ) {
-        _uiState.value = with(uiState.value) {
-            copy(detail = AuthStateDetail.Loading)
-        }
-
-        viewModelScope.launch {
-            authRepository.login(email = email, password = password).fold(
-                ifLeft = {
-                    _uiState.value = with(uiState.value) {
-                        copy(detail = AuthStateDetail.Failure(message = it.message))
-                    }
-                },
-                ifRight = {
-                    _uiState.value = with(uiState.value) {
-                        copy(
-                            detail = when (it.needRole) {
-                                true -> AuthStateDetail.SuccessWithPickRole(roles = it.roles)
-                                false -> AuthStateDetail.Success
-                            }
-                        )
-                    }
+    ) = viewModelScope.launch {
+        _uiState.update { it.copy(detail = AuthState.Detail.Loading) }
+        authRepository.login(email = email, password = password).fold(
+            ifLeft = { left ->
+                _uiState.update {
+                    it.copy(detail = AuthState.Detail.Failure(message = left.message))
                 }
-            )
-        }
+            },
+            ifRight = { right ->
+                _uiState.update {
+                    it.copy(
+                        detail = when (right.needRole) {
+                            true -> AuthState.Detail.SuccessWithPickRole(
+                                roles = right.roles
+                            )
+
+                            false -> AuthState.Detail.Success
+                        }
+                    )
+                }
+            }
+        )
     }
 
     fun register() {
