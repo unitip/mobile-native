@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.utils
+package com.unitip.mobile.features.auth.commons
 
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.shared.configs.ApiConfig

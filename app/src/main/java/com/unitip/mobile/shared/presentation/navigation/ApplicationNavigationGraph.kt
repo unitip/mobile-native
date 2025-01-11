@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.unitip.mobile.features.auth.utils.AuthRoutes
-import com.unitip.mobile.features.auth.utils.authNavigation
+import com.unitip.mobile.features.auth.commons.AuthRoutes
+import com.unitip.mobile.features.auth.commons.authNavigation
 import com.unitip.mobile.features.chat.core.chatNavigation
 import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.core.HomeRoutes
@@ -24,7 +24,6 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
-            //true -> ExampleRoutes.Users
             false -> AuthRoutes.Index
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },

@@ -48,7 +48,7 @@ import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.unitip.mobile.R
-import com.unitip.mobile.features.auth.utils.AuthRoutes
+import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.setting.presentation.states.ProfileStateDetail
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel

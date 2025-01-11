@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.auth.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,16 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,92 +37,117 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.composables.icons.lucide.Bike
-import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.User
-
-private data class Role(
-    val title: String,
-    val subtitle: String,
-    val value: String,
-    val icon: ImageVector,
-)
-
-private val defaultRoles = listOf(
-    Role(
-        title = "Driver",
-        subtitle = "Ambil dan tawarkan pekerjaan kepada pengguna lainnya",
-        value = "driver",
-        icon = Lucide.Bike
-    ),
-    Role(
-        title = "Customer",
-        subtitle = "Buat pesanan dan ikut penawaran dari pengguna lainnya",
-        value = "customer",
-        icon = Lucide.User
-    ),
-)
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.unitip.mobile.features.auth.commons.AuthConstants
+import com.unitip.mobile.features.auth.commons.AuthRoutes
+import com.unitip.mobile.features.auth.domain.models.Role
+import com.unitip.mobile.features.auth.presentation.states.PickRoleState
+import com.unitip.mobile.features.auth.presentation.viewmodels.PickRoleViewModel
+import com.unitip.mobile.features.home.core.HomeRoutes
+import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @Composable
 fun PickRoleScreen(
+    viewModel: PickRoleViewModel = hiltViewModel(),
+    email: String,
+    password: String,
     roles: List<String>,
-//    onRoleSelected: (String) -> Unit,
 ) {
-    val availableRoles = defaultRoles.filter { it.value in roles }
+    val availableRoles = AuthConstants.roles.filter { it.role in roles }
+    val navController = LocalNavController.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val uiState by viewModel.uiState.collectAsState()
     var selectedRole by remember { mutableStateOf("") }
 
-    Scaffold {
+    LaunchedEffect(uiState.detail) {
+        with(uiState.detail) {
+            when (this) {
+                is PickRoleState.Detail.Failure -> snackbarHostState.showSnackbar(
+                    message = message
+                )
+
+                is PickRoleState.Detail.Success -> navController.navigate(HomeRoutes.Index) {
+                    popUpTo(AuthRoutes.Index) { inclusive = true }
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 32.dp)
         ) {
-            Text(
-                text = "Pilih Peran",
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = "Anda terdeteksi memiliki banyak peran di Unitip. " +
-                        "Silahkan pilih peran terlebih dahulu sebelum lanjut menggunakan aplikasi",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .alpha(.8f)
-                    .padding(top = 8.dp),
-                textAlign = TextAlign.Center,
-            )
+            AnimatedVisibility(visible = uiState.detail is PickRoleState.Detail.Loading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    strokeCap = StrokeCap.Round
+                )
+            }
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(availableRoles.size) { index ->
-                    val role = availableRoles[index]
+            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+                Text(
+                    text = "Pilih Peran",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Anda terdeteksi memiliki banyak peran di Unitip. " +
+                            "Silahkan pilih peran terlebih dahulu sebelum lanjut menggunakan aplikasi",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .alpha(.8f)
+                        .padding(top = 8.dp),
+                    textAlign = TextAlign.Center,
+                )
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+                itemsIndexed(availableRoles) { index, role ->
                     RoleListItem(
                         index = index,
-                        isSelected = role.value === selectedRole,
+                        isSelected = role.role === selectedRole,
                         onSelect = { selectedRole = it },
                         role = role,
                     )
                 }
             }
 
-            Button(
-                onClick = {
-//                    onRoleSelected(selectedRole)
-                },
-                modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Selesai")
-            }
-            TextButton(
-                onClick = {
-                },
-                modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Batal")
+            AnimatedVisibility(visible = uiState.detail !is PickRoleState.Detail.Loading) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Button(
+                        onClick = {
+                            if (selectedRole.isNotEmpty())
+                                viewModel.login(
+                                    email = email,
+                                    password = password,
+                                    role = selectedRole
+                                )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(text = "Selesai") }
+                    TextButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(text = "Batal") }
+                }
             }
         }
     }
@@ -146,7 +178,7 @@ private fun RoleListItem(
             }
         ),
         modifier = Modifier.padding(top = (if (index == 0) 32 else 8).dp),
-        onClick = { onSelect(role.value) },
+        onClick = { onSelect(role.role) },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

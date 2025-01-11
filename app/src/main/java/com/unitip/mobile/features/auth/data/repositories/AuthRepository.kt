@@ -19,9 +19,17 @@ class AuthRepository @Inject constructor(
     suspend fun login(
         email: String,
         password: String,
+        role: String? = null
     ): Either<Failure, LoginResult> {
         try {
-            val response = authApi.login(LoginPayload(email, password))
+            val response =
+                authApi.login(
+                    LoginPayload(
+                        email = email,
+                        password = password,
+                        role = role
+                    )
+                )
             val result = response.body()
 
             if (response.isSuccessful && result != null) {
