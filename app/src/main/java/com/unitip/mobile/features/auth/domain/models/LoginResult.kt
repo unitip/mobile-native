@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.data.models
+package com.unitip.mobile.features.auth.domain.models
 
 data class LoginResult(
     val needRole: Boolean,

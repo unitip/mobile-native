@@ -2,8 +2,8 @@ package com.unitip.mobile.features.auth.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.auth.data.dtos.LoginPayload
-import com.unitip.mobile.features.auth.data.models.LoginResult
 import com.unitip.mobile.features.auth.data.sources.AuthApi
+import com.unitip.mobile.features.auth.domain.models.LoginResult
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.models.Failure
 import com.unitip.mobile.shared.data.models.Session
