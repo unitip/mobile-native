@@ -1,8 +1,10 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.models.Applicant
+import com.unitip.mobile.features.job.data.models.ApplyJobResult
 import com.unitip.mobile.features.job.data.models.CreateJobResult
 import com.unitip.mobile.features.job.data.models.GetAllJobsResult
 import com.unitip.mobile.features.job.data.models.GetJobResult
@@ -115,6 +117,27 @@ class JobRepository @Inject constructor(
 
                 false -> Either.Left(response.mapToFailure())
             }
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
+    suspend fun apply(jobId: String, price: Int): Either<Failure, Unit> {
+        try {
+            val token = sessionManager.read()?.token
+            val response =
+                jobApi.apply(
+                    token = "Bearer $token",
+                    jobId = jobId,
+                    payload = ApplyJobPayload(price = price)
+                )
+            val result = response.body()
+
+            return when (response.isSuccessful && result != null) {
+                true -> Either.Right(Unit)
+                false -> Either.Left(response.mapToFailure())
+            }
+
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }

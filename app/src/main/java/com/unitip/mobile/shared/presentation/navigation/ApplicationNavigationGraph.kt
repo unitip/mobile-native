@@ -11,6 +11,7 @@ import com.unitip.mobile.features.chat.core.chatNavigation
 import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.home.core.homeNavigation
+import com.unitip.mobile.features.job.core.JobRoutes
 import com.unitip.mobile.features.job.core.jobNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
