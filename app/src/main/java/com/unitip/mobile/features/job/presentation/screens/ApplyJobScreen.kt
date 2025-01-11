@@ -31,7 +31,6 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
-import com.unitip.mobile.features.job.presentation.states.Detail
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.ApplyJobViewModel
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
@@ -48,6 +47,11 @@ fun ApplyJobScreen(
     val uiState by viewModel.uiState.collectAsState()
     var priceInput by remember { mutableStateOf("0") }
 
+    LaunchedEffect(uiState.detail) {
+        if (uiState.detail is ApplyJobState.Detail.Success) {
+            navController.popBackStack()
+        }
+    }
 
     Scaffold(
         topBar = {

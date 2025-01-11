@@ -122,11 +122,15 @@ class JobRepository @Inject constructor(
         }
     }
 
-    suspend fun apply(price: Int): Either<Failure, Unit> {
+    suspend fun apply(jobId: String, price: Int): Either<Failure, Unit> {
         try {
             val token = sessionManager.read()?.token
             val response =
-                jobApi.apply(token = "Bearer $token", payload = ApplyJobPayload(price = price))
+                jobApi.apply(
+                    token = "Bearer $token",
+                    jobId = jobId,
+                    payload = ApplyJobPayload(price = price)
+                )
             val result = response.body()
 
             return when (response.isSuccessful && result != null) {

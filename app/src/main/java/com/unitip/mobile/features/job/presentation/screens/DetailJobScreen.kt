@@ -37,7 +37,6 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
 import com.unitip.mobile.features.job.core.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
-import com.unitip.mobile.features.job.presentation.states.Detail
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController

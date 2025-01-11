@@ -38,6 +38,7 @@ interface JobApi {
     @POST("jobs/{job_id}/apply")
     suspend fun apply(
         @Header("Authorization") token: String,
+        @Path("job_id") jobId: String,
         @Body payload: ApplyJobPayload
     ): Response<ApplyJobResponse>
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.example.presentation.states.ExampleUsersState
 import com.unitip.mobile.features.job.data.repositories.JobRepository
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
-import com.unitip.mobile.features.job.presentation.states.Detail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,19 +24,19 @@ class ApplyJobViewModel @Inject constructor(
     fun applyJob(jobId: String, type: String, price: Int) {
         viewModelScope.launch {
             _uiState.value = with(uiState.value) {
-                copy(detail = Detail.Loading)
+                copy(detail = ApplyJobState.Detail.Loading)
             }
 
-            jobRepository.apply(price).fold(
+            jobRepository.apply(jobId, price).fold(
                 ifLeft = {
                     _uiState.value =
                         with(uiState.value) {
-                            copy(detail = Detail.Failure(message = it.message))
+                            copy(detail = ApplyJobState.Detail.Failure(message = it.message))
                         }
                 },
                 ifRight = {
                     _uiState.value = with(uiState.value) {
-                        copy(detail = Detail.Success)
+                        copy(detail = ApplyJobState.Detail.Success)
                     }
                 }
             )
