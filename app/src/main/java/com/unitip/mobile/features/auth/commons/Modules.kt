@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.core.di
+package com.unitip.mobile.features.auth.commons
 
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.shared.configs.ApiConfig
@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiModule {
+object Modules {
     @Provides
     fun provideAuthApi(): AuthApi = ApiConfig.retrofit.create(AuthApi::class.java)
 }

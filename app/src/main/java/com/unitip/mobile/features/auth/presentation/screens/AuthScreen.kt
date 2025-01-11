@@ -33,8 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
-import com.unitip.mobile.features.auth.core.AuthRoutes
-import com.unitip.mobile.features.auth.presentation.states.AuthStateDetail
+import com.unitip.mobile.features.auth.commons.AuthRoutes
+import com.unitip.mobile.features.auth.presentation.states.AuthState
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
@@ -45,13 +45,11 @@ fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     var name by remember { mutableStateOf("Rizal Dwi Anggoro") }
-    var email by remember { mutableStateOf("customer@unitip.com") }
+    var email by remember { mutableStateOf("rizaldwianggoro@unitip.com") }
     var password by remember { mutableStateOf("password") }
     var confirmPassword by remember { mutableStateOf("password") }
 
     val uiState by viewModel.uiState.collectAsState()
-    val isLogin = uiState.isLogin
-    val isLoading = uiState.detail is AuthStateDetail.Loading
 
     val snackbarHost = remember { SnackbarHostState() }
     val navController = LocalNavController.current
@@ -59,19 +57,25 @@ fun AuthScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is AuthStateDetail.Success -> {
+                is AuthState.Detail.Success -> {
                     navController.navigate(HomeRoutes.Index) {
                         popUpTo(AuthRoutes.Index) { inclusive = true }
                     }
                     viewModel.resetState()
                 }
 
-                is AuthStateDetail.SuccessWithPickRole -> {
-                    navController.navigate(AuthRoutes.PickRole(roles = roles))
+                is AuthState.Detail.SuccessWithPickRole -> {
+                    navController.navigate(
+                        AuthRoutes.PickRole(
+                            email = email,
+                            password = password,
+                            roles = roles
+                        )
+                    )
                     viewModel.resetState()
                 }
 
-                is AuthStateDetail.Failure -> {
+                is AuthState.Detail.Failure -> {
                     snackbarHost.showSnackbar(
                         message = message,
                         actionLabel = "Oke",
@@ -80,7 +84,7 @@ fun AuthScreen(
                     viewModel.resetState()
                 }
 
-                else -> {}
+                else -> Unit
             }
         }
     }
@@ -90,10 +94,8 @@ fun AuthScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = when (isLogin) {
-                            true -> "Masuk"
-                            false -> "Registrasi"
-                        }
+                        text = if (uiState.isLogin) "Masuk"
+                        else "Registrasi"
                     )
                 },
             )
@@ -105,7 +107,7 @@ fun AuthScreen(
                 .padding(it)
                 .fillMaxSize()
         ) {
-            AnimatedVisibility(visible = isLoading) {
+            AnimatedVisibility(visible = uiState.detail is AuthState.Detail.Loading) {
                 LinearProgressIndicator(
                     strokeCap = StrokeCap.Round,
                     modifier = Modifier
@@ -116,7 +118,7 @@ fun AuthScreen(
             }
 
             Text(
-                text = when (isLogin) {
+                text = when (uiState.isLogin) {
                     true -> "Selamat datang kembali di aplikasi Unitip! Silahkan masukkan beberapa informasi berikut untuk masuk ke akun Unitip Anda"
                     false -> "Masukkan beberapa informasi berikut untuk bergabung dan menjadi bagian dari keluarga Unitip!"
                 },
@@ -135,21 +137,23 @@ fun AuthScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
             ) {
-                if (!uiState.isLogin) OutlinedTextField(
-                    enabled = !isLoading,
-                    value = name,
-                    onValueChange = { name = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp),
-                    placeholder = {
-                        Text(stringResource(R.string.name_placeholder))
-                    }
-                )
+                AnimatedVisibility(visible = !uiState.isLogin) {
+                    OutlinedTextField(
+                        enabled = uiState.detail !is AuthState.Detail.Loading,
+                        value = name,
+                        onValueChange = { value -> name = value },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                        placeholder = {
+                            Text(stringResource(R.string.name_placeholder))
+                        }
+                    )
+                }
                 OutlinedTextField(
-                    enabled = !isLoading,
+                    enabled = uiState.detail !is AuthState.Detail.Loading,
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { value -> email = value },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = (if (uiState.isLogin) 32 else 8).dp),
@@ -158,9 +162,9 @@ fun AuthScreen(
                     }
                 )
                 OutlinedTextField(
-                    enabled = !isLoading,
+                    enabled = uiState.detail !is AuthState.Detail.Loading,
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { value -> password = value },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
@@ -168,59 +172,59 @@ fun AuthScreen(
                         Text(stringResource(R.string.password_placeholder))
                     }
                 )
-                if (!uiState.isLogin) OutlinedTextField(
-                    enabled = !isLoading,
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    placeholder = {
-                        Text(stringResource(R.string.confirm_password_placeholder))
-                    }
-                )
+                AnimatedVisibility(visible = !uiState.isLogin) {
+                    OutlinedTextField(
+                        enabled = uiState.detail !is AuthState.Detail.Loading,
+                        value = confirmPassword,
+                        onValueChange = { value -> confirmPassword = value },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        placeholder = {
+                            Text(stringResource(R.string.confirm_password_placeholder))
+                        }
+                    )
+                }
             }
 
             // actions
-            Column(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 16.dp
-                )
-            ) {
-                Button(
-                    enabled = !isLoading,
-                    onClick = {
-                        if (uiState.detail !is AuthStateDetail.Loading) {
-                            when (isLogin) {
+            AnimatedVisibility(visible = uiState.detail !is AuthState.Detail.Loading) {
+                Column(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    )
+                ) {
+                    Button(
+                        onClick = {
+                            when (uiState.isLogin) {
                                 true -> viewModel.login(email = email, password = password)
-                                false -> viewModel.register()
+                                false -> viewModel.register(name = name, email = email, password = password)
                             }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(
-                            if (isLogin) R.string.login
-                            else R.string.register
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(
+                                if (uiState.isLogin) R.string.login
+                                else R.string.register
+                            )
                         )
-                    )
-                }
-                TextButton(
-                    enabled = !isLoading,
-                    onClick = { viewModel.switchAuthMode() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(
-                            if (isLogin) R.string.register_switch
-                            else R.string.login_switch
+                    }
+                    TextButton(
+                        onClick = { viewModel.switchAuthMode() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(
+                                if (uiState.isLogin) R.string.register_switch
+                                else R.string.login_switch
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

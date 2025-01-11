@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,9 +47,9 @@ import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.unitip.mobile.R
-import com.unitip.mobile.features.auth.core.AuthRoutes
+import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.core.HomeRoutes
-import com.unitip.mobile.features.setting.presentation.states.ProfileStateDetail
+import com.unitip.mobile.features.setting.presentation.states.ProfileState
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.presentation.components.ConfirmBottomSheet
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
@@ -62,7 +61,6 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
     val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -75,16 +73,16 @@ fun ProfileScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.detail) {
-        with(uiState.detail) {
+    LaunchedEffect(uiState.logoutDetail) {
+        with(uiState.logoutDetail) {
             when (this) {
-                is ProfileStateDetail.Success -> {
+                is ProfileState.LogoutDetail.Success -> {
                     navController.navigate(AuthRoutes.Index) {
                         popUpTo(HomeRoutes.Index) { inclusive = true }
                     }
                 }
 
-                is ProfileStateDetail.Failure -> {
+                is ProfileState.LogoutDetail.Failure -> {
                     when (code) {
                         401 -> navController.redirectToUnauthorized()
                         else -> {
@@ -93,12 +91,11 @@ fun ProfileScreen(
                                 actionLabel = "Oke",
                                 duration = SnackbarDuration.Indefinite
                             )
-                            viewModel.resetState()
                         }
                     }
                 }
 
-                else -> {}
+                else -> Unit
             }
         }
     }
@@ -113,7 +110,7 @@ fun ProfileScreen(
                         Text("Profile")
                     }
                 )
-                AnimatedVisibility(visible = uiState.detail is ProfileStateDetail.Loading) {
+                AnimatedVisibility(visible = uiState.logoutDetail is ProfileState.LogoutDetail.Loading) {
                     LinearProgressIndicator(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -165,7 +162,7 @@ fun ProfileScreen(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ) {
-                            Text(text = "customer")
+                            Text(text = role)
                         }
                     }
                 }
@@ -183,7 +180,7 @@ fun ProfileScreen(
                 },
                 headlineContent = { Text(text = "Keluar") },
                 modifier = Modifier.clickable(
-                    enabled = uiState.detail !is ProfileStateDetail.Loading
+                    enabled = uiState.logoutDetail !is ProfileState.LogoutDetail.Loading
                 ) {
                     scope.launch {
                         isConfirmLogoutSheetVisible = true

@@ -1,6 +1,6 @@
-package com.unitip.mobile.features.auth.data.dtos
+package com.unitip.mobile.features.auth.domain.models
 
-data class RegisterResponse(
+data class RegisterResult (
     val id: String,
     val name: String,
     val email: String,

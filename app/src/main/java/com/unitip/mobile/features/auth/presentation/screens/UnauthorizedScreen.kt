@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.R
-import com.unitip.mobile.features.auth.core.AuthRoutes
+import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.presentation.viewmodels.UnauthorizedViewModel
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 

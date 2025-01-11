@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.core
+package com.unitip.mobile.features.auth.commons
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -11,7 +11,11 @@ fun NavGraphBuilder.authNavigation() {
     composable<AuthRoutes.Index> { AuthScreen() }
     composable<AuthRoutes.PickRole> {
         val data: AuthRoutes.PickRole = it.toRoute()
-        PickRoleScreen(roles = data.roles)
+        PickRoleScreen(
+            email = data.email,
+            password = data.password,
+            roles = data.roles
+        )
     }
     composable<AuthRoutes.Unauthorized> { UnauthorizedScreen() }
 }
