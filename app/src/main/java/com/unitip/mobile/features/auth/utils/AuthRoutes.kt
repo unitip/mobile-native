@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.auth.core
+package com.unitip.mobile.features.auth.utils
 
 import kotlinx.serialization.Serializable
 

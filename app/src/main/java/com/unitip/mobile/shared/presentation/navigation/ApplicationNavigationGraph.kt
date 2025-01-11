@@ -5,10 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.unitip.mobile.features.auth.core.AuthRoutes
-import com.unitip.mobile.features.auth.core.authNavigation
+import com.unitip.mobile.features.auth.utils.AuthRoutes
+import com.unitip.mobile.features.auth.utils.authNavigation
 import com.unitip.mobile.features.chat.core.chatNavigation
-import com.unitip.mobile.features.example.utils.ExampleRoutes
 import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.home.core.homeNavigation
