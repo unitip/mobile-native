@@ -14,6 +14,7 @@ object AuthRoutes {
         val roles: List<String>,
     )
 
+
     @Serializable
     object Unauthorized
 }

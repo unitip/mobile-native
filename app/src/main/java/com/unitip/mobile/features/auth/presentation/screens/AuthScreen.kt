@@ -200,7 +200,7 @@ fun AuthScreen(
                         onClick = {
                             when (uiState.isLogin) {
                                 true -> viewModel.login(email = email, password = password)
-                                false -> Unit
+                                false -> viewModel.register(name = name, email = email, password = password)
                             }
                         },
                         modifier = Modifier
