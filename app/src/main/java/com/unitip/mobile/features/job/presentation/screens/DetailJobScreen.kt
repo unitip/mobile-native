@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,9 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
+import com.unitip.mobile.features.job.core.JobRoutes
+import com.unitip.mobile.features.job.presentation.states.ApplyJobState
+import com.unitip.mobile.features.job.presentation.states.Detail
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.presentation.compositional.LocalNavController
@@ -48,6 +52,7 @@ fun DetailJobScreen(
     val navController = LocalNavController.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val isLoading = uiState.detail is DetailJobStateDetail.Loading
 
     LaunchedEffect(id) {
         viewModel.fetchData(jobId = id, type = type)
@@ -149,11 +154,18 @@ fun DetailJobScreen(
                     // button apply for driver
                     item {
                         Button(
-                            onClick = {},
+                            onClick = {
+                                navController.navigate(
+                                    JobRoutes.Apply(
+                                        id = id, type = type
+                                    )
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp)
                         ) { Text(text = "Apply") }
+
                     }
                 }
             }

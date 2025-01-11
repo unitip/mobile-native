@@ -12,4 +12,10 @@ sealed class JobRoutes {
         val id: String,
         val type: String
     )
+
+    @Serializable
+    data class Apply(
+        val id: String,
+        val type: String
+    )
 }
