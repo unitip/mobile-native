@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,7 +49,6 @@ import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isCustomer
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobsScreen(
     viewModel: JobsViewModel = hiltViewModel()
@@ -79,23 +77,6 @@ fun JobsScreen(
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(
             WindowInsetsSides.Top
         ),
-//        modifier = Modifier.padding(bottom = 0.dp),
-//        topBar = {
-//            TopAppBar(
-//                modifier = Modifier.background(Color.Red),
-//                title = {
-//                    Text("Jobs")
-//                },
-//                actions = {
-//                    IconButton(onClick = { viewModel.refreshJobs() }) {
-//                        Icon(
-//                            Lucide.RefreshCcw,
-//                            contentDescription = null
-//                        )
-//                    }
-//                }
-//            )
-//        },
         floatingActionButton = {
             if (uiState.session.isCustomer()) {
                 FloatingActionButton(
@@ -138,7 +119,10 @@ fun JobsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                CustomIconButton(icon = Lucide.RefreshCw, onClick = {})
+                CustomIconButton(
+                    icon = Lucide.RefreshCw,
+                    onClick = { viewModel.refreshJobs() }
+                )
             }
 
             // loading indicator
@@ -146,7 +130,7 @@ fun JobsScreen(
                 LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                        .padding(start = 16.dp, end = 16.dp),
                     strokeCap = StrokeCap.Round
                 )
             }
