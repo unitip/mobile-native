@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.core.di
+package com.unitip.mobile.features.job.commons
 
 import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.shared.commons.configs.ApiConfig
@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiModule {
+object Modules {
     @Provides
     fun providerJobApi(): JobApi = ApiConfig.retrofit.create(JobApi::class.java)
 }

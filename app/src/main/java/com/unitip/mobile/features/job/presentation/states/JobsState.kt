@@ -1,6 +1,6 @@
 package com.unitip.mobile.features.job.presentation.states
 
-import com.unitip.mobile.features.job.data.models.GetAllJobsResult
+import com.unitip.mobile.features.job.domain.models.GetAllJobsResult
 import com.unitip.mobile.shared.domain.models.Session
 
 data class JobsState(

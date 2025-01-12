@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.data.models
+package com.unitip.mobile.features.job.domain.models
 
 data class Applicant(
     val id: String,

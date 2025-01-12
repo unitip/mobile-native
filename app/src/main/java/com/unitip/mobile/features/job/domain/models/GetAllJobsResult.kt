@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.data.models
+package com.unitip.mobile.features.job.domain.models
 
 data class GetAllJobsResult(
     val jobs: List<Job>,

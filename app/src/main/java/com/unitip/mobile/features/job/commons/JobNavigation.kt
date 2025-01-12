@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.job.core
+package com.unitip.mobile.features.job.commons
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

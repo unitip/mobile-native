@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
-import com.unitip.mobile.features.job.core.JobRoutes
+import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.JobListItem
 import com.unitip.mobile.features.job.presentation.states.JobsState
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel

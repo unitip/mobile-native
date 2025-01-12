@@ -9,9 +9,9 @@ import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.commons.authNavigation
 import com.unitip.mobile.features.chat.core.chatNavigation
 import com.unitip.mobile.features.example.utils.exampleNavigation
-import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.home.core.homeNavigation
-import com.unitip.mobile.features.job.core.jobNavigation
+import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.features.job.commons.jobNavigation
 import com.unitip.mobile.features.offer.core.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
 
@@ -23,7 +23,8 @@ fun ApplicationNavigationGraph(
     NavHost(
         navController = navController,
         startDestination = when (isAuthenticated) {
-            true -> HomeRoutes.Index
+//            true -> HomeRoutes.Index
+            true -> JobRoutes.Detail(id = "rec_ctokoo5c8vb25g697bm0", type = "antar-jemput")
             false -> AuthRoutes.Index
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },
