@@ -24,7 +24,7 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
-//            true -> JobRoutes.Detail(id = "rec_ctokoo5c8vb25g697bm0", type = "antar-jemput")
+//            true -> JobRoutes.Apply(id = "", type = "")
             false -> AuthRoutes.Index
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },

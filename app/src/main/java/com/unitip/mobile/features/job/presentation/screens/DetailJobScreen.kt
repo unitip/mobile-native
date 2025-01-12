@@ -28,6 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,9 +61,13 @@ fun DetailJobScreen(
 
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
+    var isFetched by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(id, type) {
-        viewModel.fetchData(jobId = id, type = type)
+    LaunchedEffect(id, type, isFetched) {
+        if (!isFetched) {
+            viewModel.fetchData(jobId = id, type = type)
+            isFetched = true
+        }
     }
 
     Scaffold {
