@@ -1,27 +1,28 @@
 package com.unitip.mobile.shared.data.managers
 
 import com.google.gson.Gson
-import com.unitip.mobile.shared.data.providers.Preferences
+import com.unitip.mobile.shared.data.providers.PreferencesProvider
 import com.unitip.mobile.shared.domain.models.Session
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SessionManager @Inject constructor(
-    private val preferences: Preferences,
+    preferencesProvider: PreferencesProvider,
 ) {
     companion object {
-        private const val KEY = "com.unitip.mobile.SESSION"
+        private const val KEY = "com.unitip.mobile.session"
     }
 
     private val gson = Gson()
+    private val preferences = preferencesProvider.client
 
     fun create(session: Session) =
-        preferences.instance().edit().putString(KEY, gson.toJson(session)).apply()
+        preferences.edit().putString(KEY, gson.toJson(session)).apply()
 
-    fun read(): Session? = preferences.instance().getString(KEY, null)?.let {
+    fun read(): Session? = preferences.getString(KEY, null)?.let {
         gson.fromJson(it, Session::class.java)
     }
 
-    fun delete() = preferences.instance().edit().remove(KEY).apply()
+    fun delete() = preferences.edit().remove(KEY).apply()
 }
