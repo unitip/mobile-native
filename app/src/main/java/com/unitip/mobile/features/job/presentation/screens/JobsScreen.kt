@@ -33,9 +33,10 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
 import com.unitip.mobile.features.job.core.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.JobListItem
-import com.unitip.mobile.features.job.presentation.states.JobsStateDetail
+import com.unitip.mobile.features.job.presentation.states.JobsState
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.isCustomer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,12 +47,12 @@ fun JobsScreen(
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
-    val isLoading = uiState.detail is JobsStateDetail.Loading
+    val isLoading = uiState.detail is JobsState.Detail.Loading
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is JobsStateDetail.Failure -> {
+                is JobsState.Detail.Failure -> {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
 
@@ -80,10 +81,12 @@ fun JobsScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(JobRoutes.Create) },
-            ) {
-                Icon(Icons.TwoTone.Add, contentDescription = null)
+            if (uiState.session.isCustomer()) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(JobRoutes.Create) },
+                ) {
+                    Icon(Icons.TwoTone.Add, contentDescription = null)
+                }
             }
         },
     ) {
@@ -100,8 +103,8 @@ fun JobsScreen(
                 }
             }
 
-            if (!isLoading && uiState.detail is JobsStateDetail.Success) {
-                itemsIndexed((uiState.detail as JobsStateDetail.Success).result.jobs) { index, job ->
+            if (!isLoading && uiState.detail is JobsState.Detail.Success) {
+                itemsIndexed((uiState.detail as JobsState.Detail.Success).result.jobs) { index, job ->
                     JobListItem(
                         modifier = Modifier
                             .padding(
