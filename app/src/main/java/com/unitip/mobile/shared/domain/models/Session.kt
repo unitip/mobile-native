@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.data.models
+package com.unitip.mobile.shared.domain.models
 
 data class Session(
     val name: String,

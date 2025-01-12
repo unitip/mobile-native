@@ -41,9 +41,9 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.FastForward
 import com.composables.icons.lucide.FileWarning
 import com.composables.icons.lucide.Lucide
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.DropdownTypeOrders
 import com.unitip.mobile.shared.presentation.components.OrderType
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

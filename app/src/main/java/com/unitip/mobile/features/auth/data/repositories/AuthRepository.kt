@@ -1,16 +1,15 @@
 package com.unitip.mobile.features.auth.data.repositories
 
 import arrow.core.Either
-import arrow.core.left
 import com.unitip.mobile.features.auth.data.dtos.LoginPayload
 import com.unitip.mobile.features.auth.data.dtos.RegisterPayload
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.features.auth.domain.models.LoginResult
 import com.unitip.mobile.features.auth.domain.models.RegisterResult
+import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
-import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.data.models.Session
-import com.unitip.mobile.shared.utils.extensions.mapToFailure
+import com.unitip.mobile.shared.domain.models.Failure
+import com.unitip.mobile.shared.domain.models.Session
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,17 +66,17 @@ class AuthRepository @Inject constructor(
     ): Either<Failure, RegisterResult> {
         try {
             //Melakukan pengiriman regiter ke server
-            val response=
+            val response =
                 authApi.register(
                     RegisterPayload(
-                        name= name,
+                        name = name,
                         email = email,
                         password = password
                     )
                 )
             val result = response.body()
 
-            if (response.isSuccessful && result!=null){
+            if (response.isSuccessful && result != null) {
                 // setelah register, langsung masukkin ke session manager
                 sessionManager.create(
                     Session(
@@ -100,7 +99,7 @@ class AuthRepository @Inject constructor(
             }
             // Jika gagal melakukan registrasi
             return Either.Left(Failure(message = "Gagal melakukan Registrasi"))
-        }catch (e: Exception){
+        } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga"))
         }
     }

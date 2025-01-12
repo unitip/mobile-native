@@ -1,8 +1,8 @@
 package com.unitip.mobile.shared.data.managers
 
 import com.google.gson.Gson
-import com.unitip.mobile.shared.data.models.Session
 import com.unitip.mobile.shared.data.providers.Preferences
+import com.unitip.mobile.shared.domain.models.Session
 import javax.inject.Inject
 import javax.inject.Singleton
 

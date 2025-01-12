@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.utils.extensions
+package com.unitip.mobile.shared.commons.extensions
 
 import androidx.navigation.NavController
 import com.unitip.mobile.features.auth.commons.AuthRoutes

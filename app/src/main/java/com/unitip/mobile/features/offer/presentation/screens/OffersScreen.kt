@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.unitip.mobile.features.offer.core.OfferRoutes
 import com.unitip.mobile.features.offer.presentation.components.OfferCardItem
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

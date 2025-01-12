@@ -36,7 +36,7 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.job.presentation.states.CreateJobStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

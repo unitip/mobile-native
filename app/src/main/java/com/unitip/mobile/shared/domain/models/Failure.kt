@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.data.models
+package com.unitip.mobile.shared.domain.models
 
 data class Failure(
     val message: String,

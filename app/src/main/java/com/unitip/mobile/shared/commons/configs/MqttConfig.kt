@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.configs
+package com.unitip.mobile.shared.commons.configs
 
 class MqttConfig {
     companion object {

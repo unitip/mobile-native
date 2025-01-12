@@ -4,16 +4,15 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.models.Applicant
-import com.unitip.mobile.features.job.data.models.ApplyJobResult
 import com.unitip.mobile.features.job.data.models.CreateJobResult
 import com.unitip.mobile.features.job.data.models.GetAllJobsResult
 import com.unitip.mobile.features.job.data.models.GetJobResult
 import com.unitip.mobile.features.job.data.models.Job
 import com.unitip.mobile.features.job.data.models.JobCustomer
 import com.unitip.mobile.features.job.data.sources.JobApi
+import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
-import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.utils.extensions.mapToFailure
+import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -37,7 +37,7 @@ import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.presentation.states.AuthState
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 import com.unitip.mobile.features.home.core.HomeRoutes
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -200,7 +200,11 @@ fun AuthScreen(
                         onClick = {
                             when (uiState.isLogin) {
                                 true -> viewModel.login(email = email, password = password)
-                                false -> viewModel.register(name = name, email = email, password = password)
+                                false -> viewModel.register(
+                                    name = name,
+                                    email = email,
+                                    password = password
+                                )
                             }
                         },
                         modifier = Modifier

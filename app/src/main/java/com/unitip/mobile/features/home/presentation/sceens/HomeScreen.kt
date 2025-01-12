@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.features.home.core.nestedHomeNavigation
 import com.unitip.mobile.features.home.presentation.components.CustomNavbar
-import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
+import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
 
 @Composable
 fun HomeScreen() {

@@ -20,7 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,10 +35,9 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCcw
 import com.unitip.mobile.features.job.core.JobRoutes
-import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

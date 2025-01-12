@@ -35,7 +35,7 @@ import com.unitip.mobile.features.job.core.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.JobListItem
 import com.unitip.mobile.features.job.presentation.states.JobsStateDetail
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

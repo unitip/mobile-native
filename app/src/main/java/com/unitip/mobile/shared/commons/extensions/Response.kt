@@ -1,12 +1,12 @@
-package com.unitip.mobile.shared.utils.extensions
+package com.unitip.mobile.shared.commons.extensions
 
 import com.google.gson.Gson
-import com.unitip.mobile.shared.data.models.BadRequestError
-import com.unitip.mobile.shared.data.models.ConflictError
-import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.data.models.InternalServerError
-import com.unitip.mobile.shared.data.models.NotFoundError
-import com.unitip.mobile.shared.data.models.UnauthorizedError
+import com.unitip.mobile.shared.data.dto.BadRequestError
+import com.unitip.mobile.shared.data.dto.ConflictError
+import com.unitip.mobile.shared.data.dto.InternalServerError
+import com.unitip.mobile.shared.data.dto.NotFoundError
+import com.unitip.mobile.shared.data.dto.UnauthorizedError
+import com.unitip.mobile.shared.domain.models.Failure
 import retrofit2.Response
 
 fun <T> Response<T>.mapToFailure(): Failure {

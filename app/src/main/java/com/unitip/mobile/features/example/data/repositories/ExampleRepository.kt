@@ -3,8 +3,8 @@ package com.unitip.mobile.features.example.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.example.data.sources.ExampleApi
 import com.unitip.mobile.features.example.domain.models.User
-import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.utils.extensions.mapToFailure
+import com.unitip.mobile.shared.commons.extensions.mapToFailure
+import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
 
