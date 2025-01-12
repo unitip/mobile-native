@@ -28,6 +28,10 @@ class JobsViewModel @Inject constructor(
         fetchJobs()
     }
 
+    fun expandJob(jobId: String) = _uiState.update {
+        it.copy(expandedJobId = if (it.expandedJobId == jobId) "" else jobId)
+    }
+
     fun refreshJobs() = fetchJobs()
 
     private fun fetchJobs() = viewModelScope.launch {
@@ -43,7 +47,8 @@ class JobsViewModel @Inject constructor(
             ifRight = { right ->
                 _uiState.update {
                     it.copy(
-                        detail = JobsState.Detail.Success(result = right)
+                        detail = JobsState.Detail.Success,
+                        result = right
                     )
                 }
             }

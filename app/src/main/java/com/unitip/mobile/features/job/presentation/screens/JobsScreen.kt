@@ -5,25 +5,27 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -34,19 +36,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.composables.icons.lucide.ChevronDown
+import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
+import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobRoutes
-import com.unitip.mobile.features.job.presentation.components.JobListItem
 import com.unitip.mobile.features.job.presentation.states.JobsState
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isCustomer
+import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
@@ -126,48 +133,184 @@ fun JobsScreen(
             }
 
             // loading indicator
-            AnimatedVisibility(visible = isLoading) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    strokeCap = StrokeCap.Round
-                )
+            if (uiState.detail is JobsState.Detail.Loading) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(
+                        strokeCap = StrokeCap.Round
+                    )
+                }
             }
 
-            AnimatedVisibility(visible = listState.canScrollBackward) {
-                HorizontalDivider()
-            }
+            if (uiState.detail is JobsState.Detail.Success) {
+                AnimatedVisibility(visible = listState.canScrollBackward) {
+                    HorizontalDivider()
+                }
 
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f),
-                state = listState
-            ) {
-                if (!isLoading && uiState.detail is JobsState.Detail.Success) {
-                    itemsIndexed((uiState.detail as JobsState.Detail.Success).result.jobs) { index, job ->
-                        JobListItem(
-                            modifier = Modifier
-                                .padding(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = if (index > 0) 8.dp else 0.dp
-                                )
-                                .clickable {
-                                    navController.navigate(
-                                        JobRoutes.Detail(
-                                            id = job.id,
-                                            type = job.type
-                                        )
+                LazyColumn(state = listState) {
+                    itemsIndexed(uiState.result.jobs) { index, job ->
+                        val isExpanded = uiState.expandedJobId == job.id
+
+                        CustomCard(
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = if (index == 0) 0.dp else 8.dp
+                            ),
+                            onClick = {
+                                navController.navigate(
+                                    JobRoutes.Detail(
+                                        id = job.id,
+                                        type = job.type
                                     )
-                                },
-                            customerName = job.customer.name,
-                            title = job.title,
-                            note = job.note,
-                            type = job.type,
-                            pickupLocation = job.pickupLocation,
-                            destination = job.destination
-                        )
+                                )
+                            }
+                        ) {
+                            Column {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 16.dp
+                                    )
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.onSurface)
+                                    ) {
+                                        Icon(
+                                            Lucide.User,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(12.dp)
+                                                .align(Alignment.Center),
+                                            tint = MaterialTheme.colorScheme.surface
+                                        )
+                                    }
+                                    Text(
+                                        text = job.customer.name,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        modifier = Modifier.padding(start = 8.dp)
+                                    )
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.Top,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 8.dp,
+                                        bottom = 16.dp
+                                    )
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = job.title,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text(
+                                            text = job.note,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+                                    Box(modifier = Modifier
+                                        .padding(start = 8.dp)
+                                        .size(40.dp)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .clickable {
+                                            viewModel.expandJob(jobId = job.id)
+                                        }
+                                    ) {
+                                        Icon(
+                                            if (isExpanded) Lucide.ChevronUp
+                                            else Lucide.ChevronDown,
+                                            contentDescription = null,
+                                            modifier = Modifier.align(
+                                                Alignment.Center
+                                            )
+                                        )
+                                    }
+                                }
+
+                                AnimatedVisibility(visible = isExpanded) {
+                                    Column {
+                                        HorizontalDivider()
+
+                                        listOf(
+                                            mapOf(
+                                                "title" to "Jenis pekerjaan",
+                                                "value" to job.type
+                                            ),
+                                            mapOf(
+                                                "title" to "Titik jemput",
+                                                "value" to job.pickupLocation
+                                            ),
+                                            mapOf(
+                                                "title" to "Destinasi",
+                                                "value" to job.destination
+                                            ),
+                                        ).mapIndexed { index, item ->
+                                            Row(
+                                                verticalAlignment = Alignment.Top,
+                                                modifier = Modifier.padding(
+                                                    start = 16.dp,
+                                                    end = 16.dp,
+                                                    top = if (index == 0) 16.dp else 4.dp,
+                                                )
+                                            ) {
+                                                Text(
+                                                    text = item["title"]!!,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    modifier = Modifier.weight(4f)
+                                                )
+                                                Text(
+                                                    text = item["value"]!!,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    modifier = Modifier.weight(8f)
+                                                )
+                                            }
+                                        }
+
+                                        Row(
+                                            modifier = Modifier.padding(
+                                                start = 16.dp,
+                                                end = 16.dp,
+                                                top = 8.dp,
+                                                bottom = 16.dp
+                                            ),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(10.dp))
+                                                    .size(20.dp)
+                                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                            ) {
+                                                Icon(
+                                                    Lucide.User, contentDescription = null,
+                                                    modifier = Modifier
+                                                        .size(12.dp)
+                                                        .align(Alignment.Center)
+                                                )
+                                            }
+                                            Text(
+                                                text = "${job.totalApplicants} orang melamar pekerjaan ini",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                modifier = Modifier
+                                                    .padding(start = 8.dp)
+                                                    .weight(1f)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     item {

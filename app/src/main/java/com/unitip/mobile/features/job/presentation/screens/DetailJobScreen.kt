@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -58,9 +59,9 @@ fun DetailJobScreen(
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
 
-//    LaunchedEffect(id) {
-//        viewModel.fetchData(jobId = id, type = type)
-//    }
+    LaunchedEffect(id, type) {
+        viewModel.fetchData(jobId = id, type = type)
+    }
 
     Scaffold {
         Column(
