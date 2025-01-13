@@ -14,16 +14,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit = {}
 ) {
     var cardModifier = modifier
         .fillMaxWidth()
         .clip(RoundedCornerShape(16.dp))
         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .08f))
-    if (onClick != {})
+    if (onClick != null)
         cardModifier = cardModifier.clickable { onClick() }
-    
+
     Box(
         modifier = cardModifier
     ) {
