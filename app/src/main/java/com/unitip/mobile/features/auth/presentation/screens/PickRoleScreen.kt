@@ -3,6 +3,8 @@ package com.unitip.mobile.features.auth.presentation.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,11 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.auth.commons.AuthConstants
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.domain.models.Role
@@ -49,6 +53,8 @@ import com.unitip.mobile.features.auth.presentation.states.PickRoleState
 import com.unitip.mobile.features.auth.presentation.viewmodels.PickRoleViewModel
 import com.unitip.mobile.features.home.core.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.presentation.components.CustomCard
+import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
 fun PickRoleScreen(
@@ -85,9 +91,37 @@ fun PickRoleScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.surfaceContainerLowest,
+                        )
+                    )
+                )
+                .padding(innerPadding)
         ) {
+            // app bar
+            CustomIconButton(
+                onClick = { navController.popBackStack() },
+                icon = Lucide.ChevronLeft,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+            )
+
+            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+                Text(
+                    text = "Pilih Peran",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    text = "Anda terdeteksi memiliki banyak peran di Unitip. " +
+                            "Silahkan pilih peran terlebih dahulu sebelum lanjut menggunakan aplikasi",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            // loading indicator
             AnimatedVisibility(visible = uiState.detail is PickRoleState.Detail.Loading) {
                 LinearProgressIndicator(
                     modifier = Modifier
@@ -97,36 +131,57 @@ fun PickRoleScreen(
                 )
             }
 
-            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                Text(
-                    text = "Pilih Peran",
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = "Anda terdeteksi memiliki banyak peran di Unitip. " +
-                            "Silahkan pilih peran terlebih dahulu sebelum lanjut menggunakan aplikasi",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .alpha(.8f)
-                        .padding(top = 8.dp),
-                    textAlign = TextAlign.Center,
-                )
-            }
-
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 16.dp, end = 16.dp)
             ) {
                 itemsIndexed(availableRoles) { index, role ->
-                    RoleListItem(
-                        index = index,
-                        isSelected = role.role === selectedRole,
-                        onSelect = { selectedRole = it },
-                        role = role,
-                    )
+                    val isSelected = selectedRole == role.role
+
+                    CustomCard(
+                        modifier = Modifier
+                            .padding(top = if (index == 0) 16.dp else 8.dp)
+                            .border(
+                                width = 2.dp,
+                                color = if (isSelected) MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = .32f
+                                )
+                                else Color.Unspecified,
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        onClick = { selectedRole = role.role }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                Icon(
+                                    role.icon, contentDescription = null, modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = role.title,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = role.subtitle,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
