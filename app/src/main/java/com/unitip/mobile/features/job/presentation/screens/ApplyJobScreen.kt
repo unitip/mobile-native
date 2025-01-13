@@ -6,14 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -100,7 +102,11 @@ fun ApplyJobScreen(
                     .weight(1f)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
-                TextField(
+                Text(
+                    text = "Harga Ajuan",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                OutlinedTextField(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     value = priceInput,
                     onValueChange = { newValue ->
@@ -108,11 +114,22 @@ fun ApplyJobScreen(
                             priceInput = newValue
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = uiState.detail !is ApplyJobState.Detail.Loading
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors().copy(
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                    ),
                 )
 
-                TextField(
+                Text(
+                    text = "Catatan Tambahan",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                OutlinedTextField(
                     value = "",
                     onValueChange = { newValue ->
                     },
@@ -120,8 +137,11 @@ fun ApplyJobScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                    placeholder = { Text(text = "Catatan") },
-                    enabled = uiState.detail !is ApplyJobState.Detail.Loading
+                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors().copy(
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                    ),
                 )
             }
 
