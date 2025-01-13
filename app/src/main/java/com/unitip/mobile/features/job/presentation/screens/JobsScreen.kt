@@ -115,7 +115,7 @@ fun JobsScreen(
                     top = 16.dp,
                     bottom = 16.dp
                 ),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
