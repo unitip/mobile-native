@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -143,7 +145,11 @@ fun AuthScreen(
                             .padding(top = 32.dp),
                         placeholder = {
                             Text(stringResource(R.string.name_placeholder))
-                        }
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors().copy(
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                        ),
                     )
                 }
                 OutlinedTextField(
@@ -155,7 +161,11 @@ fun AuthScreen(
                         .padding(top = (if (uiState.isLogin) 32 else 8).dp),
                     placeholder = {
                         Text(stringResource(R.string.email_placeholder))
-                    }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors().copy(
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                    ),
                 )
                 OutlinedTextField(
                     enabled = uiState.detail !is AuthState.Detail.Loading,
@@ -166,7 +176,11 @@ fun AuthScreen(
                         .padding(top = 8.dp),
                     placeholder = {
                         Text(stringResource(R.string.password_placeholder))
-                    }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors().copy(
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                    ),
                 )
                 AnimatedVisibility(visible = !uiState.isLogin) {
                     OutlinedTextField(
@@ -178,7 +192,11 @@ fun AuthScreen(
                             .padding(top = 8.dp),
                         placeholder = {
                             Text(stringResource(R.string.confirm_password_placeholder))
-                        }
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors().copy(
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+                        ),
                     )
                 }
             }
