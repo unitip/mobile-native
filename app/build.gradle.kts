@@ -14,7 +14,7 @@ plugins {
 
 android {
     namespace = "com.unitip.mobile"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.unitip.mobile"
@@ -85,8 +85,10 @@ dependencies {
     implementation(libs.icons.lucide)
 
     // mqtt client
-    implementation(libs.org.eclipse.paho.client.mqttv3)
-    implementation(libs.org.eclipse.paho.android.service)
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("com.github.hannesa2:paho.mqtt.android:4.3")
+//    implementation(libs.org.eclipse.paho.client.mqttv3)
+//    implementation(libs.org.eclipse.paho.android.service)
 
     // retrofit
     implementation(libs.retrofit)
