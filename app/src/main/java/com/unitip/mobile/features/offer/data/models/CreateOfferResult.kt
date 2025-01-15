@@ -1,5 +1,5 @@
 package com.unitip.mobile.features.offer.data.models
 
-data class CreateJobResult(
+data class CreateOfferResult(
     val id: String
 )
