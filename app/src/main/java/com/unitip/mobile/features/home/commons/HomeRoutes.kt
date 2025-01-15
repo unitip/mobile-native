@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.home.core
+package com.unitip.mobile.features.home.commons
 
 import kotlinx.serialization.Serializable
 

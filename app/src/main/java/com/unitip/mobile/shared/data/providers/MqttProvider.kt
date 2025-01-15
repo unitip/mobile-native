@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Mqtt @Inject constructor(
+class MqttProvider @Inject constructor(
     application: Application,
 ) {
     val client: MqttAndroidClient = MqttAndroidClient(

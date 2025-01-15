@@ -51,7 +51,7 @@ import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.domain.models.Role
 import com.unitip.mobile.features.auth.presentation.states.PickRoleState
 import com.unitip.mobile.features.auth.presentation.viewmodels.PickRoleViewModel
-import com.unitip.mobile.features.home.core.HomeRoutes
+import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton

@@ -33,6 +33,12 @@ android {
             "API_BASE_URL",
             "\"${properties.getProperty("API_BASE_URL")}\""
         )
+
+        buildConfigField(
+            "String",
+            "MQTT_SECRET",
+            "\"${properties.getProperty("MQTT_SECRET")}\""
+        )
     }
 
     buildTypes {

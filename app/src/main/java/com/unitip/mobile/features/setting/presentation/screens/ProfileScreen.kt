@@ -48,7 +48,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.unitip.mobile.R
 import com.unitip.mobile.features.auth.commons.AuthRoutes
-import com.unitip.mobile.features.home.core.HomeRoutes
+import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.features.setting.presentation.states.ProfileState
 import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController

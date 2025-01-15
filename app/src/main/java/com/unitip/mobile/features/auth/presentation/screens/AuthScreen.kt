@@ -35,7 +35,7 @@ import com.unitip.mobile.R
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.presentation.states.AuthState
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
-import com.unitip.mobile.features.home.core.HomeRoutes
+import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @Composable
