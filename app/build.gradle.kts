@@ -39,6 +39,11 @@ android {
             "MQTT_SECRET",
             "\"${properties.getProperty("MQTT_SECRET")}\""
         )
+        buildConfigField(
+            "String",
+            "MQTT_SERVER_URI",
+            "\"${properties.getProperty("MQTT_SERVER_URI")}\""
+        )
     }
 
     buildTypes {

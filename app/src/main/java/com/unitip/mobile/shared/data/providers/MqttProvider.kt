@@ -1,7 +1,7 @@
 package com.unitip.mobile.shared.data.providers
 
 import android.app.Application
-import com.unitip.mobile.shared.commons.configs.MqttConfig
+import com.unitip.mobile.BuildConfig
 import info.mqtt.android.service.MqttAndroidClient
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +11,8 @@ class MqttProvider @Inject constructor(
     application: Application,
 ) {
     val client: MqttAndroidClient = MqttAndroidClient(
-        application, MqttConfig.MQTT_SERVER_URI,
-        MqttConfig.MQTT_CLIENT_ID
+        context = application,
+        serverURI = BuildConfig.MQTT_SERVER_URI,
+        clientId = "com.unitip.mobile-" + System.currentTimeMillis()
     )
 }
