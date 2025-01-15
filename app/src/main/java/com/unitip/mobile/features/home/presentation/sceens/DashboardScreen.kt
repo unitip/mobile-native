@@ -36,7 +36,6 @@ import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.home.presentation.viewmodels.DashboardViewModel
-import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
@@ -101,8 +100,11 @@ fun DashboardScreen(
             ) {
                 // active driver counter
                 item {
-                    CustomCard(
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
                     ) {
                         Row(modifier = Modifier.padding(16.dp)) {
                             Text(
