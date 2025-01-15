@@ -29,44 +29,53 @@ class DashboardViewModel @Inject constructor(
     private val client: MqttAndroidClient = mqttProvider.client
 
     init {
+        listenMqttCallback()
         subscribeToOnlineDriverCount()
     }
 
-    private fun subscribeToOnlineDriverCount() {
+    private fun listenMqttCallback() {
         client.setCallback(object : MqttCallbackExtended {
             override fun connectionLost(cause: Throwable?) = Unit
             override fun deliveryComplete(token: IMqttDeliveryToken?) = Unit
             override fun messageArrived(topic: String?, message: MqttMessage?) = Unit
-            override fun connectComplete(reconnect: Boolean, serverURI: String?) {
-                /**
-                 * ketika client berhasil terhubung dengan broker, maka subscribe ke topic
-                 * yang berisi informasi status online driver
-                 */
-                client.subscribe(
-                    topicFilter = "com.unitip/${BuildConfig.MQTT_SECRET}/driver/+/status",
-                    qos = 2,
-                    messageListener = { topic, message ->
-                        val payload = message.toString()
-                        if (payload.isNotEmpty()) {
-                            Regex("""driver/([^/]+)/""").find(topic).let { result ->
-                                if (result != null) {
-                                    val driverId = result.groupValues[1]
-                                    Log.d(TAG, "driverId: $driverId, message: $message")
+            override fun connectComplete(reconnect: Boolean, serverURI: String?) =
+                subscribeToOnlineDriverCount()
+        })
+    }
 
-                                    _uiState.update {
-                                        it.copy(
-                                            onlineDriverIds = when (payload) {
-                                                "online" -> it.onlineDriverIds + driverId
-                                                else -> it.onlineDriverIds - driverId
-                                            }
-                                        )
-                                    }
+    private fun subscribeToOnlineDriverCount() {
+        if (client.isConnected) {
+            /**
+             * ketika client berhasil terhubung dengan broker, maka subscribe ke topic
+             * yang berisi informasi status online driver
+             *
+             * com.unitip/# -> com.unitip/a, /b, /{any}/{any}...
+             * com.unitip/+/test -> com.unitip/{any}/test
+             */
+            client.subscribe(
+                topicFilter = "com.unitip/${BuildConfig.MQTT_SECRET}/driver/+/status",
+                qos = 2,
+                messageListener = { topic, message ->
+                    val payload = message.toString()
+                    if (payload.isNotEmpty()) {
+                        Regex("""driver/([^/]+)/""").find(topic).let { result ->
+                            if (result != null) {
+                                val driverId = result.groupValues[1]
+                                Log.d(TAG, "driverId: $driverId, message: $message")
+
+                                _uiState.update {
+                                    it.copy(
+                                        onlineDriverIds = when (payload) {
+                                            "online" -> it.onlineDriverIds + driverId
+                                            else -> it.onlineDriverIds - driverId
+                                        }
+                                    )
                                 }
                             }
                         }
                     }
-                )
-            }
-        })
+                }
+            )
+        }
     }
 }

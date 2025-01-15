@@ -38,12 +38,12 @@ class MainActivity : ComponentActivity() {
         val session = sessionManager.read()
         val isAuthenticated = session != null
 
-        if (isAuthenticated && session.isDriver()) {
+        if (isAuthenticated && session != null && session.isDriver()) {
             /**
              * perlu update sistem autentikasi supaya bisa mendapatkan
              * user id, kemudian disimpan ke dalam local storage
              */
-            val driverId = "id10" // dummy
+            val driverId = session.token
             val onlineStatusTopic = "com.unitip/${BuildConfig.MQTT_SECRET}/driver/$driverId/status"
 
             val options = MqttConnectOptions().apply {
