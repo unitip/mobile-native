@@ -1,31 +1,26 @@
 package com.unitip.mobile.features.setting.presentation.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -101,31 +96,26 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets(0.dp),
         snackbarHost = { SnackbarHost(hostState = snackbarHost) },
-        topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                TopAppBar(
-                    title = {
-                        Text("Profile")
-                    }
-                )
-                AnimatedVisibility(visible = uiState.logoutDetail is ProfileState.LogoutDetail.Loading) {
-                    LinearProgressIndicator(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxWidth(),
-                        strokeCap = StrokeCap.Round,
-                    )
-                }
-            }
-        }
     ) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.surfaceContainerLowest,
+                        )
+                    )
+                )
                 .padding(it)
-                .verticalScroll(state = scrollState)
         ) {
+            Text(
+                text = "Akun Saya",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+            )
             Row(
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -153,41 +143,45 @@ fun ProfileScreen(
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.alpha(.8f)
                         )
+//                        Text(
+//                            text = token,
+//                            style = MaterialTheme.typography.bodySmall,
+//                            modifier = Modifier.alpha(.8f)
+//                        )
                         Text(
-                            text = token,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.alpha(.8f)
+                            text = role,
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .clip(RoundedCornerShape(32.dp))
+                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                .padding(horizontal = 8.dp, vertical = 2.dp),
+                            style = MaterialTheme.typography.labelSmall
                         )
-                        Badge(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ) {
-                            Text(text = role)
-                        }
                     }
                 }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            ListItem(
-                leadingContent = {
-                    Icon(
-                        Lucide.LogOut,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                headlineContent = { Text(text = "Keluar") },
-                modifier = Modifier.clickable(
-                    enabled = uiState.logoutDetail !is ProfileState.LogoutDetail.Loading
-                ) {
-                    scope.launch {
-                        isConfirmLogoutSheetVisible = true
-                        confirmLogoutSheetState.show()
+            Box(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .08f))
+                    .clickable {
+                        scope.launch {
+                            isConfirmLogoutSheetVisible = true
+                            confirmLogoutSheetState.show()
+                        }
                     }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(Lucide.LogOut, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Text(text = "Keluar", style = MaterialTheme.typography.bodyMedium)
                 }
-            )
+            }
         }
     }
 

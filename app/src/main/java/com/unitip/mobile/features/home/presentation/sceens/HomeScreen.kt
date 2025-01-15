@@ -30,7 +30,7 @@ fun HomeScreen() {
             Column(modifier = Modifier.padding(it)) {
                 NavHost(
                     navController = homeNavController,
-                    startDestination = HomeRoutes.Dashboard,
+                    startDestination = HomeRoutes.Profile,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
