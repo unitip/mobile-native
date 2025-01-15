@@ -12,10 +12,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.features.home.core.HomeRoutes
-import com.unitip.mobile.features.home.core.nestedHomeNavigation
+import com.unitip.mobile.features.home.commons.HomeRoutes
+import com.unitip.mobile.features.home.commons.nestedHomeNavigation
 import com.unitip.mobile.features.home.presentation.components.CustomNavbar
-import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
+import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
 
 @Composable
 fun HomeScreen() {

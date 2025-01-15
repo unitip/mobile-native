@@ -24,7 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unitip.mobile.features.chat.core.ChatRoutes
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -13,6 +13,8 @@ data class GetAllJobsResponse(
         val note: String,
         val type: String,
         @SerializedName("pickup_location") val pickupLocation: String,
+        @SerializedName("created_at") val createdAt: String,
+        @SerializedName("updated_at") val updatedAt: String,
         val customer: Customer
     ) {
         data class Customer(

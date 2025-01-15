@@ -3,7 +3,7 @@ package com.unitip.mobile.features.auth.commons
 import kotlinx.serialization.Serializable
 
 @Serializable
-object AuthRoutes {
+sealed class AuthRoutes {
     @Serializable
     object Index
 

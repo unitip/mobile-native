@@ -1,46 +1,75 @@
 package com.unitip.mobile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.navigation.compose.rememberNavController
+import com.unitip.mobile.shared.commons.Application
+import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.data.managers.SessionManager
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
-import com.unitip.mobile.shared.presentation.navigation.ApplicationNavigationGraph
-import com.unitip.mobile.shared.presentation.ui.theme.UnitipTheme
+import com.unitip.mobile.shared.data.providers.MqttProvider
 import dagger.hilt.android.AndroidEntryPoint
+import org.eclipse.paho.client.mqttv3.IMqttActionListener
+import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var mqttProvider: MqttProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val isAuthenticated = sessionManager.read() != null
+        /**
+         * publish online status jika user sudah login dan memiliki role
+         * sebagai driver
+         */
+        val session = sessionManager.read()
+        val isAuthenticated = session != null
 
-        setContent {
-            UnitipTheme(
-                darkTheme = false,
-                dynamicColor = false,
-            ) {
-                Surface {
-                    val navController = rememberNavController()
+        if (isAuthenticated && session != null && session.isDriver()) {
+            /**
+             * perlu update sistem autentikasi supaya bisa mendapatkan
+             * user id, kemudian disimpan ke dalam local storage
+             */
+            val driverId = session.token
+            val onlineStatusTopic = "com.unitip/${BuildConfig.MQTT_SECRET}/driver/$driverId/status"
 
-                    CompositionLocalProvider(LocalNavController provides navController) {
-                        ApplicationNavigationGraph(
-                            navController = navController,
-                            isAuthenticated = isAuthenticated,
-                        )
-                    }
-                }
+            val options = MqttConnectOptions().apply {
+                isAutomaticReconnect = true
+                setWill(onlineStatusTopic, "offline".toByteArray(), 2, true)
             }
+            val client = mqttProvider.client
+            client.connect(
+                options = options,
+                userContext = null,
+                callback = object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                        Log.d(TAG, "onSuccess: connected")
+                        client.publish(onlineStatusTopic, "online".toByteArray(), 2, true)
+                    }
+
+                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                        exception?.printStackTrace()
+                        Log.d(TAG, "onFailure: ${exception?.message ?: "unknown"}")
+                    }
+                })
+        }
+
+        // memulai aplikasi compose
+        setContent {
+            Application(isAuthenticated = isAuthenticated)
         }
     }
 }

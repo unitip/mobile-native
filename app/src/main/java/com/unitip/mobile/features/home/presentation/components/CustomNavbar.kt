@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -32,8 +31,8 @@ import com.composables.icons.lucide.LayoutDashboard
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessagesSquare
 import com.composables.icons.lucide.User
-import com.unitip.mobile.features.home.core.HomeRoutes
-import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
+import com.unitip.mobile.features.home.commons.HomeRoutes
+import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
 
 private data class NavigationItem<T : Any>(
     val title: String,
@@ -92,7 +91,11 @@ fun CustomNavbar() {
                     modifier = Modifier
                         .height(56.dp)
                         .clickable(
-                            indication = rememberRipple(bounded = false, radius = 48.dp, color = MaterialTheme.colorScheme.outlineVariant),
+                            indication = rememberRipple(
+                                bounded = false,
+                                radius = 48.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            ),
                             interactionSource = remember { MutableInteractionSource() },
                         ) {
                             homeNavController.navigate(item.route) {

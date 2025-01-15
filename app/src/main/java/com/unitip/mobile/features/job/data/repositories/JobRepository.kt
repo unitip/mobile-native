@@ -3,17 +3,15 @@ package com.unitip.mobile.features.job.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
-import com.unitip.mobile.features.job.data.models.Applicant
-import com.unitip.mobile.features.job.data.models.ApplyJobResult
 import com.unitip.mobile.features.job.data.models.CreateJobResult
-import com.unitip.mobile.features.job.data.models.GetAllJobsResult
-import com.unitip.mobile.features.job.data.models.GetJobResult
-import com.unitip.mobile.features.job.data.models.Job
-import com.unitip.mobile.features.job.data.models.JobCustomer
 import com.unitip.mobile.features.job.data.sources.JobApi
+import com.unitip.mobile.features.job.domain.models.Applicant
+import com.unitip.mobile.features.job.domain.models.GetAllJobsResult
+import com.unitip.mobile.features.job.domain.models.Job
+import com.unitip.mobile.features.job.domain.models.JobCustomer
+import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
-import com.unitip.mobile.shared.data.models.Failure
-import com.unitip.mobile.shared.utils.extensions.mapToFailure
+import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -87,7 +85,7 @@ class JobRepository @Inject constructor(
         }
     }
 
-    suspend fun get(id: String, type: String): Either<Failure, GetJobResult> {
+    suspend fun get(id: String, type: String): Either<Failure, Job> {
         try {
             val token = sessionManager.read()?.token
             val response = jobApi.get(token = "Bearer $token", jobId = id, type = type)
@@ -95,16 +93,14 @@ class JobRepository @Inject constructor(
 
             return when (response.isSuccessful && result != null) {
                 true -> Either.Right(
-                    GetJobResult(
-                        job = Job(
-                            id = result.id,
-                            title = result.title,
-                            note = result.note,
-                            pickupLocation = result.pickupLocation,
-                            destination = result.destination,
-                            type = result.type,
-                            customer = JobCustomer(name = "no data")
-                        ),
+                    Job(
+                        id = result.id,
+                        title = result.title,
+                        note = result.note,
+                        pickupLocation = result.pickupLocation,
+                        destination = result.destination,
+                        type = result.type,
+                        customer = JobCustomer(name = "no data"),
                         applicants = result.applicants.map {
                             Applicant(
                                 id = it.id,
