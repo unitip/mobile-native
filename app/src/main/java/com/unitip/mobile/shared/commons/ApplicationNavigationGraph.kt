@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.commons.authNavigation
-import com.unitip.mobile.features.chat.core.chatNavigation
+import com.unitip.mobile.features.chat.commons.chatNavigation
 import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.features.home.commons.homeNavigation

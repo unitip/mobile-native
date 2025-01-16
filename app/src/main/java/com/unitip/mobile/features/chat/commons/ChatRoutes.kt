@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.chat.core
+package com.unitip.mobile.features.chat.commons
 
 import kotlinx.serialization.Serializable
 

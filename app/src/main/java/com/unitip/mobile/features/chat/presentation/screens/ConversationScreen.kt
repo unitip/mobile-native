@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -51,10 +54,16 @@ private data class ChatItem(
 @Composable
 fun ConversationScreen() {
     val navController = LocalNavController.current
+    val context = LocalContext.current
 
     var title by remember { mutableStateOf("Rijal Anggoro") }
     var message by remember { mutableStateOf(TextFieldValue("")) }
     var messages = remember { mutableStateListOf<ChatItem>() }
+
+    BackHandler {
+        navController.popBackStack()
+        Toast.makeText(context, "back called", Toast.LENGTH_SHORT).show()
+    }
 
     Scaffold(
         topBar = {
