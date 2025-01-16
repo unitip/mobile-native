@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.commons
+package com.unitip.mobile.shared.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
@@ -12,8 +12,9 @@ import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
-import com.unitip.mobile.features.offer.core.offerNavigation
+import com.unitip.mobile.features.offer.commons.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
+import com.unitip.mobile.shared.commons.Routes
 
 @Composable
 fun ApplicationNavigationGraph(
