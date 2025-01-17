@@ -6,16 +6,19 @@ import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetAllOfferResponse
 import com.unitip.mobile.features.offer.data.models.CreateOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
+import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
+import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class OfferRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    private val offerAPI:OfferApi
+    private val offerApi:OfferApi
 ){
     suspend fun create(
         title: String,
@@ -28,7 +31,7 @@ class OfferRepository @Inject constructor(
     ):Either<Failure,CreateOfferResult>{
         try {
             val token = sessionManager.read()?.token
-            val response = offerAPI.create(
+            val response = offerApi.create(
                 token="Bearer $token",
                 payload = CreateOfferPayload(
                     title = title,
@@ -52,8 +55,39 @@ class OfferRepository @Inject constructor(
         }
     }
 
-    // ini harus bikin dari model dulu, jadi nanti aja dulu
-//    suspend fun getAll() : Either<Failure,GetAllOfferResponse>{
-//
-//    }
+
+    suspend fun getAll() : Either<Failure,GetAllOffersResult>{
+    try {
+        val token = sessionManager.read()?.token
+        val response = offerApi.getAll(token="Bearer $token")
+        val result = response.body()
+
+        return when (response.isSuccessful && result != null){
+            true -> Either.Right(
+                GetAllOffersResult(
+                    offers = result.offers.map {
+                        Offer(
+                            id = it.id,
+                            title = it.title,
+                            description = it.description,
+                            price = it.price,
+                            type = it.type,
+                            pickupArea = it.pickupArea,
+                            deliveryArea = it.deliveryArea,
+                            availableUntil = it.availableUntil,
+                            offerStatus = it.offerStatus
+                        )
+                    },
+                    hasNext = result.pageInfo.page < result.pageInfo.totalPages
+                )
+            )
+
+            false -> Either.Left(response.mapToFailure())
+        }
+
+        } catch (e: Exception){
+            e.printStackTrace()
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
 }

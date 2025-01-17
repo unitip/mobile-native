@@ -25,4 +25,7 @@ interface OfferApi {
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
     ):Response<GetAllOfferResponse>
+
+//    /api/v1/offers/{offer_id}/apply/multi
+//    /api/v1/offers/{offer_id}/apply/single
 }
