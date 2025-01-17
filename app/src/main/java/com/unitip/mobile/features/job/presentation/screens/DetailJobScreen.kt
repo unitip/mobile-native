@@ -257,6 +257,29 @@ fun DetailJobScreen(
                                         text = "Rp ${applicant.price}",
                                         style = MaterialTheme.typography.labelSmall
                                     )
+
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+
+                                    Button(
+                                        onClick = {
+                                            viewModel.approveApplicant(
+                                                jobId = id,
+                                                applicantId = applicant.id
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(start = 8.dp)
+                                    ) {
+                                        Text(text = "Terima")
+                                    }
                                 }
                                 if (false) {
                                     Spacer(modifier = Modifier.height(4.dp))
