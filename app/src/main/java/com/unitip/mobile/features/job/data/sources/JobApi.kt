@@ -2,6 +2,7 @@ package com.unitip.mobile.features.job.data.sources
 
 import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.ApplyJobResponse
+import com.unitip.mobile.features.job.data.dtos.ApproveApplicantResponse
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobResponse
 import com.unitip.mobile.features.job.data.dtos.GetAllJobsResponse
@@ -41,4 +42,11 @@ interface JobApi {
         @Path("job_id") jobId: String,
         @Body payload: ApplyJobPayload
     ): Response<ApplyJobResponse>
+
+    @POST("jobs/{job_id}/applicants/{applicant_id}/approve")
+    suspend fun approve(
+        @Header("Authorization") token: String,
+        @Path("job_id") jobId: String,
+        @Path("applicant_id") applicantId: String,
+    ): Response<ApproveApplicantResponse>
 }

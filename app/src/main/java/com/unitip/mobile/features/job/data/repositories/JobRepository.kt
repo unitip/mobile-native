@@ -138,4 +138,24 @@ class JobRepository @Inject constructor(
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
     }
+
+    suspend fun approve(jobId: String, applicantId: String): Either<Failure, Unit> {
+        try {
+            val token = sessionManager.read()?.token
+            val response =
+                jobApi.approve(
+                    token = "Bearer $token",
+                    jobId = jobId,
+                    applicantId = applicantId,
+                )
+            val result = response.body()
+            return when (response.isSuccessful && result != null) {
+                true -> Either.Right(Unit)
+                false -> Either.Left(response.mapToFailure())
+            }
+
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
 }

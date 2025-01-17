@@ -39,4 +39,23 @@ class DetailJobViewModel @Inject constructor(
         )
     }
 
+    fun approveApplicant(jobId: String, applicantId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
+            jobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
+                ifLeft = { left ->
+                    _uiState.update {
+                        it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
+                    }
+                },
+                ifRight = {
+                    _uiState.update {
+                        it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
+                    }
+                }
+            )
+        }
+
+    }
+
 }
