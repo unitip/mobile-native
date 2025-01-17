@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,17 +22,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Send
 
 enum class BubbleMessageType {
     SENDER,
     RECEIVER
 }
 
+enum class BubbleMessageSendStatus {
+    SENDING,
+    SENT,
+    FAILED
+}
+
 @Composable
 fun BubbleMessage(
     modifier: Modifier = Modifier,
     type: BubbleMessageType = BubbleMessageType.SENDER,
-    message: String = ""
+    message: String = "",
+    sendStatus: BubbleMessageSendStatus = BubbleMessageSendStatus.SENDING
 ) {
     val isSender = type == BubbleMessageType.SENDER
     var isTimeVisible by remember { mutableStateOf(false) }
@@ -44,17 +56,29 @@ fun BubbleMessage(
         horizontalAlignment = if (isSender) Alignment.End
         else Alignment.Start
     ) {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    if (isSender) MaterialTheme.colorScheme.primaryContainer
-                    else MaterialTheme.colorScheme.onSurface.copy(alpha = .08f)
+        Row(verticalAlignment = Alignment.Bottom) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isSender) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = .08f)
+                    )
+                    .clickable { isTimeVisible = !isTimeVisible }
+                    .padding(vertical = 8.dp, horizontal = 12.dp)
+            ) {
+                Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            }
+            AnimatedVisibility(visible = isSender && sendStatus == BubbleMessageSendStatus.SENDING) {
+                Icon(
+                    Lucide.Send,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(12.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .32f)
                 )
-                .clickable { isTimeVisible = !isTimeVisible }
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-        ) {
-            Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            }
         }
         AnimatedVisibility(visible = isTimeVisible) {
             Text(

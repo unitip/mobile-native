@@ -9,11 +9,13 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ChatApi {
-    @POST("chats")
+    @POST("chats/messages/to/{user_id}")
     suspend fun sendMessage(
         @Header("Authorization") token: String,
+        @Path("user_id") toUserId: String,
         @Body payload: SendMessagePayload
     ): Response<SendMessageResponse>
 
@@ -22,8 +24,9 @@ interface ChatApi {
         @Header("Authorization") token: String
     ): Response<GetAllRoomsResponse>
 
-    @GET("chats/users")
+    @GET("chats/messages/from/{user_id}")
     suspend fun getAllMessages(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Path("user_id") fromUserId: String
     ): Response<GetAllMessagesResponse>
 }

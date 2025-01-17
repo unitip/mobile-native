@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,11 +24,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,22 +37,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Send
 import com.unitip.mobile.features.chat.presentation.components.BubbleMessage
+import com.unitip.mobile.features.chat.presentation.components.BubbleMessageSendStatus
 import com.unitip.mobile.features.chat.presentation.components.BubbleMessageType
+import com.unitip.mobile.features.chat.presentation.states.ConversationState
 import com.unitip.mobile.features.chat.presentation.viewmodels.ConversationViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
-
-private data class ChatItem(
-    val from: String,
-    val message: String,
-)
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConversationScreen(
@@ -62,9 +61,20 @@ fun ConversationScreen(
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    var message by remember { mutableStateOf("") }
 
-    var message by remember { mutableStateOf(TextFieldValue("")) }
-    var messages = remember { mutableStateListOf<ChatItem>() }
+    LaunchedEffect(toUserId) {
+        viewModel.getAllMessages(
+            fromUserId = toUserId
+        )
+    }
+
+    LaunchedEffect(uiState.detail) {
+        if (uiState.detail is ConversationState.Detail.Success)
+            listState.scrollToItem(index = uiState.messages.size - 1)
+    }
 
     BackHandler {
         navController.popBackStack()
@@ -110,57 +120,28 @@ fun ConversationScreen(
 
             // Chat Messages List
             LazyColumn(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                state = listState
             ) {
+                itemsIndexed(uiState.messages) { index, message ->
+                    val isReceiver = message.fromUserId == toUserId
 
-                data class Test(
-                    val message: String,
-                    val type: BubbleMessageType
-                )
-
-                val messages =
-                    listOf(
-                        Test(
-                            message = "Halo, selamat siang mas Rizal!",
-                            type = BubbleMessageType.SENDER
-                        ),
-                        Test(
-                            message = "Tolong cepat sesuai titik yang saya kirim ya mas. Saya buru2 ketemu dengan dosen",
-                            type = BubbleMessageType.SENDER
-                        ),
-                        Test(
-                            message = "Nggih, mba!", type = BubbleMessageType.RECEIVER
-                        ),
-                        Test(
-                            message = "Mas??", type = BubbleMessageType.SENDER
-                        ),
-                        Test(
-                            message = "Sabar mba, numpak buroq wae nek kesusu! Telat kok ngerusuhi wong liyo!!",
-                            type = BubbleMessageType.RECEIVER
-                        ),
-                        Test(
-                            message = "SABAR ANJG!!!", type = BubbleMessageType.RECEIVER
-                        ),
-                        Test(
-                            message = "kok galak :(", type = BubbleMessageType.SENDER
-                        ),
-                    )
-
-                itemsIndexed(messages) { index, message ->
                     BubbleMessage(
                         modifier = Modifier.padding(
                             top = if (index == 0) 16.dp else (
-                                    if (messages[index - 1].type == message.type) 4.dp
-                                    else 12.dp)
+                                    if (uiState.messages[index - 1].toUserId == message.toUserId) 4.dp
+                                    else 12.dp),
+                            bottom = if (index == uiState.messages.size - 1) 16.dp
+                            else 0.dp
                         ),
-                        type = message.type,
-                        message = message.message
+                        type = if (isReceiver) BubbleMessageType.RECEIVER
+                        else BubbleMessageType.SENDER,
+                        message = message.message,
+                        sendStatus = if (uiState.sendingMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.SENDING
+                        else if (uiState.failedMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.FAILED
+                        else BubbleMessageSendStatus.SENT
                     )
                 }
-
-//                itemsIndexed(uiState.messages) { index, message ->
-//                    Text(text = message.message)
-//                }
             }
 
             HorizontalDivider()
@@ -188,7 +169,16 @@ fun ConversationScreen(
                         .size(48.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.primary)
-                        .clickable { }
+                        .clickable {
+                            viewModel.sendMessage(
+                                toUserId = toUserId,
+                                message = message
+                            )
+                            message = ""
+                            scope.launch {
+                                listState.scrollToItem(index = uiState.messages.size - 1)
+                            }
+                        }
                 ) {
                     Icon(
                         Lucide.Send,

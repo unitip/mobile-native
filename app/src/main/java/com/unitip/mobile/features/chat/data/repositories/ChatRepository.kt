@@ -18,19 +18,22 @@ class ChatRepository @Inject constructor(
 ) {
     suspend fun sendMessage(
         toUserId: String,
+        id: String,
         message: String
-    ): Either<Failure, Unit> = try {
+    ): Either<Failure, String> = try {
         val token = sessionManager.read()?.token
         val response = chatApi.sendMessage(
-            token = "Bearer $token", payload = SendMessagePayload(
-                toUserId = toUserId,
+            token = "Bearer $token",
+            toUserId = toUserId,
+            payload = SendMessagePayload(
+                id = id,
                 message = message,
             )
         )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
-            true -> Either.Right(Unit)
+            true -> Either.Right(result.id)
             false -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {
@@ -61,9 +64,14 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun getAllMessages(): Either<Failure, List<Message>> = try {
+    suspend fun getAllMessages(
+        fromUserId: String
+    ): Either<Failure, List<Message>> = try {
         val token = sessionManager.read()?.token
-        val response = chatApi.getAllMessages(token = "Bearer $token")
+        val response = chatApi.getAllMessages(
+            token = "Bearer $token",
+            fromUserId = fromUserId
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {

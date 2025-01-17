@@ -4,6 +4,8 @@ import com.unitip.mobile.features.chat.domain.models.Message
 
 data class ConversationState(
     val isWriting: Boolean = false,
+    val sendingMessageUUIDs: Set<String> = emptySet(),
+    val failedMessageUUIDs: Set<String> = emptySet(),
     val messages: List<Message> = emptyList(),
     val detail: Detail = Detail.Initial
 ) {
