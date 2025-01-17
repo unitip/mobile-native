@@ -3,6 +3,7 @@ package com.unitip.mobile.features.chat.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.sources.ChatApi
+import com.unitip.mobile.features.chat.domain.models.Message
 import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -58,5 +59,27 @@ class ChatRepository @Inject constructor(
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
+    }
+
+    suspend fun getAllMessages(): Either<Failure, List<Message>> = try {
+        val token = sessionManager.read()?.token
+        val response = chatApi.getAllMessages(token = "Bearer $token")
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.messages.map {
+                Message(
+                    id = it.id,
+                    fromUserId = it.fromUserId,
+                    toUserId = it.toUserId,
+                    message = it.message,
+                    isDeleted = it.isDeleted
+                )
+            })
+
+            false -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 }

@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.chat.data.sources
 
+import com.unitip.mobile.features.chat.data.dtos.GetAllMessagesResponse
 import com.unitip.mobile.features.chat.data.dtos.GetAllRoomsResponse
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessageResponse
@@ -20,4 +21,9 @@ interface ChatApi {
     suspend fun getAllRooms(
         @Header("Authorization") token: String
     ): Response<GetAllRoomsResponse>
+
+    @GET("chats/users")
+    suspend fun getAllMessages(
+        @Header("Authorization") token: String
+    ): Response<GetAllMessagesResponse>
 }

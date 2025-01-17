@@ -84,7 +84,12 @@ fun ChatsScreen(
                             top = if (index == 0) 16.dp else 8.dp
                         ),
                         onClick = {
-                            navController.navigate(ChatRoutes.Conversation)
+                            navController.navigate(
+                                ChatRoutes.Conversation(
+                                    toUserId = room.fromUserId,
+                                    toUserName = room.fromUserName
+                                )
+                            )
                         }
                     ) {
                         Row(
