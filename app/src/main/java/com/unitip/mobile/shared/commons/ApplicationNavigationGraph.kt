@@ -25,6 +25,11 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
+//            true -> ChatRoutes.Conversation(
+//                toUserId = "hehe",
+//                toUserName = "Hehe"
+//            )
+
             false -> AuthRoutes.Index
         },
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) },

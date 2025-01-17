@@ -3,171 +3,196 @@ package com.unitip.mobile.features.chat.presentation.screens
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.RefreshCw
+import com.composables.icons.lucide.Send
+import com.unitip.mobile.features.chat.presentation.components.BubbleMessage
+import com.unitip.mobile.features.chat.presentation.components.BubbleMessageSendStatus
+import com.unitip.mobile.features.chat.presentation.components.BubbleMessageType
+import com.unitip.mobile.features.chat.presentation.states.ConversationState
+import com.unitip.mobile.features.chat.presentation.viewmodels.ConversationViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import kotlin.random.Random
+import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import kotlinx.coroutines.launch
 
-private data class ChatItem(
-    val from: String,
-    val message: String,
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConversationScreen() {
+fun ConversationScreen(
+    viewModel: ConversationViewModel = hiltViewModel(),
+    toUserId: String,
+    toUserName: String
+) {
     val navController = LocalNavController.current
     val context = LocalContext.current
 
-    var title by remember { mutableStateOf("Rijal Anggoro") }
-    var message by remember { mutableStateOf(TextFieldValue("")) }
-    var messages = remember { mutableStateListOf<ChatItem>() }
+    val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    var message by remember { mutableStateOf("") }
+
+    LaunchedEffect(toUserId) {
+        viewModel.getAllMessages(
+            fromUserId = toUserId
+        )
+    }
+
+    LaunchedEffect(uiState.detail) {
+        if (uiState.detail is ConversationState.Detail.Success)
+            listState.scrollToItem(index = uiState.messages.size - 1)
+    }
 
     BackHandler {
         navController.popBackStack()
         Toast.makeText(context, "back called", Toast.LENGTH_SHORT).show()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
-                    }
-                }
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .imePadding()
-            ) {
-                // Chat Messages List
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    items(messages.size) { index ->
-                        val messageItem = messages[index]
-                        MessageBubble(
-                            sender = messageItem.from,
-                            text = messageItem.message
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.surfaceContainerLowest,
                         )
-                    }
-                }
-
-                // Message Input Field
-                Row(
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp)
-                        .fillMaxWidth()
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TextField(
-                        value = message,
-                        onValueChange = { message = it },
-                        placeholder = { Text("Type a message...") },
-                        maxLines = 1,
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            errorIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
                     )
+                )
+                .padding(paddingValues)
+                .imePadding()
+        ) {
+            Row(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 16.dp,
+                    bottom = 16.dp
+                ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                CustomIconButton(
+                    icon = Lucide.ChevronLeft,
+                    onClick = { navController.popBackStack() }
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = toUserName, style = MaterialTheme.typography.titleMedium)
+                    Text(text = "mengetik...", style = MaterialTheme.typography.bodySmall)
+                }
+                CustomIconButton(
+                    icon = Lucide.RefreshCw,
+                    onClick = { viewModel.getAllMessages(fromUserId = toUserId) }
+                )
+            }
 
-                    FilledIconButton(
-                        onClick = {
-                            messages.add(
-                                ChatItem(
-                                    from = if (Random.nextBoolean()) "You" else "Rijal Anggoro",
-                                    message = message.text
-                                )
+            HorizontalDivider()
+
+            // Chat Messages List
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                state = listState
+            ) {
+                itemsIndexed(uiState.messages) { index, message ->
+                    val isReceiver = message.fromUserId == toUserId
+
+                    BubbleMessage(
+                        modifier = Modifier.padding(
+                            top = if (index == 0) 16.dp else (
+                                    if (uiState.messages[index - 1].toUserId == message.toUserId) 4.dp
+                                    else 12.dp),
+                            bottom = if (index == uiState.messages.size - 1) 16.dp
+                            else 0.dp
+                        ),
+                        type = if (isReceiver) BubbleMessageType.RECEIVER
+                        else BubbleMessageType.SENDER,
+                        message = message.message,
+                        sendStatus = if (uiState.sendingMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.SENDING
+                        else if (uiState.failedMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.FAILED
+                        else BubbleMessageSendStatus.SENT
+                    )
+                }
+            }
+
+            HorizontalDivider()
+
+            // input message
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextField(
+                    value = message,
+                    onValueChange = { message = it },
+                    placeholder = { Text(text = "Ketik pesan...") },
+                    maxLines = 5,
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    colors = TextFieldDefaults.colors().copy(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent
+                    )
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .clickable {
+                            viewModel.sendMessage(
+                                toUserId = toUserId,
+                                message = message
                             )
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 4.dp)
-                            .size(48.dp)
-                    ) {
-                        Icon(Icons.Default.Send, contentDescription = "Send")
-                    }
+                            message = ""
+                            scope.launch {
+                                listState.scrollToItem(index = uiState.messages.size - 1)
+                            }
+                        }
+                ) {
+                    Icon(
+                        Lucide.Send,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
-    )
-}
-
-@Composable
-fun MessageBubble(sender: String, text: String) {
-    val isCurrentUser = sender == "You"
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (isCurrentUser) Color.White else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier
-                .background(
-                    color = if (isCurrentUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .padding(12.dp)
-                .align(
-                    if (isCurrentUser) {
-                        Alignment.TopEnd
-                    } else Alignment.TopStart
-                )
-        )
     }
 }
