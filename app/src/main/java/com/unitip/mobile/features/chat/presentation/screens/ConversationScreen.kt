@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Send
 import com.unitip.mobile.features.chat.presentation.components.BubbleMessage
 import com.unitip.mobile.features.chat.presentation.components.BubbleMessageSendStatus
@@ -114,6 +115,10 @@ fun ConversationScreen(
                     Text(text = toUserName, style = MaterialTheme.typography.titleMedium)
                     Text(text = "mengetik...", style = MaterialTheme.typography.bodySmall)
                 }
+                CustomIconButton(
+                    icon = Lucide.RefreshCw,
+                    onClick = { viewModel.getAllMessages(fromUserId = toUserId) }
+                )
             }
 
             HorizontalDivider()
