@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.chat.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.sources.ChatApi
 import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
@@ -14,6 +15,27 @@ class ChatRepository @Inject constructor(
     private val chatApi: ChatApi,
     private val sessionManager: SessionManager
 ) {
+    suspend fun sendMessage(
+        toUserId: String,
+        message: String
+    ): Either<Failure, Unit> = try {
+        val token = sessionManager.read()?.token
+        val response = chatApi.sendMessage(
+            token = "Bearer $token", payload = SendMessagePayload(
+                toUserId = toUserId,
+                message = message,
+            )
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(Unit)
+            false -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
     suspend fun getAllRooms(): Either<Failure, List<Room>> {
         try {
             val token = sessionManager.read()?.token
