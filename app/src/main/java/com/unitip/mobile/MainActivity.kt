@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         val session = sessionManager.read()
         val isAuthenticated = session != null
 
-        if (isAuthenticated && session != null && session.isDriver()) {
+        if (isAuthenticated && session != null) {
             /**
              * perlu update sistem autentikasi supaya bisa mendapatkan
              * user id, kemudian disimpan ke dalam local storage
@@ -48,7 +48,13 @@ class MainActivity : ComponentActivity() {
 
             val options = MqttConnectOptions().apply {
                 isAutomaticReconnect = true
-                setWill(onlineStatusTopic, "offline".toByteArray(), 2, true)
+
+                /**
+                 * ketika user login sebagai driver, maka status online dan offline
+                 * dari user tersebut akan dicatat dan disimpan pada broker mqtt
+                 */
+                if (session.isDriver())
+                    setWill(onlineStatusTopic, "offline".toByteArray(), 2, true)
             }
             val client = mqttProvider.client
             client.connect(
@@ -57,7 +63,13 @@ class MainActivity : ComponentActivity() {
                 callback = object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
                         Log.d(TAG, "onSuccess: connected")
-                        client.publish(onlineStatusTopic, "online".toByteArray(), 2, true)
+
+                        /**
+                         * ketika user login sebagai driver, maka status online dan offline
+                         * dari user tersebut akan dicatat dan disimpan pada broker mqtt
+                         */
+                        if (session.isDriver())
+                            client.publish(onlineStatusTopic, "online".toByteArray(), 2, true)
                     }
 
                     override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
