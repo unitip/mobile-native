@@ -25,6 +25,10 @@ class ConversationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ConversationState())
     val uiState get() = _uiState.asStateFlow()
 
+    fun resetRealtimeState() = _uiState.update {
+        it.copy(realtimeDetail = ConversationState.RealtimeDetail.Initial)
+    }
+
     fun openRealtimeConnection(
         otherUserId: String
     ) {
@@ -33,7 +37,10 @@ class ConversationViewModel @Inject constructor(
             realtimeChatRepository.listenMessageFromOther(
                 object : RealtimeChat.MessageListener {
                     override fun onMessageReceived(message: Message) = _uiState.update {
-                        it.copy(messages = it.messages + message)
+                        it.copy(
+                            messages = it.messages + message,
+                            realtimeDetail = ConversationState.RealtimeDetail.NewMessage
+                        )
                     }
                 }
             )
@@ -69,7 +76,8 @@ class ConversationViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 sendingMessageUUIDs = it.sendingMessageUUIDs + uuid,
-                messages = it.messages + newMessage
+                messages = it.messages + newMessage,
+                realtimeDetail = ConversationState.RealtimeDetail.NewMessage
             )
         }
         chatRepository.sendMessage(

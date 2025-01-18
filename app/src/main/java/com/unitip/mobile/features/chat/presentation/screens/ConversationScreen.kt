@@ -1,16 +1,19 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imeAnimationSource
+import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
@@ -51,8 +55,8 @@ import com.unitip.mobile.features.chat.presentation.states.ConversationState
 import com.unitip.mobile.features.chat.presentation.viewmodels.ConversationViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
@@ -67,20 +71,61 @@ fun ConversationScreen(
     val scope = rememberCoroutineScope()
     var message by remember { mutableStateOf("") }
 
+    val isImeVisible = WindowInsets.isImeVisible
+    val imeBottomSource = WindowInsets.imeAnimationSource.getBottom(LocalDensity.current)
+    val imeBottomTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
+
+    /**
+     * launched effect untuk mendeteksi ime input keyboard,
+     * lakukan scroll ke pesan terakhir ketika keyboard
+     * telah ditampilkan secara penuh
+     */
+    LaunchedEffect(isImeVisible, imeBottomSource, imeBottomTarget) {
+        if (isImeVisible && imeBottomSource > 0 &&
+            imeBottomTarget > 0 &&
+            imeBottomSource == imeBottomTarget &&
+            uiState.messages.isNotEmpty()
+        ) listState.scrollToItem(index = uiState.messages.size - 1)
+    }
+
+    /**
+     * launched effect untuk membuka koneksi mqtt serta menerima
+     * history pesan dari database
+     */
     LaunchedEffect(toUserId) {
         viewModel.openRealtimeConnection(otherUserId = toUserId)
         viewModel.getAllMessages(fromUserId = toUserId)
     }
 
+    /**
+     * launched effect untuk scroll pesan ke bagian akhir
+     * ketika history pesan berhasil diterima dari database
+     */
     LaunchedEffect(uiState.detail) {
         if (uiState.detail is ConversationState.Detail.Success)
             listState.scrollToItem(index = uiState.messages.size - 1)
     }
 
-    BackHandler {
-        navController.popBackStack()
-        Toast.makeText(context, "back called", Toast.LENGTH_SHORT).show()
+    /**
+     * launched effect untuk scroll pesan ke bagian akhir
+     * ketika terdapat terdapat pesan baru, baik dari other
+     * maupun dari current user
+     */
+    LaunchedEffect(uiState.realtimeDetail) {
+        with(uiState.realtimeDetail) {
+            if (this is ConversationState.RealtimeDetail.NewMessage &&
+                uiState.messages.isNotEmpty()
+            ) {
+                listState.scrollToItem(index = uiState.messages.size - 1)
+                viewModel.resetRealtimeState()
+            }
+        }
     }
+
+//    BackHandler {
+//        navController.popBackStack()
+//        Toast.makeText(context, "back called", Toast.LENGTH_SHORT).show()
+//    }
 
     Scaffold { paddingValues ->
         Column(
@@ -95,7 +140,6 @@ fun ConversationScreen(
                     )
                 )
                 .padding(paddingValues)
-                .imePadding()
         ) {
             Row(
                 modifier = Modifier.padding(
@@ -125,7 +169,7 @@ fun ConversationScreen(
 
             HorizontalDivider()
 
-            // Chat Messages List
+            // list messages
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 state = listState
@@ -154,7 +198,10 @@ fun ConversationScreen(
             HorizontalDivider()
 
             // input message
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.imePadding()
+            ) {
                 TextField(
                     value = message,
                     onValueChange = {
@@ -188,9 +235,6 @@ fun ConversationScreen(
                                 message = message
                             )
                             message = ""
-                            scope.launch {
-                                listState.scrollToItem(index = uiState.messages.size - 1)
-                            }
                         }
                 ) {
                     Icon(
