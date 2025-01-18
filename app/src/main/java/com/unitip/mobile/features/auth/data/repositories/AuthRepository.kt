@@ -5,7 +5,6 @@ import com.unitip.mobile.features.auth.data.dtos.LoginPayload
 import com.unitip.mobile.features.auth.data.dtos.RegisterPayload
 import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.features.auth.domain.models.LoginResult
-import com.unitip.mobile.features.auth.domain.models.RegisterResult
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -22,22 +21,23 @@ class AuthRepository @Inject constructor(
         email: String,
         password: String,
         role: String? = null
-    ): Either<Failure, LoginResult> {
-        try {
-            val response =
-                authApi.login(
-                    LoginPayload(
-                        email = email,
-                        password = password,
-                        role = role
-                    )
+    ): Either<Failure, LoginResult> = try {
+        val response =
+            authApi.login(
+                LoginPayload(
+                    email = email,
+                    password = password,
+                    role = role
                 )
-            val result = response.body()
+            )
+        val result = response.body()
 
-            if (response.isSuccessful && result != null) {
+        when (response.isSuccessful && result != null) {
+            true -> {
                 if (!result.needRole)
                     sessionManager.create(
                         Session(
+                            id = result.id,
                             name = result.name,
                             email = result.email,
                             token = result.token,
@@ -45,7 +45,7 @@ class AuthRepository @Inject constructor(
                         )
                     )
 
-                return Either.Right(
+                Either.Right(
                     LoginResult(
                         needRole = result.needRole,
                         roles = result.roles,
@@ -53,54 +53,44 @@ class AuthRepository @Inject constructor(
                 )
             }
 
-            return Either.Left(response.mapToFailure())
-        } catch (e: Exception) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+            false -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
     suspend fun register(
         name: String,
         email: String,
         password: String,
-    ): Either<Failure, RegisterResult> {
-        try {
-            //Melakukan pengiriman regiter ke server
-            val response =
-                authApi.register(
-                    RegisterPayload(
-                        name = name,
-                        email = email,
-                        password = password
-                    )
-                )
-            val result = response.body()
+    ): Either<Failure, Unit> = try {
+        // melakukan pengiriman registrasi ke server
+        val response = authApi.register(
+            payload = RegisterPayload(
+                name = name,
+                email = email,
+                password = password
+            )
+        )
+        val result = response.body()
 
-            if (response.isSuccessful && result != null) {
-                // setelah register, langsung masukkin ke session manager
+        when (response.isSuccessful && result != null) {
+            true -> {
                 sessionManager.create(
                     Session(
+                        id = result.id,
                         name = result.name,
                         email = result.email,
                         token = result.token,
                         role = result.role,
                     )
                 )
-
-                return Either.Right(
-                    RegisterResult(
-                        id = result.id,
-                        name = result.name,
-                        email = result.email,
-                        token = result.token,
-                        role = result.role
-                    )
-                )
+                Either.Right(Unit)
             }
-            // Jika gagal melakukan registrasi
-            return Either.Left(Failure(message = "Gagal melakukan Registrasi"))
-        } catch (e: Exception) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga"))
+
+            false -> Either.Left(Failure(message = "Gagal melakukan Registrasi"))
         }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga"))
     }
 }

@@ -35,7 +35,6 @@ class ConversationViewModel @Inject constructor(
                     id = uuid,
                     message = message,
                     toUserId = toUserId,
-                    // fromUserId = dari mana idnya???
                 )
             )
         }
