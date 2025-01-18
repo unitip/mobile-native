@@ -230,11 +230,13 @@ fun ConversationScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.primary)
                         .clickable {
-                            viewModel.sendMessage(
-                                toUserId = toUserId,
-                                message = message
-                            )
-                            message = ""
+                            if (message.isNotBlank()) {
+                                viewModel.sendMessage(
+                                    toUserId = toUserId,
+                                    message = message
+                                )
+                                message = ""
+                            }
                         }
                 ) {
                     Icon(
