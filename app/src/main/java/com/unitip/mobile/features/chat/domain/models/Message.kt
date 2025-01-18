@@ -5,5 +5,6 @@ data class Message(
     val fromUserId: String = "",
     val toUserId: String = "",
     val message: String = "",
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val createdAt: String = ""
 )

@@ -81,7 +81,8 @@ class ChatRepository @Inject constructor(
                     fromUserId = it.fromUserId,
                     toUserId = it.toUserId,
                     message = it.message,
-                    isDeleted = it.isDeleted
+                    isDeleted = it.isDeleted,
+                    createdAt = it.createdAt
                 )
             })
 

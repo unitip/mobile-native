@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,6 +57,7 @@ import com.unitip.mobile.features.chat.presentation.viewmodels.ConversationViewM
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
+@SuppressLint("NewApi")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ConversationScreen(
@@ -190,7 +192,8 @@ fun ConversationScreen(
                         message = message.message,
                         sendStatus = if (uiState.sendingMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.SENDING
                         else if (uiState.failedMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.FAILED
-                        else BubbleMessageSendStatus.SENT
+                        else BubbleMessageSendStatus.SENT,
+                        createdAt = message.createdAt
                     )
                 }
             }

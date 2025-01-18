@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Send
+import com.unitip.mobile.shared.commons.extensions.localTimeFormat
 
 enum class BubbleMessageType {
     SENDER,
@@ -41,7 +42,8 @@ fun BubbleMessage(
     modifier: Modifier = Modifier,
     type: BubbleMessageType = BubbleMessageType.SENDER,
     message: String = "",
-    sendStatus: BubbleMessageSendStatus = BubbleMessageSendStatus.SENDING
+    sendStatus: BubbleMessageSendStatus = BubbleMessageSendStatus.SENDING,
+    createdAt: String = ""
 ) {
     val isSender = type == BubbleMessageType.SENDER
     var isTimeVisible by remember { mutableStateOf(false) }
@@ -82,7 +84,7 @@ fun BubbleMessage(
         }
         AnimatedVisibility(visible = isTimeVisible) {
             Text(
-                text = "10.10",
+                text = createdAt.localTimeFormat(),
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(
                     top = 4.dp,
