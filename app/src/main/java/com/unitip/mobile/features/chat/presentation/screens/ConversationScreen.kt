@@ -2,6 +2,7 @@ package com.unitip.mobile.features.chat.presentation.screens
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,9 +68,8 @@ fun ConversationScreen(
     var message by remember { mutableStateOf("") }
 
     LaunchedEffect(toUserId) {
-        viewModel.getAllMessages(
-            fromUserId = toUserId
-        )
+        viewModel.openRealtimeConnection(otherUserId = toUserId)
+        viewModel.getAllMessages(fromUserId = toUserId)
     }
 
     LaunchedEffect(uiState.detail) {
@@ -113,7 +113,9 @@ fun ConversationScreen(
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = toUserName, style = MaterialTheme.typography.titleMedium)
-                    Text(text = "mengetik...", style = MaterialTheme.typography.bodySmall)
+                    AnimatedVisibility(visible = uiState.isOtherUserTyping) {
+                        Text(text = "mengetik...", style = MaterialTheme.typography.bodySmall)
+                    }
                 }
                 CustomIconButton(
                     icon = Lucide.RefreshCw,
@@ -155,7 +157,13 @@ fun ConversationScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextField(
                     value = message,
-                    onValueChange = { message = it },
+                    onValueChange = {
+                        message = it
+
+                        val newIsTyping = it.isNotBlank()
+                        if (uiState.isTyping != newIsTyping)
+                            viewModel.notifyTypingStatus(isTyping = newIsTyping)
+                    },
                     placeholder = { Text(text = "Ketik pesan...") },
                     maxLines = 5,
                     singleLine = true,

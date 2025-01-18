@@ -3,7 +3,8 @@ package com.unitip.mobile.features.chat.presentation.states
 import com.unitip.mobile.features.chat.domain.models.Message
 
 data class ConversationState(
-    val isWriting: Boolean = false,
+    val isTyping: Boolean = false,
+    val isOtherUserTyping: Boolean = false,
     val sendingMessageUUIDs: Set<String> = emptySet(),
     val failedMessageUUIDs: Set<String> = emptySet(),
     val messages: List<Message> = emptyList(),
