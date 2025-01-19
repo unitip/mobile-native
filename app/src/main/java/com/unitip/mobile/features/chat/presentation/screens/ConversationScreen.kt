@@ -165,7 +165,7 @@ fun ConversationScreen(
                 }
                 CustomIconButton(
                     icon = Lucide.RefreshCw,
-//                    onClick = { viewModel.getAllMessages(fromUserId = toUserId) }
+                    onClick = { viewModel.getAllMessages(roomId = roomId) }
                 )
             }
 
@@ -222,8 +222,8 @@ fun ConversationScreen(
                         message = it
 
                         val newIsTyping = it.isNotBlank()
-                        if (uiState.isTyping != newIsTyping)
-                            viewModel.notifyTypingStatus(isTyping = newIsTyping)
+//                        if (uiState.isTyping != newIsTyping)
+//                            viewModel.notifyTypingStatus(isTyping = newIsTyping)
                     },
                     placeholder = { Text(text = "Ketik pesan...") },
                     maxLines = 5,
@@ -245,11 +245,11 @@ fun ConversationScreen(
                         .background(MaterialTheme.colorScheme.primary)
                         .clickable {
                             if (message.isNotBlank()) {
-//                                viewModel.sendMessage(
-//                                    toUserId = toUserId,
-//                                    message = message
-//                                )
-//                                message = ""
+                                viewModel.sendMessage(
+                                    roomId = roomId,
+                                    message = message.trim()
+                                )
+                                message = ""
                             }
                         }
                 ) {
