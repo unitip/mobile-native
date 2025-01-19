@@ -6,11 +6,8 @@ object MqttTopics {
     private const val PREFIX = "com.unitip/${BuildConfig.MQTT_SECRET}"
 
     object Chats {
-        fun publishMessage(currentUserId: String, otherUserId: String): String =
-            "$PREFIX/chats/message/$otherUserId/$currentUserId"
-
-        fun subscribeMessage(currentUserId: String, otherUserId: String): String =
-            "$PREFIX/chats/message/$currentUserId/$otherUserId"
+        fun publishSubscribeMessage(roomId: String): String =
+            "$PREFIX/chats/message/$roomId"
 
         fun publishTypingStatus(currentUserId: String): String =
             "$PREFIX/chats/typing/$currentUserId"

@@ -10,6 +10,7 @@ fun NavGraphBuilder.chatNavigation() {
         val data: ChatRoutes.Conversation = it.toRoute()
         ConversationScreen(
             roomId = data.roomId,
+            otherUserId = data.otherUserId,
             otherUserName = data.otherUserName
         )
     }

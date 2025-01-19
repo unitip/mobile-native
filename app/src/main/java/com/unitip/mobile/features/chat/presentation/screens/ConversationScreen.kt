@@ -62,6 +62,7 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @Composable
 fun ConversationScreen(
     roomId: String,
+    otherUserId: String,
     otherUserName: String,
     viewModel: ConversationViewModel = hiltViewModel()
 ) {
@@ -94,8 +95,11 @@ fun ConversationScreen(
      * launched effect untuk membuka koneksi mqtt serta menerima
      * history pesan dari database
      */
-    LaunchedEffect(roomId) {
-//        viewModel.openRealtimeConnection(otherUserId = toUserId)
+    LaunchedEffect(roomId, otherUserId) {
+        viewModel.openRealtimeConnection(
+            roomId = roomId,
+            otherUserId = otherUserId
+        )
         viewModel.getAllMessages(roomId = roomId)
     }
 
@@ -222,8 +226,11 @@ fun ConversationScreen(
                         message = it
 
                         val newIsTyping = it.isNotBlank()
-//                        if (uiState.isTyping != newIsTyping)
-//                            viewModel.notifyTypingStatus(isTyping = newIsTyping)
+                        if (uiState.isTyping != newIsTyping)
+                            viewModel.notifyTypingStatus(
+                                roomId = roomId,
+                                isTyping = newIsTyping
+                            )
                     },
                     placeholder = { Text(text = "Ketik pesan...") },
                     maxLines = 5,
@@ -250,6 +257,10 @@ fun ConversationScreen(
                                     message = message.trim()
                                 )
                                 message = ""
+                                viewModel.notifyTypingStatus(
+                                    roomId = roomId,
+                                    isTyping = false
+                                )
                             }
                         }
                 ) {

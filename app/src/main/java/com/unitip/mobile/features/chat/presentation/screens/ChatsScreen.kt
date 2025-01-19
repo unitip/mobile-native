@@ -88,7 +88,8 @@ fun ChatsScreen(
                             navController.navigate(
                                 ChatRoutes.Conversation(
                                     roomId = room.id,
-                                    otherUserName = room.otherUserName
+                                    otherUserId = room.otherUser.id,
+                                    otherUserName = room.otherUser.name
                                 )
                             )
                         }
@@ -117,7 +118,7 @@ fun ChatsScreen(
                                     .padding(start = 16.dp, end = 8.dp)
                             ) {
                                 Text(
-                                    text = room.otherUserName,
+                                    text = room.otherUser.name,
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
