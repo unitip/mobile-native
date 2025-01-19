@@ -61,9 +61,9 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ConversationScreen(
-    viewModel: ConversationViewModel = hiltViewModel(),
-    toUserId: String,
-    toUserName: String
+    roomId: String,
+    otherUserName: String,
+    viewModel: ConversationViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current

@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
+import com.unitip.mobile.features.chat.commons.ChatRoutes
 import com.unitip.mobile.features.chat.presentation.viewmodels.ChatsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.localTimeFormat
@@ -84,12 +85,12 @@ fun ChatsScreen(
                             top = if (index == 0) 16.dp else 8.dp
                         ),
                         onClick = {
-//                            navController.navigate(
-//                                ChatRoutes.Conversation(
-//                                    toUserId = room.fromUserId,
-//                                    toUserName = room.fromUserName
-//                                )
-//                            )
+                            navController.navigate(
+                                ChatRoutes.Conversation(
+                                    roomId = room.id,
+                                    otherUserName = room.otherUserName
+                                )
+                            )
                         }
                     ) {
                         Row(

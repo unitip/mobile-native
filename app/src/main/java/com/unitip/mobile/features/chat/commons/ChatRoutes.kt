@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 sealed class ChatRoutes {
     @Serializable
     data class Conversation(
-        val toUserName: String,
-        val toUserId: String
+        val roomId: String,
+        val otherUserName: String
     )
 }
