@@ -24,29 +24,31 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val properties = Properties()
-        properties.load(rootProject.file(".env").inputStream())
-
-        buildConfigField(
-            "String",
-            "API_BASE_URL",
-            "\"${properties.getProperty("API_BASE_URL")}\""
-        )
-
-        buildConfigField(
-            "String",
-            "MQTT_SECRET",
-            "\"${properties.getProperty("MQTT_SECRET")}\""
-        )
-        buildConfigField(
-            "String",
-            "MQTT_SERVER_URI",
-            "\"${properties.getProperty("MQTT_SERVER_URI")}\""
-        )
     }
 
     buildTypes {
+        debug {
+            val properties = Properties()
+            properties.load(rootProject.file(".env.local").inputStream())
+
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
+
+            buildConfigField(
+                "String",
+                "MQTT_SECRET",
+                "\"${properties.getProperty("MQTT_SECRET")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SERVER_URI",
+                "\"${properties.getProperty("MQTT_SERVER_URI")}\""
+            )
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -54,6 +56,26 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
+
+            val properties = Properties()
+            properties.load(rootProject.file(".env.production").inputStream())
+
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
+
+            buildConfigField(
+                "String",
+                "MQTT_SECRET",
+                "\"${properties.getProperty("MQTT_SECRET")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SERVER_URI",
+                "\"${properties.getProperty("MQTT_SERVER_URI")}\""
+            )
         }
     }
     compileOptions {
