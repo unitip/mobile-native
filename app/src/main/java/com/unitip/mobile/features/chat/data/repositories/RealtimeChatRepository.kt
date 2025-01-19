@@ -106,7 +106,7 @@ class RealtimeChatRepository @Inject constructor(
             client.subscribe(subscribeTypingStatusTopic, 2) { _, message ->
                 val payload = message.toString()
                 Log.d(TAG, "[typing status subscribe] $payload")
-                if (payload.isNotBlank() && typingStatusListener != null)
+                if (typingStatusListener != null)
                     typingStatusListener!!.onTypingStatusReceived(
                         isTyping = payload == roomId
                     )
