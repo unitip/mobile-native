@@ -32,6 +32,7 @@ import com.composables.icons.lucide.User
 import com.unitip.mobile.features.chat.commons.ChatRoutes
 import com.unitip.mobile.features.chat.presentation.viewmodels.ChatsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.localTimeFormat
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
@@ -86,8 +87,9 @@ fun ChatsScreen(
                         onClick = {
                             navController.navigate(
                                 ChatRoutes.Conversation(
-                                    toUserId = room.fromUserId,
-                                    toUserName = room.fromUserName
+                                    roomId = room.id,
+                                    otherUserId = room.otherUser.id,
+                                    otherUserName = room.otherUser.name
                                 )
                             )
                         }
@@ -116,16 +118,22 @@ fun ChatsScreen(
                                     .padding(start = 16.dp, end = 8.dp)
                             ) {
                                 Text(
-                                    text = room.fromUserName,
+                                    text = room.otherUser.name,
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = "${if (room.lastSentUserId != room.fromUserId) "Anda: " else ""}${room.message}",
+                                    text = when (uiState.session?.id == room.lastSentUserId) {
+                                        true -> "Anda: ${room.lastMessage}"
+                                        false -> room.lastMessage
+                                    },
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
 
-                            Text("10.10", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                room.createdAt.localTimeFormat(),
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
                     }
                 }

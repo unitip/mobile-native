@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.presentation.navigation
+package com.unitip.mobile.shared.commons
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
@@ -14,7 +14,6 @@ import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
-import com.unitip.mobile.shared.commons.Routes
 
 @Composable
 fun ApplicationNavigationGraph(
@@ -26,8 +25,9 @@ fun ApplicationNavigationGraph(
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
 //            true -> ChatRoutes.Conversation(
-//                toUserId = "hehe",
-//                toUserName = "Hehe"
+//                roomId = "b48fc434-6b59-4dfb-9b22-8ba4d27068ac",
+//                otherUserId = "1cd709cb-3e77-4376-b080-b225174d8e9a",
+//                otherUserName = "Hehehehe"
 //            )
 
             false -> AuthRoutes.Index

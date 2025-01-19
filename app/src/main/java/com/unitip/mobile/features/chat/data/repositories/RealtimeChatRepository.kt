@@ -2,9 +2,9 @@ package com.unitip.mobile.features.chat.data.repositories
 
 import android.util.Log
 import com.google.gson.Gson
-import com.unitip.mobile.BuildConfig
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.shared.commons.configs.MqttTopics
 import com.unitip.mobile.shared.data.providers.MqttProvider
 import info.mqtt.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
@@ -27,78 +27,105 @@ class RealtimeChatRepository @Inject constructor(
     private var typingStatusListener: RealtimeChat.TypingStatusListener? = null
 
     // topics
-    private val topicPrefix = "com.unitip/${BuildConfig.MQTT_SECRET}/chat"
-    private lateinit var messagePubTopic: String
-    private lateinit var messageSubTopic: String
-    private lateinit var typingStatusPubTopic: String
-    private lateinit var typingStatusSubTopic: String
+    private lateinit var publishSubscribeMessageTopic: String
+    private lateinit var publishTypingStatusTopic: String
+    private lateinit var subscribeTypingStatusTopic: String
+//    private val topicPrefix = "com.unitip/${BuildConfig.MQTT_SECRET}/chat"
+//    private lateinit var messagePubTopic: String
+//    private lateinit var messageSubTopic: String
+//    private lateinit var typingStatusPubTopic: String
+//    private lateinit var typingStatusSubTopic: String
 
     fun openConnection(
+        roomId: String,
         currentUserId: String,
         otherUserId: String
     ) {
-        messagePubTopic = "$topicPrefix/message/$otherUserId-$currentUserId"
-        messageSubTopic = "$topicPrefix/message/$currentUserId-$otherUserId"
-        typingStatusPubTopic = "$topicPrefix/typing-status/$otherUserId-$currentUserId"
-        typingStatusSubTopic = "$topicPrefix/typing-status/$currentUserId-$otherUserId"
+        publishSubscribeMessageTopic = MqttTopics.Chats.publishSubscribeMessage(
+            roomId = roomId
+        )
+        publishTypingStatusTopic = MqttTopics.Chats.publishTypingStatus(
+            currentUserId = currentUserId
+        )
+        subscribeTypingStatusTopic = MqttTopics.Chats.subscribeTypingStatus(
+            otherUserId = otherUserId
+        )
+//        messagePubTopic = "$topicPrefix/message/$otherUserId-$currentUserId"
+//        messageSubTopic = "$topicPrefix/message/$currentUserId-$otherUserId"
+//        typingStatusPubTopic = "$topicPrefix/typing-status/$otherUserId-$currentUserId"
+//        typingStatusSubTopic = "$topicPrefix/typing-status/$currentUserId-$otherUserId"
 
-        subscribeToTopics()
+        subscribeToTopics(
+            roomId = roomId,
+            currentUserId = currentUserId
+        )
 
         client.setCallback(object : MqttCallbackExtended {
             override fun messageArrived(topic: String?, message: MqttMessage?) = Unit
             override fun deliveryComplete(token: IMqttDeliveryToken?) = Unit
-            override fun connectionLost(cause: Throwable?) = unsubscribeFromTopics()
+            override fun connectionLost(cause: Throwable?) =
+                unsubscribeFromTopics()
+
             override fun connectComplete(reconnect: Boolean, serverURI: String?) =
-                subscribeToTopics()
+                subscribeToTopics(
+                    roomId = roomId,
+                    currentUserId = currentUserId
+                )
         })
     }
 
     fun unsubscribeFromTopics() {
         if (client.isConnected) {
-            client.unsubscribe(messageSubTopic)
-            client.unsubscribe(typingStatusSubTopic)
+            client.unsubscribe(publishSubscribeMessageTopic)
+            client.unsubscribe(subscribeTypingStatusTopic)
         }
     }
 
-    private fun subscribeToTopics() {
+    private fun subscribeToTopics(
+        roomId: String,
+        currentUserId: String
+    ) {
         /**
          * subscribe ke beberapa topic berikut:
          * - messages
          * - typing status
          */
         if (client.isConnected) {
-            client.subscribe(messageSubTopic, 2) { _, message ->
+            client.subscribe(publishSubscribeMessageTopic, 2) { _, message ->
                 val payload = message.toString()
                 Log.d(TAG, "[message subscribe] $payload")
-                if (payload.isNotEmpty() && messageListener != null)
-                    messageListener!!.onMessageReceived(
-                        message = gson.fromJson(payload, Message::class.java)
-                    )
+                if (payload.isNotBlank() && messageListener != null) {
+                    val receivedMessage = gson.fromJson(payload, Message::class.java)
+                    if (receivedMessage.userId != currentUserId)
+                        messageListener!!.onMessageReceived(
+                            message = receivedMessage
+                        )
+                }
             }
 
-            client.subscribe(typingStatusSubTopic, 2) { _, message ->
+            client.subscribe(subscribeTypingStatusTopic, 2) { _, message ->
                 val payload = message.toString()
                 Log.d(TAG, "[typing status subscribe] $payload")
-                if (payload.isNotEmpty() && typingStatusListener != null)
+                if (typingStatusListener != null)
                     typingStatusListener!!.onTypingStatusReceived(
-                        isTyping = payload == "true"
+                        isTyping = payload == roomId
                     )
             }
         }
     }
 
-    fun listenMessageFromOther(listener: RealtimeChat.MessageListener) {
+    fun listenMessages(listener: RealtimeChat.MessageListener) {
         this.messageListener = listener
     }
 
-    fun listenTypingStatusFromOther(listener: RealtimeChat.TypingStatusListener) {
+    fun listenTypingStatus(listener: RealtimeChat.TypingStatusListener) {
         this.typingStatusListener = listener
     }
 
-    fun notifyMessageToOther(message: Message) {
+    fun notifyMessage(message: Message) {
         if (client.isConnected) {
             client.publish(
-                topic = messagePubTopic,
+                topic = publishSubscribeMessageTopic,
                 payload = gson.toJson(message).toByteArray(),
                 qos = 2,
                 retained = false
@@ -106,7 +133,7 @@ class RealtimeChatRepository @Inject constructor(
         }
     }
 
-    fun notifyTypingStatusToOther(isTyping: Boolean) {
+    fun notifyTypingStatus(roomId: String) {
         /**
          * update ke depan:
          * typing status perlu dihapus melalui onWillTopic untuk mengantisipasi ketika
@@ -114,8 +141,8 @@ class RealtimeChatRepository @Inject constructor(
          */
         if (client.isConnected) {
             client.publish(
-                topic = typingStatusPubTopic,
-                payload = isTyping.toString().toByteArray(),
+                topic = publishTypingStatusTopic,
+                payload = roomId.toByteArray(),
                 qos = 2,
                 retained = true
             )

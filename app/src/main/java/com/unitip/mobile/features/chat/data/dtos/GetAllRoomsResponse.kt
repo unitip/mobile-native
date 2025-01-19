@@ -7,11 +7,15 @@ data class GetAllRoomsResponse(
 ) {
     data class Room(
         val id: String,
-        @SerializedName("from_user_id") val fromUserId: String,
-        @SerializedName("from_user_name") val fromUserName: String,
-        @SerializedName("to_user_id") val toUserId: String,
         @SerializedName("last_message") val lastMessage: String,
         @SerializedName("last_sent_user_id") val lastSentUserId: String,
-        @SerializedName("updated_at") val updatedAt: String
-    )
+        @SerializedName("created_at") val createdAt: String,
+        @SerializedName("updated_at") val updatedAt: String,
+        @SerializedName("other_user") val otherUser: OtherUser
+    ) {
+        data class OtherUser(
+            val id: String,
+            val name: String
+        )
+    }
 }

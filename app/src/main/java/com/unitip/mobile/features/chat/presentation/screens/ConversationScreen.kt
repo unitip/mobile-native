@@ -61,9 +61,10 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ConversationScreen(
-    viewModel: ConversationViewModel = hiltViewModel(),
-    toUserId: String,
-    toUserName: String
+    roomId: String,
+    otherUserId: String,
+    otherUserName: String,
+    viewModel: ConversationViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
@@ -94,9 +95,12 @@ fun ConversationScreen(
      * launched effect untuk membuka koneksi mqtt serta menerima
      * history pesan dari database
      */
-    LaunchedEffect(toUserId) {
-        viewModel.openRealtimeConnection(otherUserId = toUserId)
-        viewModel.getAllMessages(fromUserId = toUserId)
+    LaunchedEffect(roomId, otherUserId) {
+        viewModel.openRealtimeConnection(
+            roomId = roomId,
+            otherUserId = otherUserId
+        )
+        viewModel.getAllMessages(roomId = roomId)
     }
 
     /**
@@ -158,14 +162,14 @@ fun ConversationScreen(
                     onClick = { navController.popBackStack() }
                 )
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = toUserName, style = MaterialTheme.typography.titleMedium)
+                    Text(text = otherUserName, style = MaterialTheme.typography.titleMedium)
                     AnimatedVisibility(visible = uiState.isOtherUserTyping) {
                         Text(text = "mengetik...", style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 CustomIconButton(
                     icon = Lucide.RefreshCw,
-                    onClick = { viewModel.getAllMessages(fromUserId = toUserId) }
+                    onClick = { viewModel.getAllMessages(roomId = roomId) }
                 )
             }
 
@@ -177,18 +181,29 @@ fun ConversationScreen(
                 state = listState
             ) {
                 itemsIndexed(uiState.messages) { index, message ->
-                    val isReceiver = message.fromUserId == toUserId
+                    val isSender = uiState.session?.id == message.userId
 
                     BubbleMessage(
                         modifier = Modifier.padding(
-                            top = if (index == 0) 16.dp else (
-                                    if (uiState.messages[index - 1].toUserId == message.toUserId) 4.dp
-                                    else 12.dp),
-                            bottom = if (index == uiState.messages.size - 1) 16.dp
-                            else 0.dp
+                            top = when (index == 0) {
+                                true -> 16.dp
+                                else -> {
+                                    val previousMessage = uiState.messages[index - 1]
+                                    when (previousMessage.userId == message.userId) {
+                                        true -> 4.dp
+                                        else -> 12.dp
+                                    }
+                                }
+                            },
+                            bottom = when (uiState.messages.size - 1 == index) {
+                                true -> 16.dp
+                                else -> 0.dp
+                            }
                         ),
-                        type = if (isReceiver) BubbleMessageType.RECEIVER
-                        else BubbleMessageType.SENDER,
+                        type = when (isSender) {
+                            true -> BubbleMessageType.SENDER
+                            false -> BubbleMessageType.RECEIVER
+                        },
                         message = message.message,
                         sendStatus = if (uiState.sendingMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.SENDING
                         else if (uiState.failedMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.FAILED
@@ -212,7 +227,10 @@ fun ConversationScreen(
 
                         val newIsTyping = it.isNotBlank()
                         if (uiState.isTyping != newIsTyping)
-                            viewModel.notifyTypingStatus(isTyping = newIsTyping)
+                            viewModel.notifyTypingStatus(
+                                roomId = roomId,
+                                isTyping = newIsTyping
+                            )
                     },
                     placeholder = { Text(text = "Ketik pesan...") },
                     maxLines = 5,
@@ -235,10 +253,14 @@ fun ConversationScreen(
                         .clickable {
                             if (message.isNotBlank()) {
                                 viewModel.sendMessage(
-                                    toUserId = toUserId,
-                                    message = message
+                                    roomId = roomId,
+                                    message = message.trim()
                                 )
                                 message = ""
+                                viewModel.notifyTypingStatus(
+                                    roomId = roomId,
+                                    isTyping = false
+                                )
                             }
                         }
                 ) {

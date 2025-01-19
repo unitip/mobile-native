@@ -9,8 +9,9 @@ fun NavGraphBuilder.chatNavigation() {
     composable<ChatRoutes.Conversation> {
         val data: ChatRoutes.Conversation = it.toRoute()
         ConversationScreen(
-            toUserId = data.toUserId,
-            toUserName = data.toUserName
+            roomId = data.roomId,
+            otherUserId = data.otherUserId,
+            otherUserName = data.otherUserName
         )
     }
 }

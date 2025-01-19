@@ -12,21 +12,21 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ChatApi {
-    @POST("chats/messages/to/{user_id}")
+    @POST("chats/rooms/{room_id}/messages")
     suspend fun sendMessage(
         @Header("Authorization") token: String,
-        @Path("user_id") toUserId: String,
+        @Path("room_id") roomId: String,
         @Body payload: SendMessagePayload
     ): Response<SendMessageResponse>
 
-    @GET("chats/rooms/users")
+    @GET("chats/rooms")
     suspend fun getAllRooms(
         @Header("Authorization") token: String
     ): Response<GetAllRoomsResponse>
 
-    @GET("chats/messages/from/{user_id}")
+    @GET("chats/rooms/{room_id}/messages")
     suspend fun getAllMessages(
         @Header("Authorization") token: String,
-        @Path("user_id") fromUserId: String
+        @Path("room_id") roomId: String
     ): Response<GetAllMessagesResponse>
 }

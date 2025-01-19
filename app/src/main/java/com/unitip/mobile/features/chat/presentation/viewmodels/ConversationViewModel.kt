@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.chat.presentation.viewmodels
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
@@ -13,6 +15,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 import javax.inject.Inject
 
@@ -22,19 +26,29 @@ class ConversationViewModel @Inject constructor(
     private val sessionManager: SessionManager,
     private val realtimeChatRepository: RealtimeChatRepository
 ) : ViewModel() {
+    companion object {
+        private const val TAG = "ConversationViewModel"
+    }
+
     private val _uiState = MutableStateFlow(ConversationState())
     val uiState get() = _uiState.asStateFlow()
+
+    init {
+        // read session dari session manager
+        _uiState.update { it.copy(session = sessionManager.read()) }
+    }
 
     fun resetRealtimeState() = _uiState.update {
         it.copy(realtimeDetail = ConversationState.RealtimeDetail.Initial)
     }
 
     fun openRealtimeConnection(
+        roomId: String,
         otherUserId: String
     ) {
-        val currentUserId = sessionManager.read()?.id ?: ""
+        val currentUserId = uiState.value.session?.id ?: ""
         if (currentUserId.isNotEmpty() && otherUserId.isNotEmpty()) {
-            realtimeChatRepository.listenMessageFromOther(
+            realtimeChatRepository.listenMessages(
                 object : RealtimeChat.MessageListener {
                     override fun onMessageReceived(message: Message) = _uiState.update {
                         it.copy(
@@ -45,7 +59,7 @@ class ConversationViewModel @Inject constructor(
                 }
             )
 
-            realtimeChatRepository.listenTypingStatusFromOther(
+            realtimeChatRepository.listenTypingStatus(
                 object : RealtimeChat.TypingStatusListener {
                     override fun onTypingStatusReceived(isTyping: Boolean) = _uiState.update {
                         it.copy(isOtherUserTyping = isTyping)
@@ -54,23 +68,33 @@ class ConversationViewModel @Inject constructor(
             )
 
             realtimeChatRepository.openConnection(
+                roomId = roomId,
                 currentUserId = currentUserId,
                 otherUserId = otherUserId
             )
+
+            Log.d(TAG, "openRealtimeConnection: currentUserId $currentUserId")
+            Log.d(TAG, "openRealtimeConnection: otherUserId $otherUserId")
         }
     }
 
+    @SuppressLint("NewApi")
     fun sendMessage(
-        toUserId: String,
+        roomId: String,
         message: String
     ) = viewModelScope.launch {
         val uuid = UUID.randomUUID().toString()
-        val fromUserId = sessionManager.read()?.id ?: ""
+        val userId = uiState.value.session?.id ?: ""
+
+        val currentTime = LocalDateTime.now(ZoneOffset.UTC).toString()
         val newMessage = Message(
             id = uuid,
             message = message,
-            toUserId = toUserId,
-            fromUserId = fromUserId
+            roomId = roomId,
+            userId = userId,
+            isDeleted = false,
+            createdAt = currentTime,
+            updatedAt = currentTime
         )
 
         _uiState.update {
@@ -81,7 +105,7 @@ class ConversationViewModel @Inject constructor(
             )
         }
         chatRepository.sendMessage(
-            toUserId = toUserId,
+            roomId = roomId,
             id = uuid,
             message = message
         ).fold(
@@ -90,8 +114,13 @@ class ConversationViewModel @Inject constructor(
                     it.copy(failedMessageUUIDs = it.failedMessageUUIDs + uuid)
                 }
             },
-            ifRight = {
-                realtimeChatRepository.notifyMessageToOther(message = newMessage)
+            ifRight = { right ->
+                realtimeChatRepository.notifyMessage(
+                    message = newMessage.copy(
+                        createdAt = right.createdAt,
+                        updatedAt = right.updatedAt
+                    )
+                )
                 _uiState.update {
                     it.copy(
                         sendingMessageUUIDs = it.sendingMessageUUIDs - uuid,
@@ -99,12 +128,11 @@ class ConversationViewModel @Inject constructor(
                 }
             }
         )
-
     }
 
-    fun getAllMessages(fromUserId: String) = viewModelScope.launch {
+    fun getAllMessages(roomId: String) = viewModelScope.launch {
         _uiState.update { it.copy(detail = ConversationState.Detail.Loading) }
-        chatRepository.getAllMessages(fromUserId = fromUserId).fold(
+        chatRepository.getAllMessages(roomId = roomId).fold(
             ifLeft = { left ->
                 _uiState.update {
                     it.copy(
@@ -123,8 +151,16 @@ class ConversationViewModel @Inject constructor(
         )
     }
 
-    fun notifyTypingStatus(isTyping: Boolean) {
+    fun notifyTypingStatus(
+        roomId: String,
+        isTyping: Boolean
+    ) {
         _uiState.update { it.copy(isTyping = isTyping) }
-        realtimeChatRepository.notifyTypingStatusToOther(isTyping = isTyping)
+        realtimeChatRepository.notifyTypingStatus(
+            roomId = when (isTyping) {
+                true -> roomId
+                false -> ""
+            }
+        )
     }
 }
