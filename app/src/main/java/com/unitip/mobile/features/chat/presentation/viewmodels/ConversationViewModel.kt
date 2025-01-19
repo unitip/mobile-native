@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +23,11 @@ class ConversationViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ConversationState())
     val uiState get() = _uiState.asStateFlow()
+
+    init {
+        // read session dari session manager
+        _uiState.update { it.copy(session = sessionManager.read()) }
+    }
 
     fun resetRealtimeState() = _uiState.update {
         it.copy(realtimeDetail = ConversationState.RealtimeDetail.Initial)
@@ -64,47 +68,46 @@ class ConversationViewModel @Inject constructor(
         toUserId: String,
         message: String
     ) = viewModelScope.launch {
-        val uuid = UUID.randomUUID().toString()
-        val fromUserId = sessionManager.read()?.id ?: ""
-        val newMessage = Message(
-            id = uuid,
-            message = message,
-            toUserId = toUserId,
-            fromUserId = fromUserId
-        )
-
-        _uiState.update {
-            it.copy(
-                sendingMessageUUIDs = it.sendingMessageUUIDs + uuid,
-                messages = it.messages + newMessage,
-                realtimeDetail = ConversationState.RealtimeDetail.NewMessage
-            )
-        }
-        chatRepository.sendMessage(
-            toUserId = toUserId,
-            id = uuid,
-            message = message
-        ).fold(
-            ifLeft = {
-                _uiState.update {
-                    it.copy(failedMessageUUIDs = it.failedMessageUUIDs + uuid)
-                }
-            },
-            ifRight = {
-                realtimeChatRepository.notifyMessageToOther(message = newMessage)
-                _uiState.update {
-                    it.copy(
-                        sendingMessageUUIDs = it.sendingMessageUUIDs - uuid,
-                    )
-                }
-            }
-        )
-
+//        val uuid = UUID.randomUUID().toString()
+//        val fromUserId = sessionManager.read()?.id ?: ""
+//        val newMessage = Message(
+//            id = uuid,
+//            message = message,
+//            toUserId = toUserId,
+//            fromUserId = fromUserId
+//        )
+//
+//        _uiState.update {
+//            it.copy(
+//                sendingMessageUUIDs = it.sendingMessageUUIDs + uuid,
+//                messages = it.messages + newMessage,
+//                realtimeDetail = ConversationState.RealtimeDetail.NewMessage
+//            )
+//        }
+//        chatRepository.sendMessage(
+//            toUserId = toUserId,
+//            id = uuid,
+//            message = message
+//        ).fold(
+//            ifLeft = {
+//                _uiState.update {
+//                    it.copy(failedMessageUUIDs = it.failedMessageUUIDs + uuid)
+//                }
+//            },
+//            ifRight = {
+//                realtimeChatRepository.notifyMessageToOther(message = newMessage)
+//                _uiState.update {
+//                    it.copy(
+//                        sendingMessageUUIDs = it.sendingMessageUUIDs - uuid,
+//                    )
+//                }
+//            }
+//        )
     }
 
-    fun getAllMessages(fromUserId: String) = viewModelScope.launch {
+    fun getAllMessages(roomId: String) = viewModelScope.launch {
         _uiState.update { it.copy(detail = ConversationState.Detail.Loading) }
-        chatRepository.getAllMessages(fromUserId = fromUserId).fold(
+        chatRepository.getAllMessages(roomId = roomId).fold(
             ifLeft = { left ->
                 _uiState.update {
                     it.copy(

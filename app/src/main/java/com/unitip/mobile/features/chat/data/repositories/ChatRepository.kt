@@ -66,12 +66,12 @@ class ChatRepository @Inject constructor(
     }
 
     suspend fun getAllMessages(
-        fromUserId: String
+        roomId: String
     ): Either<Failure, List<Message>> = try {
         val token = sessionManager.read()?.token
         val response = chatApi.getAllMessages(
             token = "Bearer $token",
-            fromUserId = fromUserId
+            roomId = roomId
         )
         val result = response.body()
 
@@ -79,11 +79,12 @@ class ChatRepository @Inject constructor(
             true -> Either.Right(result.messages.map {
                 Message(
                     id = it.id,
-                    fromUserId = it.fromUserId,
-                    toUserId = it.toUserId,
                     message = it.message,
                     isDeleted = it.isDeleted,
-                    createdAt = it.createdAt
+                    roomId = it.roomId,
+                    userId = it.userId,
+                    createdAt = it.createdAt,
+                    updatedAt = it.updatedAt
                 )
             })
 

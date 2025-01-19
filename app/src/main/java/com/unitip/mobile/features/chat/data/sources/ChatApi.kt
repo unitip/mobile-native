@@ -24,9 +24,9 @@ interface ChatApi {
         @Header("Authorization") token: String
     ): Response<GetAllRoomsResponse>
 
-    @GET("chats/messages/from/{user_id}")
+    @GET("chats/rooms/{room_id}/messages")
     suspend fun getAllMessages(
         @Header("Authorization") token: String,
-        @Path("user_id") fromUserId: String
+        @Path("room_id") roomId: String
     ): Response<GetAllMessagesResponse>
 }
