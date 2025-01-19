@@ -50,10 +50,11 @@ class ChatRepository @Inject constructor(
                 true -> Either.Right(result.rooms.map {
                     Room(
                         id = it.id,
-                        fromUserId = it.fromUserId,
-                        fromUserName = it.fromUserName,
-                        message = it.lastMessage,
-                        lastSentUserId = it.lastSentUserId
+                        otherUserName = it.otherUserName,
+                        lastMessage = it.lastMessage,
+                        lastSentUserId = it.lastSentUserId,
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
                     )
                 })
 

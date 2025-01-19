@@ -2,8 +2,9 @@ package com.unitip.mobile.features.chat.domain.models
 
 data class Room(
     val id: String = "",
-    val fromUserId: String = "",
-    val fromUserName: String = "",
-    val message: String = "",
-    val lastSentUserId: String = ""
+    val otherUserName: String = "",
+    val lastMessage: String = "",
+    val lastSentUserId: String = "",
+    val createdAt: String = "",
+    val updatedAt: String = ""
 )

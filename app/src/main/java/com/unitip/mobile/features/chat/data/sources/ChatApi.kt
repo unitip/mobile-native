@@ -19,7 +19,7 @@ interface ChatApi {
         @Body payload: SendMessagePayload
     ): Response<SendMessageResponse>
 
-    @GET("chats/rooms/users")
+    @GET("chats/rooms")
     suspend fun getAllRooms(
         @Header("Authorization") token: String
     ): Response<GetAllRoomsResponse>

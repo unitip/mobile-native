@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
 import com.unitip.mobile.features.chat.presentation.states.ChatsState
+import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,12 +14,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ChatsState())
     val uiState get() = _uiState.asStateFlow()
 
     init {
+        // read session
+        _uiState.update { it.copy(session = sessionManager.read()) }
+
         getAllRooms()
     }
 
