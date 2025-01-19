@@ -30,8 +30,10 @@ class OffersViewModel @Inject constructor(
             it.copy(session = sessionManager.read())
         }
         // ini untuk refresh ngambil Offer baru
-        //fetchJobs()
+        fetchOffer()
     }
+
+    fun refreshOffer() = fetchOffer()
 
     private fun fetchOffer() = viewModelScope.launch {
         _uiState.update { it.copy(detail = OfferState.Detail.Loading) }
