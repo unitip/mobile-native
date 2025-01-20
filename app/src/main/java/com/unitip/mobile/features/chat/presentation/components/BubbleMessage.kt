@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Send
+import com.unitip.mobile.shared.commons.extensions.localDateFormat
 import com.unitip.mobile.shared.commons.extensions.localTimeFormat
 
 enum class BubbleMessageType {
@@ -94,7 +95,7 @@ fun BubbleMessage(
         }
         AnimatedVisibility(visible = isTimeVisible) {
             Text(
-                text = createdAt.localTimeFormat(),
+                text = "${createdAt.localDateFormat()} • ${createdAt.localTimeFormat()}",
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(
                     top = 4.dp,
@@ -108,11 +109,11 @@ fun BubbleMessage(
          * status jika pesan telah dilihat oleh other user sampai
          * check point message id ini
          */
-        AnimatedVisibility(visible = isSender && isSeen) {
+        AnimatedVisibility(visible = isSender && isSeen && !isTimeVisible) {
             Text(
-                text = "Dilihat",
+                text = "Telah dilihat",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(end = 12.dp, top = 4.dp, bottom = 12.dp)
+                modifier = Modifier.padding(end = 12.dp, top = 4.dp)
             )
         }
     }
