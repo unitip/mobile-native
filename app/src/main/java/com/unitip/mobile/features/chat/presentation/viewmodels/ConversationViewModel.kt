@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.chat.presentation.viewmodels
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
@@ -50,11 +49,20 @@ class ConversationViewModel @Inject constructor(
         if (currentUserId.isNotEmpty() && otherUserId.isNotEmpty()) {
             realtimeChatRepository.listenMessages(
                 object : RealtimeChat.MessageListener {
-                    override fun onMessageReceived(message: Message) = _uiState.update {
-                        it.copy(
-                            messages = it.messages + message,
-                            realtimeDetail = ConversationState.RealtimeDetail.NewMessage
-                        )
+                    override fun onMessageReceived(message: Message) {
+                        _uiState.update {
+                            it.copy(
+                                messages = it.messages + message,
+                                realtimeDetail = ConversationState.RealtimeDetail.NewMessage
+                            )
+                        }
+
+                        /**
+                         * ketika terdapat pesan baru dari other user dan user saat ini
+                         * sedang membuka conversation room, maka update read checkpoint
+                         * ke pesan paling akhir
+                         */
+                        updateReadCheckpoint(roomId = roomId)
                     }
                 }
             )
@@ -72,9 +80,6 @@ class ConversationViewModel @Inject constructor(
                 currentUserId = currentUserId,
                 otherUserId = otherUserId
             )
-
-            Log.d(TAG, "openRealtimeConnection: currentUserId $currentUserId")
-            Log.d(TAG, "openRealtimeConnection: otherUserId $otherUserId")
         }
     }
 
@@ -148,6 +153,12 @@ class ConversationViewModel @Inject constructor(
                         detail = ConversationState.Detail.Success
                     )
                 }
+
+                /**
+                 * ketika semua history chat berhasil dimuat, maka update checkpoint
+                 * ke pesan paling akhir
+                 */
+                updateReadCheckpoint(roomId = roomId)
             }
         )
     }
@@ -163,5 +174,23 @@ class ConversationViewModel @Inject constructor(
                 false -> ""
             }
         )
+    }
+
+    /**
+     * fungsi updateReadCheckpoint digunakan untuk mengupdate checkpoint chat
+     * yang terakhir dibaca oleh user yang sedang login saat ini.
+     * fungsi ini dipanggil berdasarkan beberapa kondisi berikut:
+     * - ketika history pesan berhasil dimuat dari database
+     * - ketika user sedang berada di chat room dan terdapat chat baru
+     */
+    private fun updateReadCheckpoint(roomId: String) = viewModelScope.launch {
+        val lastMessage = uiState.value.messages.lastOrNull()
+        if (lastMessage != null)
+            chatRepository.updateReadCheckpoint(
+                roomId = roomId,
+                lastReadMessageId = lastMessage.id
+            ).onRight {
+
+            }
     }
 }
