@@ -184,13 +184,17 @@ class ConversationViewModel @Inject constructor(
      * - ketika user sedang berada di chat room dan terdapat chat baru
      */
     private fun updateReadCheckpoint(roomId: String) = viewModelScope.launch {
-        val lastMessage = uiState.value.messages.lastOrNull()
+        val currentUserId = uiState.value.session?.id ?: ""
+        val lastMessage = uiState.value.messages.lastOrNull { it.userId != currentUserId }
         if (lastMessage != null)
             chatRepository.updateReadCheckpoint(
                 roomId = roomId,
                 lastReadMessageId = lastMessage.id
             ).onRight {
-
+                /**
+                 * kirim notifikasi ke broker mqtt sehingga other user
+                 * mengetahui perubahan status baca tersebut
+                 */
             }
     }
 }
