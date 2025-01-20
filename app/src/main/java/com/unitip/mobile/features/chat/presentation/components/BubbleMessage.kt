@@ -45,6 +45,7 @@ fun BubbleMessage(
     sendStatus: BubbleMessageSendStatus = BubbleMessageSendStatus.SENDING,
     createdAt: String = ""
 ) {
+    val isSending = sendStatus == BubbleMessageSendStatus.SENDING
     val isSender = type == BubbleMessageType.SENDER
     var isTimeVisible by remember { mutableStateOf(false) }
 
@@ -59,19 +60,27 @@ fun BubbleMessage(
         else Alignment.Start
     ) {
         Row(verticalAlignment = Alignment.Bottom) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        if (isSender) MaterialTheme.colorScheme.primaryContainer
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = .08f)
-                    )
-                    .clickable { isTimeVisible = !isTimeVisible }
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-            ) {
-                Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            Box(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (isSender) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = .08f)
+                        )
+                        .clickable { isTimeVisible = !isTimeVisible }
+                        .padding(vertical = 8.dp, horizontal = 12.dp)
+                        .align(
+                            when (isSender) {
+                                true -> Alignment.CenterEnd
+                                else -> Alignment.CenterStart
+                            }
+                        )
+                ) {
+                    Text(text = message, style = MaterialTheme.typography.bodyMedium)
+                }
             }
-            AnimatedVisibility(visible = isSender && sendStatus == BubbleMessageSendStatus.SENDING) {
+            AnimatedVisibility(visible = isSender && isSending) {
                 Icon(
                     Lucide.Send,
                     contentDescription = null,
