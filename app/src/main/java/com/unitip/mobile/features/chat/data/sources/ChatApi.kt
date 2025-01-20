@@ -4,10 +4,13 @@ import com.unitip.mobile.features.chat.data.dtos.GetAllMessagesResponse
 import com.unitip.mobile.features.chat.data.dtos.GetAllRoomsResponse
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessageResponse
+import com.unitip.mobile.features.chat.data.dtos.UpdateReadCheckpointPayload
+import com.unitip.mobile.features.chat.data.dtos.UpdateReadCheckpointResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -29,4 +32,11 @@ interface ChatApi {
         @Header("Authorization") token: String,
         @Path("room_id") roomId: String
     ): Response<GetAllMessagesResponse>
+
+    @PATCH("chats/rooms/{room_id}/read")
+    suspend fun updateReadCheckpoint(
+        @Header("Authorization") token: String,
+        @Path("room_id") roomId: String,
+        @Body payload: UpdateReadCheckpointPayload
+    ): Response<UpdateReadCheckpointResponse>
 }

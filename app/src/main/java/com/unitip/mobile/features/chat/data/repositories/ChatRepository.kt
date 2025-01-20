@@ -3,11 +3,13 @@ package com.unitip.mobile.features.chat.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessageResponse
+import com.unitip.mobile.features.chat.data.dtos.UpdateReadCheckpointPayload
 import com.unitip.mobile.features.chat.data.sources.ChatApi
 import com.unitip.mobile.features.chat.domain.models.GetAllMessagesResult
 import com.unitip.mobile.features.chat.domain.models.Message
 import com.unitip.mobile.features.chat.domain.models.OtherUser
 import com.unitip.mobile.features.chat.domain.models.Room
+import com.unitip.mobile.features.chat.domain.models.UpdateReadCheckpointResult
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -109,6 +111,36 @@ class ChatRepository @Inject constructor(
             ))
 
             false -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun updateReadCheckpoint(
+        roomId: String,
+        lastReadMessageId: String
+    ): Either<Failure, UpdateReadCheckpointResult> = try {
+        val token = sessionManager.read()?.token
+        val response = chatApi.updateReadCheckpoint(
+            token = "Bearer $token",
+            roomId = roomId,
+            payload = UpdateReadCheckpointPayload(
+                lastReadMessageId = lastReadMessageId
+            )
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(
+                UpdateReadCheckpointResult(
+                    id = result.id,
+                    roomId = result.roomId,
+                    userId = result.userId,
+                    lastReadMessageId = result.lastReadMessageId
+                )
+            )
+
+            else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
