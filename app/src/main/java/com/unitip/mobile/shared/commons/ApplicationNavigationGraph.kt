@@ -26,8 +26,8 @@ fun ApplicationNavigationGraph(
             true -> HomeRoutes.Index
 //            true -> ChatRoutes.Conversation(
 //                roomId = "b48fc434-6b59-4dfb-9b22-8ba4d27068ac",
-//                otherUserId = "1cd709cb-3e77-4376-b080-b225174d8e9a",
-//                otherUserName = "Hehehehe"
+//                otherUserId = "rec_cscfpbjss7tdpjmkt6m0",
+//                otherUserName = "Rizal Dwi Anggoro"
 //            )
 
             false -> AuthRoutes.Index
