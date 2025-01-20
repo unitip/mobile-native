@@ -4,7 +4,9 @@ import arrow.core.Either
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessageResponse
 import com.unitip.mobile.features.chat.data.sources.ChatApi
+import com.unitip.mobile.features.chat.domain.models.GetAllMessagesResult
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.features.chat.domain.models.OtherUser
 import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -79,7 +81,7 @@ class ChatRepository @Inject constructor(
 
     suspend fun getAllMessages(
         roomId: String
-    ): Either<Failure, List<Message>> = try {
+    ): Either<Failure, GetAllMessagesResult> = try {
         val token = sessionManager.read()?.token
         val response = chatApi.getAllMessages(
             token = "Bearer $token",
@@ -88,17 +90,23 @@ class ChatRepository @Inject constructor(
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
-            true -> Either.Right(result.messages.map {
-                Message(
-                    id = it.id,
-                    message = it.message,
-                    isDeleted = it.isDeleted,
-                    roomId = it.roomId,
-                    userId = it.userId,
-                    createdAt = it.createdAt,
-                    updatedAt = it.updatedAt
-                )
-            })
+            true -> Either.Right(GetAllMessagesResult(
+                otherUser = OtherUser(
+                    id = result.otherUser.id,
+                    lastReadMessageId = result.otherUser.lastReadMessageId
+                ),
+                messages = result.messages.map {
+                    Message(
+                        id = it.id,
+                        message = it.message,
+                        isDeleted = it.isDeleted,
+                        roomId = it.roomId,
+                        userId = it.userId,
+                        createdAt = it.createdAt,
+                        updatedAt = it.updatedAt
+                    )
+                }
+            ))
 
             false -> Either.Left(response.mapToFailure())
         }

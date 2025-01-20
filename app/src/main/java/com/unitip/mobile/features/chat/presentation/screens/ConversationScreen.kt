@@ -208,7 +208,8 @@ fun ConversationScreen(
                         sendStatus = if (uiState.sendingMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.SENDING
                         else if (uiState.failedMessageUUIDs.contains(message.id)) BubbleMessageSendStatus.FAILED
                         else BubbleMessageSendStatus.SENT,
-                        createdAt = message.createdAt
+                        createdAt = message.createdAt,
+                        isSeen = message.id == uiState.otherUser.lastReadMessageId
                     )
                 }
             }

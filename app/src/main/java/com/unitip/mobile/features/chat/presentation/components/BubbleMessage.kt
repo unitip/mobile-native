@@ -43,7 +43,8 @@ fun BubbleMessage(
     type: BubbleMessageType = BubbleMessageType.SENDER,
     message: String = "",
     sendStatus: BubbleMessageSendStatus = BubbleMessageSendStatus.SENDING,
-    createdAt: String = ""
+    createdAt: String = "",
+    isSeen: Boolean = false
 ) {
     val isSending = sendStatus == BubbleMessageSendStatus.SENDING
     val isSender = type == BubbleMessageType.SENDER
@@ -100,6 +101,18 @@ fun BubbleMessage(
                     start = if (isSender) 0.dp else 12.dp,
                     end = if (isSender) 12.dp else 0.dp
                 )
+            )
+        }
+
+        /**
+         * status jika pesan telah dilihat oleh other user sampai
+         * check point message id ini
+         */
+        AnimatedVisibility(visible = isSender && isSeen) {
+            Text(
+                text = "Dilihat",
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(end = 12.dp, top = 4.dp, bottom = 12.dp)
             )
         }
     }

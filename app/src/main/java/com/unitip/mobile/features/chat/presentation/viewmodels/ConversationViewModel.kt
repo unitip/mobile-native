@@ -143,7 +143,8 @@ class ConversationViewModel @Inject constructor(
             ifRight = { right ->
                 _uiState.update {
                     it.copy(
-                        messages = right,
+                        otherUser = right.otherUser,
+                        messages = right.messages,
                         detail = ConversationState.Detail.Success
                     )
                 }
