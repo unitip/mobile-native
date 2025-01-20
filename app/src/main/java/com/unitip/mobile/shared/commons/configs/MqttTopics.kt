@@ -14,13 +14,19 @@ object MqttTopics {
     }
 
     object Chats {
+        // message
         fun publishSubscribeMessage(roomId: String): String =
             "$PREFIX/chats/message/$roomId"
 
+        // typing status
         fun publishTypingStatus(currentUserId: String): String =
             "$PREFIX/chats/typing/$currentUserId"
 
         fun subscribeTypingStatus(otherUserId: String): String =
             "$PREFIX/chats/typing/$otherUserId"
+
+        // read checkpoint
+        fun publishSubscribeReadCheckpoint(roomId: String): String =
+            "$PREFIX/chats/read-checkpoint/$roomId"
     }
 }

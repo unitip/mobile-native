@@ -7,6 +7,7 @@ import com.unitip.mobile.features.chat.data.repositories.ChatRepository
 import com.unitip.mobile.features.chat.data.repositories.RealtimeChatRepository
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.features.chat.domain.models.ReadCheckpoint
 import com.unitip.mobile.features.chat.presentation.states.ConversationState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,6 +72,21 @@ class ConversationViewModel @Inject constructor(
                 object : RealtimeChat.TypingStatusListener {
                     override fun onTypingStatusReceived(isTyping: Boolean) = _uiState.update {
                         it.copy(isOtherUserTyping = isTyping)
+                    }
+                }
+            )
+
+            realtimeChatRepository.listenReadCheckpoint(
+                object : RealtimeChat.ReadCheckpointListener {
+                    override fun onReadCheckpointReceived(readCheckpoint: ReadCheckpoint) {
+                        if (readCheckpoint.userId == otherUserId)
+                            _uiState.update {
+                                it.copy(
+                                    otherUser = it.otherUser.copy(
+                                        lastReadMessageId = readCheckpoint.lastReadMessageId
+                                    )
+                                )
+                            }
                     }
                 }
             )
@@ -195,6 +211,12 @@ class ConversationViewModel @Inject constructor(
                  * kirim notifikasi ke broker mqtt sehingga other user
                  * mengetahui perubahan status baca tersebut
                  */
+                realtimeChatRepository.notifyReadCheckpoint(
+                    readCheckpoint = ReadCheckpoint(
+                        userId = currentUserId,
+                        lastReadMessageId = lastMessage.id
+                    )
+                )
             }
     }
 }

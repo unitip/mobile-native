@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.features.chat.domain.models.ReadCheckpoint
 import com.unitip.mobile.shared.commons.configs.MqttTopics
 import com.unitip.mobile.shared.data.providers.MqttProvider
 import info.mqtt.android.service.MqttAndroidClient
@@ -23,13 +24,17 @@ class RealtimeChatRepository @Inject constructor(
 
     private val client: MqttAndroidClient = mqttProvider.client
     private val gson = Gson()
+
+    // listeners
     private var messageListener: RealtimeChat.MessageListener? = null
     private var typingStatusListener: RealtimeChat.TypingStatusListener? = null
+    private var readCheckpointListener: RealtimeChat.ReadCheckpointListener? = null
 
     // topics
     private lateinit var publishSubscribeMessageTopic: String
     private lateinit var publishTypingStatusTopic: String
     private lateinit var subscribeTypingStatusTopic: String
+    private lateinit var publishSubscribeReadCheckpointTopic: String
 //    private val topicPrefix = "com.unitip/${BuildConfig.MQTT_SECRET}/chat"
 //    private lateinit var messagePubTopic: String
 //    private lateinit var messageSubTopic: String
@@ -49,6 +54,9 @@ class RealtimeChatRepository @Inject constructor(
         )
         subscribeTypingStatusTopic = MqttTopics.Chats.subscribeTypingStatus(
             otherUserId = otherUserId
+        )
+        publishSubscribeReadCheckpointTopic = MqttTopics.Chats.publishSubscribeReadCheckpoint(
+            roomId = roomId
         )
 //        messagePubTopic = "$topicPrefix/message/$otherUserId-$currentUserId"
 //        messageSubTopic = "$topicPrefix/message/$currentUserId-$otherUserId"
@@ -78,6 +86,7 @@ class RealtimeChatRepository @Inject constructor(
         if (client.isConnected) {
             client.unsubscribe(publishSubscribeMessageTopic)
             client.unsubscribe(subscribeTypingStatusTopic)
+            client.unsubscribe(publishSubscribeReadCheckpointTopic)
         }
     }
 
@@ -89,6 +98,7 @@ class RealtimeChatRepository @Inject constructor(
          * subscribe ke beberapa topic berikut:
          * - messages
          * - typing status
+         * - read checkpoint
          */
         if (client.isConnected) {
             client.subscribe(publishSubscribeMessageTopic, 2) { _, message ->
@@ -111,15 +121,31 @@ class RealtimeChatRepository @Inject constructor(
                         isTyping = payload == roomId
                     )
             }
+
+            client.subscribe(publishSubscribeReadCheckpointTopic, 2) { _, message ->
+                val payload = message.toString()
+                Log.d(TAG, "[read checkpoint subscribe] $payload")
+                if (payload.isNotBlank() && readCheckpointListener != null) {
+                    val received = gson.fromJson(payload, ReadCheckpoint::class.java)
+                    if (received.userId != currentUserId)
+                        readCheckpointListener!!.onReadCheckpointReceived(
+                            readCheckpoint = received
+                        )
+                }
+            }
         }
     }
 
     fun listenMessages(listener: RealtimeChat.MessageListener) {
-        this.messageListener = listener
+        messageListener = listener
     }
 
     fun listenTypingStatus(listener: RealtimeChat.TypingStatusListener) {
-        this.typingStatusListener = listener
+        typingStatusListener = listener
+    }
+
+    fun listenReadCheckpoint(listener: RealtimeChat.ReadCheckpointListener) {
+        readCheckpointListener = listener
     }
 
     fun notifyMessage(message: Message) {
@@ -147,5 +173,15 @@ class RealtimeChatRepository @Inject constructor(
                 retained = true
             )
         }
+    }
+
+    fun notifyReadCheckpoint(readCheckpoint: ReadCheckpoint) {
+        if (client.isConnected)
+            client.publish(
+                topic = publishSubscribeReadCheckpointTopic,
+                payload = gson.toJson(readCheckpoint).toByteArray(),
+                qos = 2,
+                retained = false
+            )
     }
 }
