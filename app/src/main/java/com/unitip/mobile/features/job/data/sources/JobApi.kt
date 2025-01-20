@@ -43,7 +43,7 @@ interface JobApi {
         @Body payload: ApplyJobPayload
     ): Response<ApplyJobResponse>
 
-    @POST("jobs/{job_id}/applicants/{applicant_id}/approve")
+    @GET("jobs/{job_id}/applicants/{applicant_id}/approve")
     suspend fun approve(
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String,
