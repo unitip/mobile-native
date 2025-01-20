@@ -99,6 +99,8 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    fun closeRealtimeConnection() = realtimeChatRepository.unsubscribeFromTopics()
+
     @SuppressLint("NewApi")
     fun sendMessage(
         roomId: String,

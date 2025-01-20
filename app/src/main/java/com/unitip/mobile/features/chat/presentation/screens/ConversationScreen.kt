@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -128,10 +129,14 @@ fun ConversationScreen(
         }
     }
 
-//    BackHandler {
-//        navController.popBackStack()
-//        Toast.makeText(context, "back called", Toast.LENGTH_SHORT).show()
-//    }
+    /**
+     * handle back button untuk unsubscribe atau memutuskan koneksi dengan broker
+     * mqtt, sehingga aplikasi tidak terus menerima pesan yang tidak diperlukan
+     */
+    BackHandler {
+        viewModel.closeRealtimeConnection()
+        navController.popBackStack()
+    }
 
     Scaffold { paddingValues ->
         Column(
@@ -159,7 +164,14 @@ fun ConversationScreen(
             ) {
                 CustomIconButton(
                     icon = Lucide.ChevronLeft,
-                    onClick = { navController.popBackStack() }
+                    onClick = {
+                        /**
+                         * handle back button untuk unsubscribe atau memutuskan koneksi dengan broker
+                         * mqtt, sehingga aplikasi tidak terus menerima pesan yang tidak diperlukan
+                         */
+                        viewModel.closeRealtimeConnection()
+                        navController.popBackStack()
+                    }
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = otherUserName, style = MaterialTheme.typography.titleMedium)

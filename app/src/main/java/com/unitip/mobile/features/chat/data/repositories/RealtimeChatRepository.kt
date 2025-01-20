@@ -83,6 +83,7 @@ class RealtimeChatRepository @Inject constructor(
     }
 
     fun unsubscribeFromTopics() {
+        Log.d(TAG, "unsubscribeFromTopics")
         if (client.isConnected) {
             client.unsubscribe(publishSubscribeMessageTopic)
             client.unsubscribe(subscribeTypingStatusTopic)
