@@ -33,6 +33,10 @@ class OffersViewModel @Inject constructor(
         fetchOffer()
     }
 
+    fun expandOffer(offerId : String) = _uiState.update {
+        it.copy(expandOfferId =if(it.expandOfferId == offerId) "" else offerId)
+    }
+
     fun refreshOffer() = fetchOffer()
 
     private fun fetchOffer() = viewModelScope.launch {

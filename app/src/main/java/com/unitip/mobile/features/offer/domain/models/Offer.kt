@@ -18,7 +18,7 @@ data class Offer(
     val createdAt: String = "",
     val updatedAt: String = "",
     val totalApplicants: Int = 0,
-    val freelancer: String = "",
+    val freelancer: OfferFreelancer = OfferFreelancer(),
     val applicants: List<Any> = emptyList()
 
 )

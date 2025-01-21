@@ -8,6 +8,7 @@ import com.unitip.mobile.features.offer.data.models.CreateOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
+import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -59,7 +60,7 @@ class OfferRepository @Inject constructor(
     suspend fun getAll() : Either<Failure,GetAllOffersResult>{
     try {
         val token = sessionManager.read()?.token
-        val response = offerApi.getAll(token="Bearer $token")
+        val response = offerApi.getAll(token="Bearer $token", type = GetAllOfferResponse.PageInfo.OfferType.SINGLE.value)
         val result = response.body()
 
         return when (response.isSuccessful && result != null){
@@ -75,7 +76,10 @@ class OfferRepository @Inject constructor(
                             pickupArea = it.pickupArea,
                             deliveryArea = it.deliveryArea,
                             availableUntil = it.availableUntil,
-                            offerStatus = it.offerStatus
+                            offerStatus = it.offerStatus,
+                            freelancer = OfferFreelancer(
+                                name = it.freelancer.name
+                            )
                         )
                     },
                     hasNext = result.pageInfo.page < result.pageInfo.totalPages
@@ -87,7 +91,7 @@ class OfferRepository @Inject constructor(
 
         } catch (e: Exception){
             e.printStackTrace()
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga !"))
         }
     }
 }
