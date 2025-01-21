@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.job.presentation.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,12 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,22 +50,14 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
 fun DetailJobScreen(
-    id: String,
-    type: String,
+    jobId: String,
+    service: String,
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
 
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
-    var isFetched by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(id, type, isFetched) {
-        if (!isFetched) {
-            viewModel.fetchData(jobId = id, type = type)
-            isFetched = true
-        }
-    }
 
     Scaffold {
         Column(
@@ -96,7 +85,7 @@ fun DetailJobScreen(
                     icon = Lucide.ChevronLeft
                 )
                 CustomIconButton(
-                    onClick = { viewModel.fetchData(jobId = id, type = type) },
+                    onClick = { viewModel.fetchData() },
                     icon = Lucide.RefreshCw
                 )
             }
@@ -114,6 +103,7 @@ fun DetailJobScreen(
 
             // success state
             if (uiState.detail is DetailJobState.Detail.Success) {
+                Log.d("DetailJobScreen", "DetailJobScreen: called")
                 AnimatedVisibility(visible = listState.canScrollBackward) {
                     HorizontalDivider()
                 }
@@ -303,8 +293,8 @@ fun DetailJobScreen(
                     onClick = {
                         navController.navigate(
                             JobRoutes.Apply(
-                                id = id,
-                                type = type
+                                id = jobId,
+                                type = service
                             )
                         )
                     },

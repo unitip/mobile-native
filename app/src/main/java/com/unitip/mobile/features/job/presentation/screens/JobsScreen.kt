@@ -163,8 +163,8 @@ fun JobsScreen(
                             onClick = {
                                 navController.navigate(
                                     JobRoutes.Detail(
-                                        id = job.id,
-                                        type = job.service
+                                        jobId = job.id,
+                                        service = job.service
                                     )
                                 )
                             }

@@ -1,7 +1,11 @@
 package com.unitip.mobile.features.job.presentation.viewmodels
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,15 +17,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailJobViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val singleJobRepository: SingleJobRepository,
 ) : ViewModel() {
+    companion object {
+        private const val TAG = "DetailJobViewModel"
+    }
+
     private val _uiState = MutableStateFlow(DetailJobState())
     val uiState get() = _uiState.asStateFlow()
 
-    fun fetchData(jobId: String, type: String) = viewModelScope.launch {
+    private val parameters = savedStateHandle.toRoute<JobRoutes.Detail>()
+
+    init {
+        fetchData()
+    }
+
+    fun fetchData() = viewModelScope.launch {
         _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
-        singleJobRepository.get(id = jobId, type = type).fold(
+        singleJobRepository.get(
+            id = parameters.jobId,
+            type = parameters.service
+        ).fold(
             ifLeft = { left ->
+                Log.d(TAG, "fetchData: ${left.message}")
                 _uiState.update {
                     it.copy(
                         detail = DetailJobState.Detail.Failure(message = left.message)
@@ -29,6 +48,7 @@ class DetailJobViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
+                Log.d(TAG, "fetchData: right")
                 _uiState.update {
                     it.copy(
                         detail = DetailJobState.Detail.Success,

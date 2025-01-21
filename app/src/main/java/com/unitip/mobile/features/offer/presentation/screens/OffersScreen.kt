@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,9 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,7 +42,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronDown
@@ -54,9 +50,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobRoutes
-import com.unitip.mobile.features.job.presentation.states.JobsState
 import com.unitip.mobile.features.offer.commons.OfferRoutes
-import com.unitip.mobile.features.offer.presentation.components.OfferCardItem
 import com.unitip.mobile.features.offer.presentation.states.OfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.OffersViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -97,7 +91,7 @@ fun OffersScreen(
         floatingActionButton = {
             // Floating add ini nantinya akan muncul jika
             // session yang login merupakan driver
-            if (uiState.session.isDriver()){
+            if (uiState.session.isDriver()) {
                 FloatingActionButton(
                     onClick = { navController.navigate(OfferRoutes.Create) }
                 ) {
@@ -121,7 +115,7 @@ fun OffersScreen(
                     )
                 )
                 .padding(it)
-        ){
+        ) {
             // app bar
             Row(
                 modifier = Modifier.padding(
@@ -148,12 +142,12 @@ fun OffersScreen(
             }
 
             // loading indicator
-            if (uiState.detail is OfferState.Detail.Loading){
-                Column (
+            if (uiState.detail is OfferState.Detail.Loading) {
+                Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     CircularProgressIndicator(
                         strokeCap = StrokeCap.Round
                     )
@@ -178,8 +172,8 @@ fun OffersScreen(
                             onClick = {
                                 navController.navigate(
                                     JobRoutes.Detail(
-                                        id = offer.id,
-                                        type = offer.type
+                                        jobId = offer.id,
+                                        service = offer.type
                                     )
                                 )
                             }

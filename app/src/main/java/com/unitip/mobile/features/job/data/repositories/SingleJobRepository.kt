@@ -7,9 +7,9 @@ import com.unitip.mobile.features.job.data.sources.SingleJobApi
 import com.unitip.mobile.features.job.domain.models.Applicant
 import com.unitip.mobile.features.job.domain.models.Job
 import com.unitip.mobile.features.job.domain.models.JobCustomer
+import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
-import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,7 +50,7 @@ class SingleJobRepository @Inject constructor(
 
     suspend fun get(id: String, type: String): Either<Failure, Job> {
         try {
-            val token = sessionManager.read()?.token
+            val token = sessionManager.read().token
             val response = singleJobApi.get(token = "Bearer $token", jobId = id, type = type)
             val result = response.body()
 
@@ -77,6 +77,7 @@ class SingleJobRepository @Inject constructor(
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
     }
