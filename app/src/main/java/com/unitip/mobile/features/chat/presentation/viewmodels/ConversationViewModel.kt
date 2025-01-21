@@ -5,9 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
 import com.unitip.mobile.features.chat.data.repositories.RealtimeConversationRepository
+import com.unitip.mobile.features.chat.data.repositories.RealtimeRoomRepository
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.features.chat.domain.models.OtherUser
 import com.unitip.mobile.features.chat.domain.models.ReadCheckpoint
+import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.features.chat.presentation.states.ConversationState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +27,8 @@ import javax.inject.Inject
 class ConversationViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val sessionManager: SessionManager,
-    private val realtimeConversationRepository: RealtimeConversationRepository
+    private val realtimeConversationRepository: RealtimeConversationRepository,
+    private val realtimeRoomRepository: RealtimeRoomRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "ConversationViewModel"
@@ -109,6 +113,7 @@ class ConversationViewModel @Inject constructor(
     ) = viewModelScope.launch {
         val uuid = UUID.randomUUID().toString()
         val userId = uiState.value.session?.id ?: ""
+        val currentUserName = uiState.value.session?.name ?: ""
 
         val currentTime = LocalDateTime.now(ZoneOffset.UTC).toString()
         val newMessage = Message(
@@ -160,6 +165,21 @@ class ConversationViewModel @Inject constructor(
             ifRight = { right ->
                 realtimeConversationRepository.notifyMessage(
                     message = newMessage.copy(
+                        createdAt = right.createdAt,
+                        updatedAt = right.updatedAt
+                    )
+                )
+                realtimeRoomRepository.notify(
+                    otherUserId = otherUserId,
+                    room = Room(
+                        id = roomId,
+                        lastMessage = newMessage.message,
+                        unreadMessageCount = otherUnreadMessageCount,
+                        otherUser = OtherUser(
+                            id = userId,
+                            name = currentUserName
+                        ),
+                        lastSentUserId = userId,
                         createdAt = right.createdAt,
                         updatedAt = right.updatedAt
                     )
