@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,10 +46,6 @@ fun ChatsScreen(
     val navController = LocalNavController.current
 
     val uiState by viewModel.uiState.collectAsState()
-
-    SideEffect {
-        viewModel.openConnection()
-    }
 
     Scaffold {
         Column(
@@ -130,7 +125,7 @@ fun ChatsScreen(
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = when (uiState.session?.id == room.lastSentUserId) {
+                                    text = when (uiState.session.id == room.lastSentUserId) {
                                         true -> "Anda: ${room.lastMessage}"
                                         false -> room.lastMessage
                                     },
@@ -165,14 +160,6 @@ fun ChatsScreen(
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onPrimary
                                         )
-//                                    Icon(
-//                                        Lucide.Bell,
-//                                        contentDescription = null,
-//                                        tint = MaterialTheme.colorScheme.onPrimary,
-//                                        modifier = Modifier
-//                                            .size(10.dp)
-//                                            .align(Alignment.Center)
-//                                    )
                                     }
                                 }
                             }
@@ -185,7 +172,9 @@ fun ChatsScreen(
                         text = "Percakapan akan otomatis terhapus ketika pesanan telah selesai dilakukan",
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                     )
                 }
             }

@@ -19,65 +19,60 @@ import javax.inject.Inject
 class ChatsViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val realtimeRoomRepository: RealtimeRoomRepository,
-    private val sessionManager: SessionManager
+    sessionManager: SessionManager
 ) : ViewModel() {
     companion object {
         private const val TAG = "ChatsViewModel"
     }
-
+    
     private val _uiState = MutableStateFlow(ChatsState())
     val uiState get() = _uiState.asStateFlow()
 
+    private val session = sessionManager.read()
+
     init {
-        // read session
-        _uiState.update { it.copy(session = sessionManager.read()) }
+        /**
+         * copy session ke dalam state karena akan digunakan pada screen
+         */
+        _uiState.update { it.copy(session = session) }
 
         getAllRooms()
+        openConnection()
     }
 
-    fun resetRealtimeState() =
-        _uiState.update {
-            it.copy(
-                realtimeDetail = ChatsState.RealtimeDetail.Initial
-            )
-        }
+    private fun openConnection() {
+        realtimeRoomRepository.listen(
+            object : RealtimeRoom.Listener {
+                override fun onRoomReceived(room: Room) {
+                    _uiState.update {
+                        val currentRooms = it.rooms
+                        val index = currentRooms.indexOfFirst { currentRoom ->
+                            currentRoom.id == room.id
+                        }
 
-    fun openConnection() {
-        val currentUserId = uiState.value.session?.id
-        if (currentUserId != null) {
-            realtimeRoomRepository.listen(
-                object : RealtimeRoom.Listener {
-                    override fun onRoomReceived(room: Room) {
-                        _uiState.update {
-                            val currentRooms = it.rooms
-                            val index = currentRooms.indexOfFirst { currentRoom ->
-                                currentRoom.id == room.id
-                            }
+                        when (index == -1) {
+                            true -> it.copy(
+                                rooms = (currentRooms + room)
+                                    .sortedBy { item -> item.updatedAt }
+                            )
 
-                            when (index == -1) {
-                                true -> it.copy(
-                                    rooms = (currentRooms + room)
-                                        .sortedBy { item -> item.updatedAt }
-                                )
-
-                                else -> it.copy(
-                                    rooms = currentRooms.map { item ->
-                                        when (item.id == room.id) {
-                                            true -> room
-                                            else -> item
-                                        }
-                                    }.sortedBy { item -> item.updatedAt }
-                                )
-                            }
+                            else -> it.copy(
+                                rooms = currentRooms.map { item ->
+                                    when (item.id == room.id) {
+                                        true -> room
+                                        else -> item
+                                    }
+                                }.sortedBy { item -> item.updatedAt }
+                            )
                         }
                     }
                 }
-            )
+            }
+        )
 
-            realtimeRoomRepository.openConnection(
-                currentUserId = currentUserId
-            )
-        }
+        realtimeRoomRepository.openConnection(
+            currentUserId = session.id
+        )
     }
 
     fun closeConnection() = realtimeRoomRepository.unsubscribeFromTopics()
