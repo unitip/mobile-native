@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,14 +34,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,11 +65,9 @@ fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
-    val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
     var message by remember { mutableStateOf("") }
 
     val isImeVisible = WindowInsets.isImeVisible
@@ -90,18 +85,6 @@ fun ConversationScreen(
             imeBottomSource == imeBottomTarget &&
             uiState.messages.isNotEmpty()
         ) listState.scrollToItem(index = uiState.messages.size - 1)
-    }
-
-    /**
-     * launched effect untuk membuka koneksi mqtt serta menerima
-     * history pesan dari database
-     */
-    LaunchedEffect(roomId, otherUserId) {
-        viewModel.openRealtimeConnection(
-            roomId = roomId,
-            otherUserId = otherUserId
-        )
-        viewModel.getAllMessages(roomId = roomId)
     }
 
     /**
@@ -127,15 +110,6 @@ fun ConversationScreen(
                 viewModel.resetRealtimeState()
             }
         }
-    }
-
-    /**
-     * handle back button untuk unsubscribe atau memutuskan koneksi dengan broker
-     * mqtt, sehingga aplikasi tidak terus menerima pesan yang tidak diperlukan
-     */
-    BackHandler {
-        viewModel.closeRealtimeConnection()
-        navController.popBackStack()
     }
 
     Scaffold { paddingValues ->
@@ -164,14 +138,7 @@ fun ConversationScreen(
             ) {
                 CustomIconButton(
                     icon = Lucide.ChevronLeft,
-                    onClick = {
-                        /**
-                         * handle back button untuk unsubscribe atau memutuskan koneksi dengan broker
-                         * mqtt, sehingga aplikasi tidak terus menerima pesan yang tidak diperlukan
-                         */
-                        viewModel.closeRealtimeConnection()
-                        navController.popBackStack()
-                    }
+                    onClick = { navController.popBackStack() }
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = otherUserName, style = MaterialTheme.typography.titleMedium)
@@ -181,7 +148,9 @@ fun ConversationScreen(
                 }
                 CustomIconButton(
                     icon = Lucide.RefreshCw,
-                    onClick = { viewModel.getAllMessages(roomId = roomId) }
+                    onClick = {
+                        viewModel.getAllMessages()
+                    }
                 )
             }
 
@@ -193,7 +162,7 @@ fun ConversationScreen(
                 state = listState
             ) {
                 itemsIndexed(uiState.messages) { index, message ->
-                    val isSender = uiState.session?.id == message.userId
+                    val isSender = uiState.session.id == message.userId
 
                     BubbleMessage(
                         modifier = Modifier.padding(
@@ -243,9 +212,8 @@ fun ConversationScreen(
                         message = it
 
                         val newIsTyping = it.isNotBlank()
-                        if (uiState.isTyping != newIsTyping)
+                        if (uiState.isCurrentUserTyping != newIsTyping)
                             viewModel.notifyTypingStatus(
-                                roomId = roomId,
                                 isTyping = newIsTyping
                             )
                     },
@@ -270,13 +238,10 @@ fun ConversationScreen(
                         .clickable {
                             if (message.isNotBlank()) {
                                 viewModel.sendMessage(
-                                    roomId = roomId,
-                                    message = message.trim(),
-                                    otherUserId = otherUserId
+                                    message = message.trim()
                                 )
                                 message = ""
                                 viewModel.notifyTypingStatus(
-                                    roomId = roomId,
                                     isTyping = false
                                 )
                             }

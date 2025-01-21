@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RealtimeChatRepository @Inject constructor(
+class RealtimeConversationRepository @Inject constructor(
     mqttProvider: MqttProvider
 ) {
     companion object {
@@ -35,11 +35,6 @@ class RealtimeChatRepository @Inject constructor(
     private lateinit var publishTypingStatusTopic: String
     private lateinit var subscribeTypingStatusTopic: String
     private lateinit var publishSubscribeReadCheckpointTopic: String
-//    private val topicPrefix = "com.unitip/${BuildConfig.MQTT_SECRET}/chat"
-//    private lateinit var messagePubTopic: String
-//    private lateinit var messageSubTopic: String
-//    private lateinit var typingStatusPubTopic: String
-//    private lateinit var typingStatusSubTopic: String
 
     fun openConnection(
         roomId: String,
@@ -58,10 +53,6 @@ class RealtimeChatRepository @Inject constructor(
         publishSubscribeReadCheckpointTopic = MqttTopics.Chats.publishSubscribeReadCheckpoint(
             roomId = roomId
         )
-//        messagePubTopic = "$topicPrefix/message/$otherUserId-$currentUserId"
-//        messageSubTopic = "$topicPrefix/message/$currentUserId-$otherUserId"
-//        typingStatusPubTopic = "$topicPrefix/typing-status/$otherUserId-$currentUserId"
-//        typingStatusSubTopic = "$topicPrefix/typing-status/$currentUserId-$otherUserId"
 
         subscribeToTopics(
             roomId = roomId,

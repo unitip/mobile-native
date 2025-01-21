@@ -14,6 +14,13 @@ object MqttTopics {
     }
 
     object Chats {
+        // room
+        fun publishRoom(otherUserId: String): String =
+            "$PREFIX/chats/room/$otherUserId"
+
+        fun subscribeRooms(currentUserId: String): String =
+            "$PREFIX/chats/room/$currentUserId"
+
         // message
         fun publishSubscribeMessage(roomId: String): String =
             "$PREFIX/chats/message/$roomId"

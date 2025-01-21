@@ -5,8 +5,8 @@ import com.unitip.mobile.features.chat.domain.models.OtherUser
 import com.unitip.mobile.shared.domain.models.Session
 
 data class ConversationState(
-    val session: Session? = null,
-    val isTyping: Boolean = false,
+    val session: Session = Session(),
+    val isCurrentUserTyping: Boolean = false,
     val isOtherUserTyping: Boolean = false,
     val sendingMessageUUIDs: Set<String> = emptySet(),
     val failedMessageUUIDs: Set<String> = emptySet(),

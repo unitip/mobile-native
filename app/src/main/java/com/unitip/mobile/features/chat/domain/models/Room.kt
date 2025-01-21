@@ -8,9 +8,4 @@ data class Room(
     val updatedAt: String = "",
     val unreadMessageCount: Int = 0,
     val otherUser: OtherUser = OtherUser()
-) {
-    data class OtherUser(
-        val id: String = "",
-        val name: String = ""
-    )
-}
+)

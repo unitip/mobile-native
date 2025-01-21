@@ -1,13 +1,20 @@
 package com.unitip.mobile.features.chat.presentation.viewmodels
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.unitip.mobile.features.chat.commons.ChatRoutes
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
-import com.unitip.mobile.features.chat.data.repositories.RealtimeChatRepository
+import com.unitip.mobile.features.chat.data.repositories.RealtimeConversationRepository
+import com.unitip.mobile.features.chat.data.repositories.RealtimeRoomRepository
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
+import com.unitip.mobile.features.chat.domain.models.OtherUser
 import com.unitip.mobile.features.chat.domain.models.ReadCheckpoint
+import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.features.chat.presentation.states.ConversationState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,9 +29,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    sessionManager: SessionManager,
     private val chatRepository: ChatRepository,
-    private val sessionManager: SessionManager,
-    private val realtimeChatRepository: RealtimeChatRepository
+    private val realtimeConversationRepository: RealtimeConversationRepository,
+    private val realtimeRoomRepository: RealtimeRoomRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "ConversationViewModel"
@@ -33,89 +42,89 @@ class ConversationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ConversationState())
     val uiState get() = _uiState.asStateFlow()
 
+    private val session = sessionManager.read()
+    private val parameters = savedStateHandle.toRoute<ChatRoutes.Conversation>()
+
     init {
         // read session dari session manager
-        _uiState.update { it.copy(session = sessionManager.read()) }
+        _uiState.update { it.copy(session = session) }
+
+        getAllMessages()
+        openRealtimeConnection()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        Log.d(TAG, "onCleared: unsubscribe from topics")
+        realtimeConversationRepository.unsubscribeFromTopics()
     }
 
     fun resetRealtimeState() = _uiState.update {
         it.copy(realtimeDetail = ConversationState.RealtimeDetail.Initial)
     }
 
-    fun openRealtimeConnection(
-        roomId: String,
-        otherUserId: String
-    ) {
-        val currentUserId = uiState.value.session?.id ?: ""
-        if (currentUserId.isNotEmpty() && otherUserId.isNotEmpty()) {
-            realtimeChatRepository.listenMessages(
-                object : RealtimeChat.MessageListener {
-                    override fun onMessageReceived(message: Message) {
+    private fun openRealtimeConnection() {
+        realtimeConversationRepository.listenMessages(
+            object : RealtimeChat.MessageListener {
+                override fun onMessageReceived(message: Message) {
+                    _uiState.update {
+                        it.copy(
+                            messages = it.messages + message,
+                            realtimeDetail = ConversationState.RealtimeDetail.NewMessage
+                        )
+                    }
+
+                    /**
+                     * ketika terdapat pesan baru dari other user dan user saat ini
+                     * sedang membuka conversation room, maka update read checkpoint
+                     * ke pesan paling akhir
+                     */
+                    updateReadCheckpoint()
+                }
+            }
+        )
+
+        realtimeConversationRepository.listenTypingStatus(
+            object : RealtimeChat.TypingStatusListener {
+                override fun onTypingStatusReceived(isTyping: Boolean) = _uiState.update {
+                    it.copy(isOtherUserTyping = isTyping)
+                }
+            }
+        )
+
+        realtimeConversationRepository.listenReadCheckpoint(
+            object : RealtimeChat.ReadCheckpointListener {
+                override fun onReadCheckpointReceived(readCheckpoint: ReadCheckpoint) {
+                    if (readCheckpoint.userId == parameters.otherUserId)
                         _uiState.update {
                             it.copy(
-                                messages = it.messages + message,
-                                realtimeDetail = ConversationState.RealtimeDetail.NewMessage
+                                otherUser = it.otherUser.copy(
+                                    lastReadMessageId = readCheckpoint.lastReadMessageId
+                                )
                             )
                         }
-
-                        /**
-                         * ketika terdapat pesan baru dari other user dan user saat ini
-                         * sedang membuka conversation room, maka update read checkpoint
-                         * ke pesan paling akhir
-                         */
-                        updateReadCheckpoint(roomId = roomId)
-                    }
                 }
-            )
+            }
+        )
 
-            realtimeChatRepository.listenTypingStatus(
-                object : RealtimeChat.TypingStatusListener {
-                    override fun onTypingStatusReceived(isTyping: Boolean) = _uiState.update {
-                        it.copy(isOtherUserTyping = isTyping)
-                    }
-                }
-            )
-
-            realtimeChatRepository.listenReadCheckpoint(
-                object : RealtimeChat.ReadCheckpointListener {
-                    override fun onReadCheckpointReceived(readCheckpoint: ReadCheckpoint) {
-                        if (readCheckpoint.userId == otherUserId)
-                            _uiState.update {
-                                it.copy(
-                                    otherUser = it.otherUser.copy(
-                                        lastReadMessageId = readCheckpoint.lastReadMessageId
-                                    )
-                                )
-                            }
-                    }
-                }
-            )
-
-            realtimeChatRepository.openConnection(
-                roomId = roomId,
-                currentUserId = currentUserId,
-                otherUserId = otherUserId
-            )
-        }
+        realtimeConversationRepository.openConnection(
+            roomId = parameters.roomId,
+            currentUserId = session.id,
+            otherUserId = parameters.otherUserId
+        )
     }
 
-    fun closeRealtimeConnection() = realtimeChatRepository.unsubscribeFromTopics()
-
     @SuppressLint("NewApi")
-    fun sendMessage(
-        roomId: String,
-        message: String,
-        otherUserId: String
-    ) = viewModelScope.launch {
+    fun sendMessage(message: String) = viewModelScope.launch {
         val uuid = UUID.randomUUID().toString()
-        val userId = uiState.value.session?.id ?: ""
 
         val currentTime = LocalDateTime.now(ZoneOffset.UTC).toString()
         val newMessage = Message(
             id = uuid,
             message = message,
-            roomId = roomId,
-            userId = userId,
+            roomId = parameters.roomId,
+            userId = session.id,
             isDeleted = false,
             createdAt = currentTime,
             updatedAt = currentTime
@@ -132,9 +141,8 @@ class ConversationViewModel @Inject constructor(
             val lastReadMessageId = otherUser.lastReadMessageId
             val lastReadMessageIndex = messages.indexOfLast { it.id == lastReadMessageId }
             if (lastReadMessageIndex != -1) {
-//                otherUnreadMessageCount = messages.size - lastReadMessageIndex
                 otherUnreadMessageCount = messages.subList(lastReadMessageIndex, messages.size)
-                    .count { it.userId == userId }
+                    .count { it.userId == session.id }
             }
         }
 
@@ -146,10 +154,10 @@ class ConversationViewModel @Inject constructor(
             )
         }
         chatRepository.sendMessage(
-            roomId = roomId,
+            roomId = parameters.roomId,
             id = uuid,
             message = message,
-            otherId = otherUserId,
+            otherId = parameters.otherUserId,
             otherUnreadMessageCount = otherUnreadMessageCount
         ).fold(
             ifLeft = {
@@ -158,12 +166,31 @@ class ConversationViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
-                realtimeChatRepository.notifyMessage(
+                realtimeConversationRepository.notifyMessage(
                     message = newMessage.copy(
                         createdAt = right.createdAt,
                         updatedAt = right.updatedAt
                     )
                 )
+                realtimeRoomRepository.notify(
+                    otherUserId = parameters.otherUserId,
+                    room = Room(
+                        id = parameters.roomId,
+                        lastMessage = newMessage.message,
+                        unreadMessageCount = otherUnreadMessageCount,
+                        otherUser = OtherUser(
+                            id = session.id,
+                            name = session.name
+                        ),
+                        lastSentUserId = session.id,
+                        createdAt = right.createdAt,
+                        updatedAt = right.updatedAt
+                    )
+                )
+
+                // todo: notify current user
+                notifyRoomToCurrentUser()
+
                 _uiState.update {
                     it.copy(
                         sendingMessageUUIDs = it.sendingMessageUUIDs - uuid,
@@ -173,9 +200,9 @@ class ConversationViewModel @Inject constructor(
         )
     }
 
-    fun getAllMessages(roomId: String) = viewModelScope.launch {
+    fun getAllMessages() = viewModelScope.launch {
         _uiState.update { it.copy(detail = ConversationState.Detail.Loading) }
-        chatRepository.getAllMessages(roomId = roomId).fold(
+        chatRepository.getAllMessages(roomId = parameters.roomId).fold(
             ifLeft = { left ->
                 _uiState.update {
                     it.copy(
@@ -196,19 +223,16 @@ class ConversationViewModel @Inject constructor(
                  * ketika semua history chat berhasil dimuat, maka update checkpoint
                  * ke pesan paling akhir
                  */
-                updateReadCheckpoint(roomId = roomId)
+                updateReadCheckpoint()
             }
         )
     }
 
-    fun notifyTypingStatus(
-        roomId: String,
-        isTyping: Boolean
-    ) {
-        _uiState.update { it.copy(isTyping = isTyping) }
-        realtimeChatRepository.notifyTypingStatus(
+    fun notifyTypingStatus(isTyping: Boolean) {
+        _uiState.update { it.copy(isCurrentUserTyping = isTyping) }
+        realtimeConversationRepository.notifyTypingStatus(
             roomId = when (isTyping) {
-                true -> roomId
+                true -> parameters.roomId
                 false -> ""
             }
         )
@@ -221,24 +245,46 @@ class ConversationViewModel @Inject constructor(
      * - ketika history pesan berhasil dimuat dari database
      * - ketika user sedang berada di chat room dan terdapat chat baru
      */
-    private fun updateReadCheckpoint(roomId: String) = viewModelScope.launch {
-        val currentUserId = uiState.value.session?.id ?: ""
-        val lastMessage = uiState.value.messages.lastOrNull { it.userId != currentUserId }
+    private fun updateReadCheckpoint() = viewModelScope.launch {
+        val lastMessage = uiState.value.messages.lastOrNull { it.userId != session.id }
         if (lastMessage != null)
             chatRepository.updateReadCheckpoint(
-                roomId = roomId,
+                roomId = parameters.roomId,
                 lastReadMessageId = lastMessage.id
             ).onRight {
                 /**
                  * kirim notifikasi ke broker mqtt sehingga other user
                  * mengetahui perubahan status baca tersebut
                  */
-                realtimeChatRepository.notifyReadCheckpoint(
+                realtimeConversationRepository.notifyReadCheckpoint(
                     readCheckpoint = ReadCheckpoint(
-                        userId = currentUserId,
+                        userId = session.id,
                         lastReadMessageId = lastMessage.id
                     )
                 )
+
+                // todo: notify current user
+                notifyRoomToCurrentUser()
             }
+    }
+
+    private fun notifyRoomToCurrentUser() {
+        val lastMessage = uiState.value.messages.lastOrNull()
+        if (lastMessage != null)
+            realtimeRoomRepository.notify(
+                otherUserId = session.id,
+                room = Room(
+                    id = parameters.roomId,
+                    lastMessage = lastMessage.message,
+                    unreadMessageCount = 0,
+                    createdAt = lastMessage.createdAt,
+                    updatedAt = lastMessage.updatedAt,
+                    lastSentUserId = lastMessage.userId,
+                    otherUser = OtherUser(
+                        id = parameters.otherUserId,
+                        name = parameters.otherUserName
+                    )
+                )
+            )
     }
 }

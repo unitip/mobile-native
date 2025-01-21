@@ -4,9 +4,10 @@ import com.unitip.mobile.features.chat.domain.models.Room
 import com.unitip.mobile.shared.domain.models.Session
 
 data class ChatsState(
-    val session: Session? = null,
+    val session: Session = Session(),
     val rooms: List<Room> = emptyList(),
-    val detail: Detail = Detail.Initial
+
+    val detail: Detail = Detail.Initial,
 ) {
     sealed interface Detail {
         data object Initial : Detail

@@ -26,7 +26,9 @@ class MainActivity : ComponentActivity() {
 
         // memulai aplikasi compose
         setContent {
-            Application(isAuthenticated = sessionManager.read() != null)
+            Application(
+                isAuthenticated = sessionManager.isAuthenticated()
+            )
         }
     }
 }
