@@ -78,7 +78,6 @@ class RealtimeRoomRepository @Inject constructor(
         otherUserId: String,
         room: Room
     ) {
-        Log.d(TAG, "notify: called")
         if (client.isConnected && isConnectionEstablished) {
             client.publish(
                 topic = MqttTopics.Chats.publishRoom(
