@@ -189,6 +189,7 @@ class ConversationViewModel @Inject constructor(
                 )
 
                 // todo: notify current user
+                notifyRoomToCurrentUser()
 
                 _uiState.update {
                     it.copy(
@@ -263,10 +264,27 @@ class ConversationViewModel @Inject constructor(
                 )
 
                 // todo: notify current user
+                notifyRoomToCurrentUser()
             }
     }
 
     private fun notifyRoomToCurrentUser() {
-        val currentUserId = uiState.value.session?.id ?: ""
+        val lastMessage = uiState.value.messages.lastOrNull()
+        if (lastMessage != null)
+            realtimeRoomRepository.notify(
+                otherUserId = session.id,
+                room = Room(
+                    id = parameters.roomId,
+                    lastMessage = lastMessage.message,
+                    unreadMessageCount = 0,
+                    createdAt = lastMessage.createdAt,
+                    updatedAt = lastMessage.updatedAt,
+                    lastSentUserId = lastMessage.userId,
+                    otherUser = OtherUser(
+                        id = parameters.otherUserId,
+                        name = parameters.otherUserName
+                    )
+                )
+            )
     }
 }
