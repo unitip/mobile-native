@@ -131,8 +131,11 @@ class ConversationViewModel @Inject constructor(
         with(uiState.value) {
             val lastReadMessageId = otherUser.lastReadMessageId
             val lastReadMessageIndex = messages.indexOfLast { it.id == lastReadMessageId }
-            if (lastReadMessageIndex != -1)
-                otherUnreadMessageCount = messages.size - lastReadMessageIndex
+            if (lastReadMessageIndex != -1) {
+//                otherUnreadMessageCount = messages.size - lastReadMessageIndex
+                otherUnreadMessageCount = messages.subList(lastReadMessageIndex, messages.size)
+                    .count { it.userId == userId }
+            }
         }
 
         _uiState.update {
