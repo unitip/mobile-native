@@ -2,7 +2,8 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.job.data.repositories.JobRepository
+import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
+import com.unitip.mobile.features.job.data.repositories.MultiJobRepository
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.states.CreateJobStateDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateJobViewModel @Inject constructor(
-    private val jobRepository: JobRepository,
+    private val singleJobRepository: SingleJobRepository,
+    private val multiJobRepository: MultiJobRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateJobState())
     val uiState get() = _uiState
@@ -33,7 +35,7 @@ class CreateJobViewModel @Inject constructor(
             copy(detail = CreateJobStateDetail.Loading)
         }
 
-        jobRepository.create(
+        singleJobRepository.create(
             title = title,
             note = note,
             pickupLocation = pickupLocation,

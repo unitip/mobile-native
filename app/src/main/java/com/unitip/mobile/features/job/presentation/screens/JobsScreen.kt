@@ -164,7 +164,7 @@ fun JobsScreen(
                                 navController.navigate(
                                     JobRoutes.Detail(
                                         id = job.id,
-                                        type = job.type
+                                        type = job.service
                                     )
                                 )
                             }
@@ -244,7 +244,7 @@ fun JobsScreen(
                                         listOf(
                                             mapOf(
                                                 "title" to "Jenis pekerjaan",
-                                                "value" to job.type
+                                                "value" to job.service
                                             ),
                                             mapOf(
                                                 "title" to "Titik jemput",
