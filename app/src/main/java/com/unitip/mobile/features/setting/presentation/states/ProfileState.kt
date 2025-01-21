@@ -1,10 +1,9 @@
 package com.unitip.mobile.features.setting.presentation.states
 
+import com.unitip.mobile.shared.domain.models.Session
+
 data class ProfileState(
-    val name: String = "",
-    val email: String = "",
-    val token: String = "",
-    val role: String = "",
+    val session: Session = Session(),
 
     val logoutDetail: LogoutDetail = LogoutDetail.Initial,
 ) {

@@ -132,7 +132,7 @@ fun ProfileScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                with(uiState) {
+                with(uiState.session) {
                     Column(modifier = Modifier.padding(start = 16.dp)) {
                         Text(
                             text = name,

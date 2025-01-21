@@ -14,26 +14,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val sessionManager: SessionManager,
+    sessionManager: SessionManager,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileState())
     val uiState get() = _uiState.asStateFlow()
 
-    init {
-        loadSession()
-    }
+    private val session = sessionManager.read()
 
-    private fun loadSession() {
-        val session = sessionManager.read()
-        if (session != null) _uiState.update {
-            it.copy(
-                name = session.name,
-                email = session.email,
-                token = session.token,
-                role = session.role
-            )
-        }
+    init {
+        _uiState.update { it.copy(session = session) }
     }
 
     fun logout() = viewModelScope.launch {
