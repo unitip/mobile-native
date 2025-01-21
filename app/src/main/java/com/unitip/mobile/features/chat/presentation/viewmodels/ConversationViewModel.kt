@@ -104,7 +104,8 @@ class ConversationViewModel @Inject constructor(
     @SuppressLint("NewApi")
     fun sendMessage(
         roomId: String,
-        message: String
+        message: String,
+        otherUserId: String
     ) = viewModelScope.launch {
         val uuid = UUID.randomUUID().toString()
         val userId = uiState.value.session?.id ?: ""
@@ -120,6 +121,20 @@ class ConversationViewModel @Inject constructor(
             updatedAt = currentTime
         )
 
+        /**
+         * logika untuk mendapatkan jumlah pesan yang belum dibaca
+         * oleh other user, yaitu dengan cara mencari index pesan
+         * yang terakhir dibaca, kemudian total pesan dikurangi
+         * dengan index tersebut
+         */
+        var otherUnreadMessageCount = 1
+        with(uiState.value) {
+            val lastReadMessageId = otherUser.lastReadMessageId
+            val lastReadMessageIndex = messages.indexOfLast { it.id == lastReadMessageId }
+            if (lastReadMessageIndex != -1)
+                otherUnreadMessageCount = messages.size - lastReadMessageIndex
+        }
+
         _uiState.update {
             it.copy(
                 sendingMessageUUIDs = it.sendingMessageUUIDs + uuid,
@@ -130,7 +145,9 @@ class ConversationViewModel @Inject constructor(
         chatRepository.sendMessage(
             roomId = roomId,
             id = uuid,
-            message = message
+            message = message,
+            otherId = otherUserId,
+            otherUnreadMessageCount = otherUnreadMessageCount
         ).fold(
             ifLeft = {
                 _uiState.update {

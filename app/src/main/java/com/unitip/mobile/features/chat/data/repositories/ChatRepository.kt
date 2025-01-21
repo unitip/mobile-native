@@ -52,7 +52,9 @@ class ChatRepository @Inject constructor(
     suspend fun sendMessage(
         roomId: String,
         id: String,
-        message: String
+        message: String,
+        otherId: String,
+        otherUnreadMessageCount: Int
     ): Either<Failure, SendMessageResponse> = try {
         val token = sessionManager.read()?.token
         val response = chatApi.sendMessage(
@@ -61,6 +63,8 @@ class ChatRepository @Inject constructor(
             payload = SendMessagePayload(
                 id = id,
                 message = message,
+                otherId = otherId,
+                otherUnreadMessageCount = otherUnreadMessageCount
             )
         )
         val result = response.body()

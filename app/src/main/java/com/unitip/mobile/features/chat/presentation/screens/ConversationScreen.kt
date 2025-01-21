@@ -271,7 +271,8 @@ fun ConversationScreen(
                             if (message.isNotBlank()) {
                                 viewModel.sendMessage(
                                     roomId = roomId,
-                                    message = message.trim()
+                                    message = message.trim(),
+                                    otherUserId = otherUserId
                                 )
                                 message = ""
                                 viewModel.notifyTypingStatus(
