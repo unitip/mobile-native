@@ -2,7 +2,7 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.job.data.repositories.JobRepository
+import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,14 +13,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailJobViewModel @Inject constructor(
-    private val jobRepository: JobRepository,
+    private val singleJobRepository: SingleJobRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DetailJobState())
     val uiState get() = _uiState.asStateFlow()
 
     fun fetchData(jobId: String, type: String) = viewModelScope.launch {
         _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
-        jobRepository.get(id = jobId, type = type).fold(
+        singleJobRepository.get(id = jobId, type = type).fold(
             ifLeft = { left ->
                 _uiState.update {
                     it.copy(
@@ -39,23 +39,23 @@ class DetailJobViewModel @Inject constructor(
         )
     }
 
-    fun approveApplicant(jobId: String, applicantId: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
-            jobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
-                ifLeft = { left ->
-                    _uiState.update {
-                        it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
-                    }
-                },
-                ifRight = {
-                    _uiState.update {
-                        it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
-                    }
-                }
-            )
-        }
-
-    }
+//    fun approveApplicant(jobId: String, applicantId: String) {
+//        viewModelScope.launch {
+//            _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
+//            singleJobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
+//                ifLeft = { left ->
+//                    _uiState.update {
+//                        it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
+//                    }
+//                },
+//                ifRight = {
+//                    _uiState.update {
+//                        it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
+//                    }
+//                }
+//            )
+//        }
+//
+//    }
 
 }

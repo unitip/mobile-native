@@ -2,7 +2,7 @@ package com.unitip.mobile.features.job.data.dtos
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateJobPayload(
+data class CreateSingleJobPayload(
     val title: String,
     val destination: String,
     val note: String,
