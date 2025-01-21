@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.chat.data.repositories.ChatRepository
-import com.unitip.mobile.features.chat.data.repositories.RealtimeChatRepository
+import com.unitip.mobile.features.chat.data.repositories.RealtimeConversationRepository
 import com.unitip.mobile.features.chat.domain.callbacks.RealtimeChat
 import com.unitip.mobile.features.chat.domain.models.Message
 import com.unitip.mobile.features.chat.domain.models.ReadCheckpoint
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class ConversationViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val sessionManager: SessionManager,
-    private val realtimeChatRepository: RealtimeChatRepository
+    private val realtimeConversationRepository: RealtimeConversationRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "ConversationViewModel"
@@ -48,7 +48,7 @@ class ConversationViewModel @Inject constructor(
     ) {
         val currentUserId = uiState.value.session?.id ?: ""
         if (currentUserId.isNotEmpty() && otherUserId.isNotEmpty()) {
-            realtimeChatRepository.listenMessages(
+            realtimeConversationRepository.listenMessages(
                 object : RealtimeChat.MessageListener {
                     override fun onMessageReceived(message: Message) {
                         _uiState.update {
@@ -68,7 +68,7 @@ class ConversationViewModel @Inject constructor(
                 }
             )
 
-            realtimeChatRepository.listenTypingStatus(
+            realtimeConversationRepository.listenTypingStatus(
                 object : RealtimeChat.TypingStatusListener {
                     override fun onTypingStatusReceived(isTyping: Boolean) = _uiState.update {
                         it.copy(isOtherUserTyping = isTyping)
@@ -76,7 +76,7 @@ class ConversationViewModel @Inject constructor(
                 }
             )
 
-            realtimeChatRepository.listenReadCheckpoint(
+            realtimeConversationRepository.listenReadCheckpoint(
                 object : RealtimeChat.ReadCheckpointListener {
                     override fun onReadCheckpointReceived(readCheckpoint: ReadCheckpoint) {
                         if (readCheckpoint.userId == otherUserId)
@@ -91,7 +91,7 @@ class ConversationViewModel @Inject constructor(
                 }
             )
 
-            realtimeChatRepository.openConnection(
+            realtimeConversationRepository.openConnection(
                 roomId = roomId,
                 currentUserId = currentUserId,
                 otherUserId = otherUserId
@@ -99,7 +99,7 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    fun closeRealtimeConnection() = realtimeChatRepository.unsubscribeFromTopics()
+    fun closeRealtimeConnection() = realtimeConversationRepository.unsubscribeFromTopics()
 
     @SuppressLint("NewApi")
     fun sendMessage(
@@ -158,7 +158,7 @@ class ConversationViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
-                realtimeChatRepository.notifyMessage(
+                realtimeConversationRepository.notifyMessage(
                     message = newMessage.copy(
                         createdAt = right.createdAt,
                         updatedAt = right.updatedAt
@@ -206,7 +206,7 @@ class ConversationViewModel @Inject constructor(
         isTyping: Boolean
     ) {
         _uiState.update { it.copy(isTyping = isTyping) }
-        realtimeChatRepository.notifyTypingStatus(
+        realtimeConversationRepository.notifyTypingStatus(
             roomId = when (isTyping) {
                 true -> roomId
                 false -> ""
@@ -233,7 +233,7 @@ class ConversationViewModel @Inject constructor(
                  * kirim notifikasi ke broker mqtt sehingga other user
                  * mengetahui perubahan status baca tersebut
                  */
-                realtimeChatRepository.notifyReadCheckpoint(
+                realtimeConversationRepository.notifyReadCheckpoint(
                     readCheckpoint = ReadCheckpoint(
                         userId = currentUserId,
                         lastReadMessageId = lastMessage.id
