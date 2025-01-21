@@ -139,7 +139,7 @@ fun DetailJobScreen(
                             mapOf(
                                 "icon" to Lucide.Bike,
                                 "title" to "Jenis Pekerjaan",
-                                "value" to uiState.job.type
+                                "value" to uiState.job.service
                             ),
                             mapOf(
                                 "icon" to Lucide.MapPinned,
@@ -269,10 +269,10 @@ fun DetailJobScreen(
 
                                     Button(
                                         onClick = {
-                                            viewModel.approveApplicant(
-                                                jobId = id,
-                                                applicantId = applicant.id
-                                            )
+//                                            viewModel.approveApplicant(
+//                                                jobId = id,
+//                                                applicantId = applicant.id
+//                                            )
                                         },
                                         modifier = Modifier
                                             .weight(1f)

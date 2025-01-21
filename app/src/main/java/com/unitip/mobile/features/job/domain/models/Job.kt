@@ -5,7 +5,7 @@ data class Job(
     val title: String = "",
     val destination: String = "",
     val note: String = "",
-    val type: String = "",
+    val service: String = "",
     val pickupLocation: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
