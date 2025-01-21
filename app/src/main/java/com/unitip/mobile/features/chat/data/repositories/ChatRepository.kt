@@ -35,6 +35,7 @@ class ChatRepository @Inject constructor(
                         lastSentUserId = it.lastSentUserId,
                         createdAt = it.createdAt,
                         updatedAt = it.updatedAt,
+                        unreadMessageCount = it.unreadMessageCount,
                         otherUser = Room.OtherUser(
                             id = it.otherUser.id,
                             name = it.otherUser.name

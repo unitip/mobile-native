@@ -6,6 +6,7 @@ data class Room(
     val lastSentUserId: String = "",
     val createdAt: String = "",
     val updatedAt: String = "",
+    val unreadMessageCount: Int = 0,
     val otherUser: OtherUser = OtherUser()
 ) {
     data class OtherUser(

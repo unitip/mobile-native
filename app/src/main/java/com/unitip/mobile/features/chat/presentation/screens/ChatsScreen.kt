@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.chat.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
@@ -141,23 +141,34 @@ fun ChatsScreen(
                             ) {
                                 Text(
                                     room.createdAt.localTimeFormat(),
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = when (room.unreadMessageCount > 0) {
+                                        true -> MaterialTheme.colorScheme.primary
+                                        false -> MaterialTheme.colorScheme.onSurface
+                                    }
                                 )
-                                Box(
-                                    modifier = Modifier
-                                        .padding(top = 2.dp)
-                                        .size(16.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                ) {
-                                    Icon(
-                                        Lucide.Bell,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                AnimatedVisibility(visible = room.unreadMessageCount > 0) {
+                                    Box(
                                         modifier = Modifier
-                                            .size(10.dp)
-                                            .align(Alignment.Center)
-                                    )
+                                            .padding(top = 2.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .padding(vertical = 1.dp, horizontal = 6.dp)
+                                    ) {
+                                        Text(
+                                            text = room.unreadMessageCount.toString(),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onPrimary
+                                        )
+//                                    Icon(
+//                                        Lucide.Bell,
+//                                        contentDescription = null,
+//                                        tint = MaterialTheme.colorScheme.onPrimary,
+//                                        modifier = Modifier
+//                                            .size(10.dp)
+//                                            .align(Alignment.Center)
+//                                    )
+                                    }
                                 }
                             }
                         }
