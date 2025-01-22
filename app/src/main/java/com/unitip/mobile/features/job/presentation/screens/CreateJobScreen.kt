@@ -19,10 +19,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -30,6 +33,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +41,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,27 +53,34 @@ import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Square
+import com.composables.icons.lucide.SquareCheck
+import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CreateJobScreen(
     viewModel: CreateJobViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val isImeVisible = WindowInsets.isImeVisible
+    val listState = rememberLazyListState()
+    val firstVisibleListItemIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     var title by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     var pickupLocation by remember { mutableStateOf("") }
     var destination by remember { mutableStateOf("") }
-    val listState = rememberLazyListState()
-    val firstVisibleListItemIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
-    val isImeVisible = WindowInsets.isImeVisible
+    var isBottomSheetSelectServiceVisible by remember { mutableStateOf(false) }
+    var isJoinAllowed by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
     val isLoading = uiState.detail is CreateJobState.Detail.Loading
@@ -138,8 +150,8 @@ fun CreateJobScreen(
                 LinearProgressIndicator(
                     modifier = Modifier
                         .padding(
-                            start = 8.dp,
-                            end = 8.dp,
+                            start = 16.dp,
+                            end = 16.dp,
                             bottom = 16.dp
                         )
                         .fillMaxWidth(),
@@ -171,7 +183,9 @@ fun CreateJobScreen(
                 item {
                     CustomCard(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                        onClick = {}
+                        onClick = {
+                            isBottomSheetSelectServiceVisible = true
+                        }
                     ) {
                         Row(
                             modifier = Modifier
@@ -272,7 +286,9 @@ fun CreateJobScreen(
                             end = 16.dp,
                             top = 16.dp
                         ),
-                        onClick = {}
+                        onClick = {
+                            isJoinAllowed = !isJoinAllowed
+                        }
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -280,7 +296,10 @@ fun CreateJobScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Icon(
-                                Lucide.Square,
+                                when (isJoinAllowed) {
+                                    true -> Lucide.SquareCheck
+                                    else -> Lucide.Square
+                                },
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -291,10 +310,6 @@ fun CreateJobScreen(
                         }
                     }
                 }
-
-//                item {
-//                    Box(modifier = Modifier.imePadding())
-//                }
             }
 
             // button create
@@ -317,5 +332,65 @@ fun CreateJobScreen(
                 }
             }
         }
+
+        /**
+         * bottom sheet untuk memilih jenis layanan berikut:
+         * - antar jemput
+         * - jasa titip
+         */
+        if (isBottomSheetSelectServiceVisible)
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch { sheetState.hide() }
+                        .invokeOnCompletion { isBottomSheetSelectServiceVisible = false }
+                },
+                sheetState = sheetState
+            ) {
+                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
+                    Text(
+                        text = "Jenis Layanan",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "Silahkan pilih janis layanan untuk pekerjaan yang akan Anda buat",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    JobConstants.services.mapIndexed { index, it ->
+                        CustomCard(
+                            modifier = Modifier.padding(
+                                top = when (index == 0) {
+                                    true -> 16.dp
+                                    else -> 8.dp
+                                }
+                            ),
+                            onClick = {
+
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Icon(Lucide.Square, contentDescription = null)
+                                Text(text = it.title, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
+
+                    OutlinedButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 16.dp),
+                        onClick = {
+                            scope.launch { sheetState.hide() }
+                                .invokeOnCompletion { isBottomSheetSelectServiceVisible = false }
+                        }
+                    ) {
+                        Text(text = "Batal")
+                    }
+                }
+            }
     }
 }
