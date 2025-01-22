@@ -10,5 +10,3 @@ data class CreateJobState(
         data class Failure(val message: String) : Detail
     }
 }
-
-

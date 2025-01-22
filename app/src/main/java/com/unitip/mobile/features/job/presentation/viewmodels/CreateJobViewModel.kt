@@ -7,6 +7,7 @@ import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,28 +30,41 @@ class CreateJobViewModel @Inject constructor(
         note: String,
         pickupLocation: String,
         destination: String,
+        service: String
     ) = viewModelScope.launch {
         _uiState.value = with(uiState.value) {
             copy(detail = CreateJobState.Detail.Loading)
         }
 
-        singleJobRepository.create(
-            title = title,
-            note = note,
-            pickupLocation = pickupLocation,
-            destination = destination,
-            type = "antar-jemput"
-        ).fold(
-            ifLeft = {
-                _uiState.value = with(uiState.value) {
-                    copy(detail = CreateJobState.Detail.Failure(message = it.message))
-                }
-            },
-            ifRight = {
-                _uiState.value = with(uiState.value) {
-                    copy(detail = CreateJobState.Detail.Success)
+        when (service) {
+            "antar-jemput" -> {
+                singleJobRepository.create(
+                    title = title,
+                    note = note,
+                    pickupLocation = pickupLocation,
+                    destination = destination,
+                    service = service
+                ).fold(
+                    ifLeft = {
+                        _uiState.value = with(uiState.value) {
+                            copy(detail = CreateJobState.Detail.Failure(message = it.message))
+                        }
+                    },
+                    ifRight = {
+                        _uiState.value = with(uiState.value) {
+                            copy(detail = CreateJobState.Detail.Success)
+                        }
+                    }
+                )
+            }
+
+            else -> {
+                _uiState.update {
+                    it.copy(
+                        detail = CreateJobState.Detail.Failure(message = "Not implemented yet!")
+                    )
                 }
             }
-        )
+        }
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
@@ -74,20 +75,16 @@ fun CreateJobScreen(
     val isImeVisible = WindowInsets.isImeVisible
     val listState = rememberLazyListState()
     val firstVisibleListItemIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
-//    val sheetState = rememberModalBottomSheetState()
-//    val scope = rememberCoroutineScope()
 
     var title by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     var pickupLocation by remember { mutableStateOf("") }
     var destination by remember { mutableStateOf("") }
-//    var isBottomSheetSelectServiceVisible by remember { mutableStateOf(false) }
     var isSelectServiceVisible by remember { mutableStateOf(false) }
     var selectedService by remember { mutableStateOf("") }
     var isJoinAllowed by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
-    val isLoading = uiState.detail is CreateJobState.Detail.Loading
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -107,11 +104,7 @@ fun CreateJobScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-//        contentWindowInsets = when (isImeVisible) {
-//            true -> WindowInsets.statusBarsIgnoringVisibility
-//            else -> ScaffoldDefaults.contentWindowInsets
-//        }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         Column(
             modifier = Modifier
@@ -145,18 +138,20 @@ fun CreateJobScreen(
                 }
             }
 
-            AnimatedVisibility(visible = listState.canScrollBackward) {
+            AnimatedVisibility(
+                visible = listState.canScrollBackward &&
+                        uiState.detail !is CreateJobState.Detail.Loading
+            ) {
                 HorizontalDivider()
             }
 
             // loading bar
-            AnimatedVisibility(visible = isLoading) {
+            AnimatedVisibility(visible = uiState.detail is CreateJobState.Detail.Loading) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .padding(
                             start = 16.dp,
-                            end = 16.dp,
-                            bottom = 16.dp
+                            end = 16.dp
                         )
                         .fillMaxWidth(),
                     strokeCap = StrokeCap.Round,
@@ -173,7 +168,14 @@ fun CreateJobScreen(
                     Text(
                         text = "Pekerjaan Baru",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = when (uiState.detail is CreateJobState.Detail.Loading) {
+                                true -> 16.dp
+                                else -> 0.dp
+                            }
+                        )
                     )
                 }
                 item {
@@ -192,7 +194,9 @@ fun CreateJobScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable {
+                                    .clickable(
+                                        enabled = uiState.detail !is CreateJobState.Detail.Loading
+                                    ) {
                                         isSelectServiceVisible = !isSelectServiceVisible
                                     }
                                     .padding(16.dp),
@@ -281,6 +285,7 @@ fun CreateJobScreen(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
                     ) {
                         OutlinedTextField(
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
                             value = title,
                             onValueChange = { title = it },
                             modifier = Modifier
@@ -295,6 +300,7 @@ fun CreateJobScreen(
                         )
 
                         OutlinedTextField(
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
                             value = note,
                             onValueChange = { note = it },
                             modifier = Modifier
@@ -311,6 +317,7 @@ fun CreateJobScreen(
                         )
 
                         OutlinedTextField(
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
                             value = pickupLocation,
                             onValueChange = { pickupLocation = it },
                             modifier = Modifier
@@ -326,6 +333,7 @@ fun CreateJobScreen(
                         )
 
                         OutlinedTextField(
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
                             value = destination,
                             onValueChange = { destination = it },
                             modifier = Modifier
@@ -375,87 +383,34 @@ fun CreateJobScreen(
                         }
                     }
                 }
+
+                item {
+                    Box(modifier = Modifier.height(500.dp))
+                }
             }
 
             // button create
             if (!isImeVisible) {
-                Button(
-                    enabled = !isLoading,
-                    onClick = {
-                        viewModel.create(
-                            title = title,
-                            note = note,
-                            pickupLocation = pickupLocation,
-                            destination = destination,
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text("Selesai")
+                AnimatedVisibility(visible = uiState.detail !is CreateJobState.Detail.Loading) {
+                    Button(
+                        onClick = {
+                            if (selectedService.isNotBlank())
+                                viewModel.create(
+                                    title = title,
+                                    note = note,
+                                    pickupLocation = pickupLocation,
+                                    destination = destination,
+                                    service = selectedService
+                                )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    ) {
+                        Text("Selesai")
+                    }
                 }
             }
         }
-
-        /**
-         * bottom sheet untuk memilih jenis layanan berikut:
-         * - antar jemput
-         * - jasa titip
-         */
-//        if (isBottomSheetSelectServiceVisible)
-//            ModalBottomSheet(
-//                onDismissRequest = {
-//                    scope.launch { sheetState.hide() }
-//                        .invokeOnCompletion { isBottomSheetSelectServiceVisible = false }
-//                },
-//                sheetState = sheetState
-//            ) {
-//                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
-//                    Text(
-//                        text = "Jenis Layanan",
-//                        style = MaterialTheme.typography.titleMedium
-//                    )
-//                    Text(
-//                        text = "Silahkan pilih janis layanan untuk pekerjaan yang akan Anda buat",
-//                        style = MaterialTheme.typography.bodyMedium
-//                    )
-//
-//                    JobConstants.services.mapIndexed { index, it ->
-//                        CustomCard(
-//                            modifier = Modifier.padding(
-//                                top = when (index == 0) {
-//                                    true -> 16.dp
-//                                    else -> 8.dp
-//                                }
-//                            ),
-//                            onClick = {
-//
-//                            }
-//                        ) {
-//                            Row(
-//                                modifier = Modifier.padding(16.dp),
-//                                verticalAlignment = Alignment.CenterVertically,
-//                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-//                            ) {
-//                                Icon(Lucide.Square, contentDescription = null)
-//                                Text(text = it.title, style = MaterialTheme.typography.bodyMedium)
-//                            }
-//                        }
-//                    }
-//
-//                    OutlinedButton(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(top = 16.dp, bottom = 16.dp),
-//                        onClick = {
-//                            scope.launch { sheetState.hide() }
-//                                .invokeOnCompletion { isBottomSheetSelectServiceVisible = false }
-//                        }
-//                    ) {
-//                        Text(text = "Batal")
-//                    }
-//                }
-//            }
     }
 }

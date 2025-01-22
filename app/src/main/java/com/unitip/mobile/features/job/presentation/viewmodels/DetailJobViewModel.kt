@@ -39,8 +39,8 @@ class DetailJobViewModel @Inject constructor(
     fun fetchData() = viewModelScope.launch {
         _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
         singleJobRepository.get(
-            id = parameters.jobId,
-            type = parameters.service
+            jobId = parameters.jobId,
+            service = parameters.service
         ).fold(
             ifLeft = { left ->
                 _uiState.update {

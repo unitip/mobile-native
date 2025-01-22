@@ -6,6 +6,6 @@ data class CreateSingleJobPayload(
     val title: String,
     val destination: String,
     val note: String,
-    val type: String,
+    val service: String,
     @SerializedName("pickup_location") val pickupLocation: String,
 )

@@ -12,7 +12,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SingleJobApi {
-
     @POST("jobs/single")
     suspend fun create(
         @Header("Authorization") token: String,

@@ -2,11 +2,7 @@ package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
-import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
-import com.unitip.mobile.features.job.data.models.CreateJobResult
 import com.unitip.mobile.features.job.data.sources.JobApi
-import com.unitip.mobile.features.job.data.sources.SingleJobApi
-import com.unitip.mobile.features.job.domain.models.Applicant
 import com.unitip.mobile.features.job.domain.models.GetAllJobsResult
 import com.unitip.mobile.features.job.domain.models.Job
 import com.unitip.mobile.features.job.domain.models.JobCustomer
