@@ -46,6 +46,7 @@ import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
@@ -287,22 +288,22 @@ fun DetailJobScreen(
                     }
                 }
 
-                HorizontalDivider()
-
-                Button(
-                    onClick = {
-                        navController.navigate(
-                            JobRoutes.Apply(
-                                id = jobId,
-                                type = service
+                if (uiState.session.isDriver()) {
+                    Button(
+                        onClick = {
+                            navController.navigate(
+                                JobRoutes.Apply(
+                                    id = jobId,
+                                    type = service
+                                )
                             )
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp)
-                ) {
-                    Text(text = "Lamar pekerjaan")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp)
+                    ) {
+                        Text(text = "Lamar pekerjaan")
+                    }
                 }
             }
         }
