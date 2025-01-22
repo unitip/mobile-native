@@ -42,6 +42,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MapPinned
 import com.composables.icons.lucide.RefreshCw
+import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
@@ -130,7 +131,14 @@ fun DetailJobScreen(
                             mapOf(
                                 "icon" to Lucide.Bike,
                                 "title" to "Jenis Pekerjaan",
-                                "value" to uiState.job.service
+                                "value" to JobConstants.services
+                                    .find { item -> item.value == uiState.job.service }
+                                    .let { service ->
+                                        when (service != null) {
+                                            true -> service.title
+                                            else -> "Service tidak tersedia"
+                                        }
+                                    }
                             ),
                             mapOf(
                                 "icon" to Lucide.MapPinned,
