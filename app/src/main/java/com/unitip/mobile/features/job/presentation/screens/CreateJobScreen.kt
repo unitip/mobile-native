@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,8 +28,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -64,6 +63,7 @@ import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import com.unitip.mobile.shared.presentation.components.CustomTextField
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -280,72 +280,43 @@ fun CreateJobScreen(
                     }
                 }
 
+                /**
+                 * form untuk membuat pekerjaan baru
+                 */
                 item {
                     Column(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
                     ) {
-                        OutlinedTextField(
-                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
+                        CustomTextField(
+                            label = "Judul pekerjaan",
                             value = title,
                             onValueChange = { title = it },
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            placeholder = { Text("Judul") },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors().copy(
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = .16f
-                                )
-                            ),
+                            placeholder = "Cth: Anjem ke Gacoan"
                         )
 
-                        OutlinedTextField(
-                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
-                            value = note,
-                            onValueChange = { note = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            placeholder = { Text("Catatan tambahan") },
-                            minLines = 5,
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors().copy(
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = .16f
-                                )
-                            ),
-                        )
-
-                        OutlinedTextField(
-                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
+                        CustomTextField(
+                            label = "Lokasi penjemputan",
                             value = pickupLocation,
                             onValueChange = { pickupLocation = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            placeholder = { Text("Lokasi jemput") },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors().copy(
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = .16f
-                                )
-                            ),
+                            placeholder = "Cth: Kos Unitip no.2",
+                            modifier = Modifier.padding(top = 16.dp)
                         )
 
-                        OutlinedTextField(
-                            enabled = uiState.detail !is CreateJobState.Detail.Loading,
+                        CustomTextField(
+                            label = "Lokasi tujuan",
                             value = destination,
                             onValueChange = { destination = it },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            placeholder = { Text("Destinasi") },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors().copy(
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = .16f
-                                )
-                            ),
+                            placeholder = "Cth: Gacoan Jebres",
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+
+                        CustomTextField(
+                            label = "Catatan tambahan",
+                            value = note,
+                            onValueChange = { note = it },
+                            placeholder = "Cth: Tolong bawain helm",
+                            minLines = 5,
+                            modifier = Modifier.padding(top = 16.dp)
                         )
                     }
                 }
@@ -385,7 +356,7 @@ fun CreateJobScreen(
                 }
 
                 item {
-                    Box(modifier = Modifier.height(500.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
