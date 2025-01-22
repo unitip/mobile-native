@@ -41,6 +41,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MapPinned
+import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.commons.JobRoutes
@@ -80,15 +81,20 @@ fun DetailJobScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CustomIconButton(
                     onClick = { navController.popBackStack() },
                     icon = Lucide.ChevronLeft
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 CustomIconButton(
                     onClick = { viewModel.fetchData() },
                     icon = Lucide.RefreshCw
+                )
+                CustomIconButton(
+                    onClick = { },
+                    icon = Lucide.Menu
                 )
             }
 
