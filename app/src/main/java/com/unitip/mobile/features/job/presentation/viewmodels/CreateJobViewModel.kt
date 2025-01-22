@@ -2,10 +2,9 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.data.repositories.MultiJobRepository
+import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
-import com.unitip.mobile.features.job.presentation.states.CreateJobStateDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +20,7 @@ class CreateJobViewModel @Inject constructor(
 
     fun resetState() {
         _uiState.value = with(uiState.value) {
-            copy(detail = CreateJobStateDetail.Initial)
+            copy(detail = CreateJobState.Detail.Initial)
         }
     }
 
@@ -32,7 +31,7 @@ class CreateJobViewModel @Inject constructor(
         destination: String,
     ) = viewModelScope.launch {
         _uiState.value = with(uiState.value) {
-            copy(detail = CreateJobStateDetail.Loading)
+            copy(detail = CreateJobState.Detail.Loading)
         }
 
         singleJobRepository.create(
@@ -44,12 +43,12 @@ class CreateJobViewModel @Inject constructor(
         ).fold(
             ifLeft = {
                 _uiState.value = with(uiState.value) {
-                    copy(detail = CreateJobStateDetail.Failure(message = it.message))
+                    copy(detail = CreateJobState.Detail.Failure(message = it.message))
                 }
             },
             ifRight = {
                 _uiState.value = with(uiState.value) {
-                    copy(detail = CreateJobStateDetail.Success)
+                    copy(detail = CreateJobState.Detail.Success)
                 }
             }
         )
