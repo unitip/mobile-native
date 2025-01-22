@@ -290,7 +290,8 @@ fun CreateJobScreen(
                             label = "Judul pekerjaan",
                             value = title,
                             onValueChange = { title = it },
-                            placeholder = "Cth: Anjem ke Gacoan"
+                            placeholder = "Cth: Anjem ke Gacoan",
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
                         CustomTextField(
@@ -298,7 +299,8 @@ fun CreateJobScreen(
                             value = pickupLocation,
                             onValueChange = { pickupLocation = it },
                             placeholder = "Cth: Kos Unitip no.2",
-                            modifier = Modifier.padding(top = 16.dp)
+                            modifier = Modifier.padding(top = 16.dp),
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
                         CustomTextField(
@@ -306,7 +308,8 @@ fun CreateJobScreen(
                             value = destination,
                             onValueChange = { destination = it },
                             placeholder = "Cth: Gacoan Jebres",
-                            modifier = Modifier.padding(top = 16.dp)
+                            modifier = Modifier.padding(top = 16.dp),
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
                         CustomTextField(
@@ -315,7 +318,8 @@ fun CreateJobScreen(
                             onValueChange = { note = it },
                             placeholder = "Cth: Tolong bawain helm",
                             minLines = 5,
-                            modifier = Modifier.padding(top = 16.dp)
+                            modifier = Modifier.padding(top = 16.dp),
+                            enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
                     }
                 }
