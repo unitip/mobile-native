@@ -2,7 +2,7 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.job.data.repositories.JobRepository
+import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApplyJobViewModel @Inject constructor(
-    private val jobRepository: JobRepository
+    private val singleJobRepository: SingleJobRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ApplyJobState())
     val uiState get() = _uiState.asStateFlow()
@@ -25,7 +25,7 @@ class ApplyJobViewModel @Inject constructor(
     ) = viewModelScope.launch {
         _uiState.update { it.copy(detail = ApplyJobState.Detail.Loading) }
 
-        jobRepository.apply(jobId, price).fold(
+        singleJobRepository.application(jobId, price).fold(
             ifLeft = { left ->
                 _uiState.update {
                     it.copy(
