@@ -6,14 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +31,8 @@ import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.ApplyJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import com.unitip.mobile.shared.presentation.components.CustomTextField
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplyJobScreen(
     id: String,
@@ -46,7 +42,8 @@ fun ApplyJobScreen(
     val navController = LocalNavController.current
 
     val uiState by viewModel.uiState.collectAsState()
-    var priceInput by remember { mutableStateOf("0") }
+    var price by remember { mutableStateOf("0") }
+    var note by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.detail) {
         if (uiState.detail is ApplyJobState.Detail.Success) {
@@ -97,62 +94,83 @@ fun ApplyJobScreen(
                 )
             }
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-            ) {
-                Text(
-                    text = "Harga Ajuan",
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                OutlinedTextField(
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    value = priceInput,
-                    onValueChange = { newValue ->
-                        if (newValue.all { it.isDigit() }) {
-                            priceInput = newValue
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors().copy(
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                    ),
-                )
+            CustomTextField(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                label = "Harga Ajuan",
+                value = price,
+                onValueChange = { value ->
+                    if (value.all { char -> char.isDigit() })
+                        price = value
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
 
-                Text(
-                    text = "Catatan Tambahan",
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = { newValue ->
-                    },
-                    minLines = 5,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors().copy(
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                    ),
-                )
-            }
+            CustomTextField(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                label = "Catatan Tambahan",
+                value = note,
+                onValueChange = { value ->
+                    note = value
+                },
+                minLines = 5
+            )
+
+//            Column(
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+//            ) {
+//                Text(
+//                    text = "Harga Ajuan",
+//                    style = MaterialTheme.typography.labelMedium,
+//                )
+//                OutlinedTextField(
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//                    value = priceInput,
+//                    onValueChange = { newValue ->
+//                        if (newValue.all { it.isDigit() }) {
+//                            priceInput = newValue
+//                        }
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 8.dp),
+//                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
+//                    shape = RoundedCornerShape(12.dp),
+//                    colors = OutlinedTextFieldDefaults.colors().copy(
+//                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+//                    ),
+//                )
+//
+//                Text(
+//                    text = "Catatan Tambahan",
+//                    style = MaterialTheme.typography.labelMedium,
+//                    modifier = Modifier.padding(top = 16.dp)
+//                )
+//                OutlinedTextField(
+//                    value = "",
+//                    onValueChange = { newValue ->
+//                    },
+//                    minLines = 5,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 8.dp),
+//                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
+//                    shape = RoundedCornerShape(12.dp),
+//                    colors = OutlinedTextFieldDefaults.colors().copy(
+//                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
+//                    ),
+//                )
+//            }
 
             // button apply
             AnimatedVisibility(visible = uiState.detail !is ApplyJobState.Detail.Loading) {
                 Button(
                     onClick = {
-                        viewModel.applyJob(
+                        viewModel.apply(
                             jobId = id,
                             type = type,
-                            price = priceInput.toInt()
+                            price = price.toInt()
                         )
                     },
                     modifier = Modifier

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -20,7 +21,8 @@ fun CustomTextField(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
-    minLines: Int = 1
+    minLines: Int = 1,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -29,6 +31,7 @@ fun CustomTextField(
             modifier = Modifier.padding(start = 8.dp)
         )
         OutlinedTextField(
+            keyboardOptions = keyboardOptions,
             minLines = minLines,
             enabled = enabled,
             value = value,

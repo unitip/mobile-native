@@ -2,7 +2,6 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.example.presentation.states.ExampleUsersState
 import com.unitip.mobile.features.job.data.repositories.JobRepository
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,30 +15,29 @@ import javax.inject.Inject
 class ApplyJobViewModel @Inject constructor(
     private val jobRepository: JobRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(ApplyJobState())
     val uiState get() = _uiState.asStateFlow()
 
+    fun apply(
+        jobId: String,
+        type: String,
+        price: Int
+    ) = viewModelScope.launch {
+        _uiState.update { it.copy(detail = ApplyJobState.Detail.Loading) }
 
-    fun applyJob(jobId: String, type: String, price: Int) {
-        viewModelScope.launch {
-            _uiState.value = with(uiState.value) {
-                copy(detail = ApplyJobState.Detail.Loading)
-            }
-
-            jobRepository.apply(jobId, price).fold(
-                ifLeft = {
-                    _uiState.value =
-                        with(uiState.value) {
-                            copy(detail = ApplyJobState.Detail.Failure(message = it.message))
-                        }
-                },
-                ifRight = {
-                    _uiState.value = with(uiState.value) {
-                        copy(detail = ApplyJobState.Detail.Success)
-                    }
+        jobRepository.apply(jobId, price).fold(
+            ifLeft = { left ->
+                _uiState.update {
+                    it.copy(
+                        detail = ApplyJobState.Detail.Failure(message = left.message)
+                    )
                 }
-            )
-        }
+            },
+            ifRight = {
+                _uiState.update {
+                    it.copy(detail = ApplyJobState.Detail.Success)
+                }
+            }
+        )
     }
 }

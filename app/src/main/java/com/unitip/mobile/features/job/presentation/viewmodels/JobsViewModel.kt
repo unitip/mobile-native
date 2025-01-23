@@ -25,7 +25,8 @@ class JobsViewModel @Inject constructor(
             it.copy(session = sessionManager.read())
         }
 
-        fetchJobs()
+        if (uiState.value.detail !is JobsState.Detail.Success)
+            fetchJobs()
     }
 
     fun expandJob(jobId: String) = _uiState.update {
