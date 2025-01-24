@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.job.data.sources
 
+import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobPayload
+import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobResponse
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobResponse
 import com.unitip.mobile.features.job.data.dtos.GetSingleJobResponse
@@ -24,4 +26,12 @@ interface SingleJobApi {
         @Path("job_id") jobId: String,
         @Query("type") type: String
     ): Response<GetSingleJobResponse>
+
+    @POST("jobs/{job_id}/applications")
+    suspend fun apply(
+        @Header("Authorization") token: String,
+        @Path("job_id") jobId: String,
+        @Body payload: ApplicationSingleJobPayload
+    ): Response<ApplicationSingleJobResponse>
+
 }

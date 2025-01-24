@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.sources.SingleJobApi
 import com.unitip.mobile.features.job.domain.models.Applicant
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SingleJobRepository @Inject constructor(
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val singleJobApi: SingleJobApi
 ) {
     private val session = sessionManager.read()
@@ -80,4 +81,27 @@ class SingleJobRepository @Inject constructor(
         e.printStackTrace()
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+    suspend fun application(jobId: String, price: Int): Either<Failure, Unit> {
+        try {
+            val token = sessionManager.read()?.token
+            val response =
+                singleJobApi.apply(
+                    token = "Bearer $token",
+                    jobId = jobId,
+                    payload = ApplicationSingleJobPayload(price = price)
+                )
+            val result = response.body()
+
+            return when (response.isSuccessful && result != null) {
+                true -> Either.Right(Unit)
+                false -> Either.Left(response.mapToFailure())
+            }
+
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
 }
+
