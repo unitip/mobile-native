@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Deprecated("Anti pattern")
 @Singleton
 class JobCache @Inject constructor() {
     private val _content = MutableStateFlow<List<Job>>(emptyList())
