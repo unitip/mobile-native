@@ -66,7 +66,7 @@ fun JobsScreen(
     val listState = rememberLazyListState()
 
     val uiState by viewModel.uiState.collectAsState()
-    val isLoading = uiState.detail is JobsState.Detail.Loading
+//    val jobs by viewModel.jobs.collectAsState()
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -119,7 +119,10 @@ fun JobsScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = "Jobs", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "Jobs",
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Text(
                         text = "Berikut adalah beberapa pekerjaan yang dapat Anda lamar sebagai driver",
                         style = MaterialTheme.typography.bodyMedium
@@ -151,7 +154,7 @@ fun JobsScreen(
                 }
 
                 LazyColumn(state = listState) {
-                    itemsIndexed(uiState.result.jobs) { index, job ->
+                    itemsIndexed(uiState.jobs) { index, job ->
                         val isExpanded = uiState.expandedJobId == job.id
 
                         CustomCard(

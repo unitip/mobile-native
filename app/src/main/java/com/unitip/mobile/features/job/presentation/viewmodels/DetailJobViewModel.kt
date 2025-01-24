@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.features.job.data.caches.JobCache
 import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -20,20 +21,31 @@ class DetailJobViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
     private val singleJobRepository: SingleJobRepository,
+    private val jobCache: JobCache
 ) : ViewModel() {
     companion object {
         private const val TAG = "DetailJobViewModel"
     }
 
-    private val _uiState = MutableStateFlow(DetailJobState())
-    val uiState get() = _uiState.asStateFlow()
-
     private val session = sessionManager.read()
     private val parameters = savedStateHandle.toRoute<JobRoutes.Detail>()
 
+    private val _uiState = MutableStateFlow(DetailJobState())
+    val uiState get() = _uiState.asStateFlow()
+
     init {
         _uiState.update { it.copy(session = session) }
-        fetchData()
+
+        val cachedJob = jobCache.getJob(jobId = parameters.jobId)
+        if (cachedJob != null)
+            _uiState.update {
+                it.copy(
+                    detail = DetailJobState.Detail.Success,
+                    job = cachedJob
+                )
+            }
+        else if (uiState.value.detail !is DetailJobState.Detail.Success)
+            fetchData()
     }
 
     fun fetchData() = viewModelScope.launch {
@@ -50,6 +62,10 @@ class DetailJobViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
+                jobCache.updateJob(
+                    jobId = right.id,
+                    job = right
+                )
                 _uiState.update {
                     it.copy(
                         detail = DetailJobState.Detail.Success,
