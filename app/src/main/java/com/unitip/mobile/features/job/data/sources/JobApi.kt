@@ -18,11 +18,4 @@ interface JobApi {
         @Query("page") page: Int = 1
     ): Response<GetAllJobsResponse>
 
-
-    @GET("jobs/{job_id}/applicants/{applicant_id}/approve")
-    suspend fun approve(
-        @Header("Authorization") token: String,
-        @Path("job_id") jobId: String,
-        @Path("applicant_id") applicantId: String,
-    ): Response<ApproveApplicantResponse>
 }
