@@ -274,10 +274,10 @@ fun DetailJobScreen(
 
                                     Button(
                                         onClick = {
-//                                            viewModel.approveApplicant(
-//                                                jobId = id,
-//                                                applicantId = applicant.id
-//                                            )
+                                            viewModel.approveApplicant(
+                                                jobId = jobId,
+                                                applicantId = applicant.id
+                                            )
                                         },
                                         modifier = Modifier
                                             .weight(1f)

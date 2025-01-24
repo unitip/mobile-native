@@ -84,15 +84,33 @@ class SingleJobRepository @Inject constructor(
 
     suspend fun application(jobId: String, price: Int): Either<Failure, Unit> {
         try {
-            val token = sessionManager.read()?.token
             val response =
                 singleJobApi.apply(
-                    token = "Bearer $token",
+                    token = "Bearer ${session.token}",
                     jobId = jobId,
                     payload = ApplicationSingleJobPayload(price = price)
                 )
             val result = response.body()
 
+            return when (response.isSuccessful && result != null) {
+                true -> Either.Right(Unit)
+                false -> Either.Left(response.mapToFailure())
+            }
+
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
+    suspend fun approve(jobId: String, applicantId: String): Either<Failure, Unit> {
+        try {
+            val response =
+                singleJobApi.approve(
+                    token = "Bearer ${session.token}",
+                    jobId = jobId,
+                    applicationId = applicantId,
+                )
+            val result = response.body()
             return when (response.isSuccessful && result != null) {
                 true -> Either.Right(Unit)
                 false -> Either.Left(response.mapToFailure())
