@@ -49,7 +49,6 @@ import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
-import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.presentation.states.OfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.OffersViewModel
@@ -170,12 +169,12 @@ fun OffersScreen(
                                 top = if (index == 0) 0.dp else 8.dp
                             ),
                             onClick = {
-                                navController.navigate(
-                                    JobRoutes.Detail(
-                                        jobId = offer.id,
-                                        service = offer.type
-                                    )
-                                )
+//                                navController.navigate(
+//                                    JobRoutes.Detail(
+//                                        jobId = offer.id,
+//                                        type = offer.type
+//                                    )
+//                                )
                             }
                         ) {
                             Column {
