@@ -25,7 +25,7 @@ class CreateJobViewModel @Inject constructor(
         }
     }
 
-    fun create(
+    fun createSingleJob(
         title: String,
         note: String,
         pickupLocation: String,
@@ -66,5 +66,32 @@ class CreateJobViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun createMultiJob(
+        title: String,
+        note: String,
+        pickupLocation: String,
+        service: String
+    ) = viewModelScope.launch {
+        _uiState.value = with(uiState.value) {
+            copy(detail = CreateJobState.Detail.Loading)
+        }
+        multiJobRepository.create(
+            title = title,
+            note = note,
+            pickupLocation = pickupLocation,
+            service = service
+        ).fold(
+            ifLeft = {
+                _uiState.value = with(uiState.value) {
+                    copy(detail = CreateJobState.Detail.Failure(message = it.message))
+                }
+            },
+            ifRight = {
+                _uiState.value = with(uiState.value) {
+                    copy(detail = CreateJobState.Detail.Success)
+                }
+            })
     }
 }
