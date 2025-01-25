@@ -1,7 +1,7 @@
 package com.unitip.mobile.features.job.data.sources
 
-import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobPayload
-import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobResponse
+import com.unitip.mobile.features.job.data.dtos.ApplySingleJobPayload
+import com.unitip.mobile.features.job.data.dtos.ApplySingleJobResponse
 import com.unitip.mobile.features.job.data.dtos.ApproveApplicantResponse
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobResponse
@@ -33,8 +33,8 @@ interface SingleJobApi {
     suspend fun apply(
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String,
-        @Body payload: ApplicationSingleJobPayload
-    ): Response<ApplicationSingleJobResponse>
+        @Body payload: ApplySingleJobPayload
+    ): Response<ApplySingleJobResponse>
 
     @PATCH("jobs/single/{job_id}/applications/{application_id}/approval")
     suspend fun approve(

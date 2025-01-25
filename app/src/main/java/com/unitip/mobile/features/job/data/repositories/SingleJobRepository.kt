@@ -1,7 +1,7 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobPayload
+import com.unitip.mobile.features.job.data.dtos.ApplySingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.sources.SingleJobApi
 import com.unitip.mobile.features.job.domain.models.JobV2
@@ -82,14 +82,13 @@ class SingleJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun application(jobId: String, price: Int): Either<Failure, Unit> {
+    suspend fun apply(jobId: String, price: Int): Either<Failure, Unit> {
         try {
-            val response =
-                singleJobApi.apply(
-                    token = "Bearer ${session.token}",
-                    jobId = jobId,
-                    payload = ApplicationSingleJobPayload(price = price)
-                )
+            val response = singleJobApi.apply(
+                token = "Bearer ${session.token}",
+                jobId = jobId,
+                payload = ApplySingleJobPayload(price = price)
+            )
             val result = response.body()
 
             return when (response.isSuccessful && result != null) {

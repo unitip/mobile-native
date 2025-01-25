@@ -44,6 +44,7 @@ import com.composables.icons.lucide.MapPinned
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.job.commons.JobConstants
+import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -53,7 +54,7 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @Composable
 fun DetailJobScreen(
     jobId: String,
-//    service: String,
+    jobType: JobConstants.Type,
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
@@ -304,12 +305,12 @@ fun DetailJobScreen(
                 if (uiState.session.isDriver()) {
                     Button(
                         onClick = {
-//                            navController.navigate(
-//                                JobRoutes.Apply(
-//                                    id = jobId,
-//                                    type = service
-//                                )
-//                            )
+                            navController.navigate(
+                                JobRoutes.Apply(
+                                    jobId = jobId,
+                                    jobType = jobType
+                                )
+                            )
                         },
                         modifier = Modifier
                             .fillMaxWidth()

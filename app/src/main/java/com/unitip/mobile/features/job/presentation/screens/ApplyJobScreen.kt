@@ -35,8 +35,6 @@ import com.unitip.mobile.shared.presentation.components.CustomTextField
 
 @Composable
 fun ApplyJobScreen(
-    id: String,
-    type: String,
     viewModel: ApplyJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
@@ -115,63 +113,11 @@ fun ApplyJobScreen(
                 minLines = 5
             )
 
-//            Column(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-//            ) {
-//                Text(
-//                    text = "Harga Ajuan",
-//                    style = MaterialTheme.typography.labelMedium,
-//                )
-//                OutlinedTextField(
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    value = priceInput,
-//                    onValueChange = { newValue ->
-//                        if (newValue.all { it.isDigit() }) {
-//                            priceInput = newValue
-//                        }
-//                    },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 8.dp),
-//                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
-//                    shape = RoundedCornerShape(12.dp),
-//                    colors = OutlinedTextFieldDefaults.colors().copy(
-//                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-//                    ),
-//                )
-//
-//                Text(
-//                    text = "Catatan Tambahan",
-//                    style = MaterialTheme.typography.labelMedium,
-//                    modifier = Modifier.padding(top = 16.dp)
-//                )
-//                OutlinedTextField(
-//                    value = "",
-//                    onValueChange = { newValue ->
-//                    },
-//                    minLines = 5,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 8.dp),
-//                    enabled = uiState.detail !is ApplyJobState.Detail.Loading,
-//                    shape = RoundedCornerShape(12.dp),
-//                    colors = OutlinedTextFieldDefaults.colors().copy(
-//                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-//                    ),
-//                )
-//            }
-
             // button apply
             AnimatedVisibility(visible = uiState.detail !is ApplyJobState.Detail.Loading) {
                 Button(
                     onClick = {
-                        viewModel.apply(
-                            jobId = id,
-                            type = type,
-                            price = price.toInt()
-                        )
+                        viewModel.apply(price = price.toInt())
                     },
                     modifier = Modifier
                         .fillMaxWidth()
