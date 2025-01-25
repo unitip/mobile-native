@@ -369,13 +369,25 @@ fun CreateJobScreen(
                     Button(
                         onClick = {
                             if (selectedService.isNotBlank())
-                                viewModel.create(
-                                    title = title,
-                                    note = note,
-                                    pickupLocation = pickupLocation,
-                                    destination = destination,
-                                    service = selectedService
-                                )
+                                if (!isJoinAllowed) {
+                                    viewModel.createSingleJob(
+                                        title = title,
+                                        note = note,
+                                        pickupLocation = pickupLocation,
+                                        destination = destination,
+                                        service = selectedService
+
+                                    )
+                                } else {
+                                    viewModel.createMultiJob(
+                                        title = title,
+                                        note = note,
+                                        pickupLocation = pickupLocation,
+                                        service = selectedService
+
+                                    )
+                                }
+
                         },
                         modifier = Modifier
                             .fillMaxWidth()
