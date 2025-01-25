@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.job.domain.models
 
+@Deprecated(message = "Gunakan model baru yang lebih diperjelas untuk per screen")
 data class Job(
     val id: String = "",
     val title: String = "",

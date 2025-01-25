@@ -66,7 +66,6 @@ fun JobsScreen(
     val listState = rememberLazyListState()
 
     val uiState by viewModel.uiState.collectAsState()
-//    val jobs by viewModel.jobs.collectAsState()
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -197,7 +196,7 @@ fun JobsScreen(
                                         )
                                     }
                                     Text(
-                                        text = job.customer.name,
+                                        text = job.customer.name + " (debug: ${job.type.toString()})",
                                         style = MaterialTheme.typography.labelMedium,
                                         modifier = Modifier.padding(start = 8.dp)
                                     )
@@ -303,7 +302,7 @@ fun JobsScreen(
                                                 )
                                             }
                                             Text(
-                                                text = "${job.totalApplicants} orang melamar pekerjaan ini",
+                                                text = "${job.totalApplications} orang melamar pekerjaan ini",
                                                 style = MaterialTheme.typography.labelMedium,
                                                 modifier = Modifier
                                                     .padding(start = 8.dp)

@@ -15,7 +15,6 @@ import javax.inject.Inject
 class JobsViewModel @Inject constructor(
     sessionManager: SessionManager,
     private val jobRepository: JobRepository,
-//    private val jobCache: JobCache
 ) : ViewModel() {
     private val session = sessionManager.read()
 
@@ -24,12 +23,6 @@ class JobsViewModel @Inject constructor(
 
     init {
         _uiState.update { it.copy(session = session) }
-
-//        viewModelScope.launch {
-//            jobCache.content.collectLatest { value ->
-//                _uiState.update { it.copy(jobs = value) }
-//            }
-//        }
 
         if (uiState.value.detail !is JobsState.Detail.Success)
             fetchJobs()
@@ -52,7 +45,6 @@ class JobsViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
-//                jobCache.setJobs(jobs = right.jobs)
                 _uiState.update {
                     it.copy(
                         detail = JobsState.Detail.Success,

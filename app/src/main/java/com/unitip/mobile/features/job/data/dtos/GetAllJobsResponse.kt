@@ -8,6 +8,7 @@ data class GetAllJobsResponse(
 ) {
     data class Job(
         val id: String,
+        val type: String,
         val title: String,
         val destination: String,
         val note: String,
