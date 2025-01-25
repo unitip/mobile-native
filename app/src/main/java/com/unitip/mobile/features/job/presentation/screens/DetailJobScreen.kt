@@ -44,7 +44,6 @@ import com.composables.icons.lucide.MapPinned
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.job.commons.JobConstants
-import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -54,7 +53,7 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @Composable
 fun DetailJobScreen(
     jobId: String,
-    service: String,
+//    service: String,
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
@@ -235,7 +234,7 @@ fun DetailJobScreen(
                         }
                     }
 
-                    itemsIndexed(uiState.job.applicants) { index, applicant ->
+                    itemsIndexed(uiState.job.applications) { index, applicant ->
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -254,7 +253,7 @@ fun DetailJobScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = applicant.name,
+                                        text = applicant.freelancerName,
                                         style = MaterialTheme.typography.titleSmall,
                                         modifier = Modifier.weight(1f)
                                     )
@@ -305,12 +304,12 @@ fun DetailJobScreen(
                 if (uiState.session.isDriver()) {
                     Button(
                         onClick = {
-                            navController.navigate(
-                                JobRoutes.Apply(
-                                    id = jobId,
-                                    type = service
-                                )
-                            )
+//                            navController.navigate(
+//                                JobRoutes.Apply(
+//                                    id = jobId,
+//                                    type = service
+//                                )
+//                            )
                         },
                         modifier = Modifier
                             .fillMaxWidth()

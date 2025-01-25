@@ -28,7 +28,7 @@ class JobRepository @Inject constructor(
             true -> Either.Right(
                 GetAllJobsResult(
                     jobs = result.jobs.map { job ->
-                        JobV2.List(
+                        JobV2.ListItem(
                             type = when (job.type == "single") {
                                 true -> JobConstants.Type.SINGLE
                                 else -> JobConstants.Type.MULTI
@@ -42,7 +42,7 @@ class JobRepository @Inject constructor(
                             createdAt = job.createdAt,
                             updatedAt = job.updatedAt,
                             totalApplications = 0,
-                            customer = JobV2.List.Customer(
+                            customer = JobV2.ListItem.Customer(
                                 name = job.customer.name
                             )
                         )

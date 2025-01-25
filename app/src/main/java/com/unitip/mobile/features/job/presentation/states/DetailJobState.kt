@@ -1,11 +1,11 @@
 package com.unitip.mobile.features.job.presentation.states
 
-import com.unitip.mobile.features.job.domain.models.Job
+import com.unitip.mobile.features.job.domain.models.JobV2
 import com.unitip.mobile.shared.domain.models.Session
 
 data class DetailJobState(
     val session: Session = Session(),
-    val job: Job = Job(),
+    val job: JobV2.Detail = JobV2.Detail(),
     val detail: Detail = Detail.Initial,
     val approveDetail: ApproveDetail = ApproveDetail.Initial
 ) {

@@ -4,8 +4,12 @@ import com.unitip.mobile.features.job.domain.models.JobService
 
 object JobConstants {
     enum class Type {
-        SINGLE,
-        MULTI
+        SINGLE {
+            override fun toString(): String = "single"
+        },
+        MULTI {
+            override fun toString(): String = "multi"
+        }
     }
 
     val services = listOf<JobService>(

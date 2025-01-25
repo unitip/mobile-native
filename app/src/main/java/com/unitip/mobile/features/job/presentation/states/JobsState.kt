@@ -5,7 +5,7 @@ import com.unitip.mobile.shared.domain.models.Session
 
 data class JobsState(
     val expandedJobId: String = "",
-    val jobs: List<JobV2.List> = emptyList(),
+    val jobs: List<JobV2.ListItem> = emptyList(),
     val session: Session? = null,
     val detail: Detail = Detail.Initial,
 ) {

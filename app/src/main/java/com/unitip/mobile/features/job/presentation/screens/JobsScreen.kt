@@ -166,7 +166,7 @@ fun JobsScreen(
                                 navController.navigate(
                                     JobRoutes.Detail(
                                         jobId = job.id,
-                                        service = job.service
+                                        type = job.type
                                     )
                                 )
                             }

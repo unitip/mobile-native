@@ -9,11 +9,14 @@ data class GetSingleJobResponse(
     val note: String,
     val service: String,
     @SerializedName("pickup_location") val pickupLocation: String,
-    val applicants: List<Applicant>
+    @SerializedName("created_at") val createdAt: String,
+    @SerializedName("updated_at") val updatedAt: String,
+    @SerializedName("customer_id") val customerId: String,
+    val applications: List<Application>
 ) {
-    data class Applicant(
+    data class Application(
         val id: String,
-        val name: String,
+        @SerializedName("freelancer_name") val freelancerName: String,
         val price: Int
     )
 }

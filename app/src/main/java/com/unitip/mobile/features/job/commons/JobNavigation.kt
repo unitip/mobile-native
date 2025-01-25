@@ -16,7 +16,7 @@ fun NavGraphBuilder.jobNavigation() {
         val data = it.toRoute<JobRoutes.Detail>()
         DetailJobScreen(
             jobId = data.jobId,
-            service = data.service
+//            service = data.type
         )
     }
 

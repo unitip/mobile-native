@@ -4,9 +4,7 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplicationSingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.sources.SingleJobApi
-import com.unitip.mobile.features.job.domain.models.Applicant
-import com.unitip.mobile.features.job.domain.models.Job
-import com.unitip.mobile.features.job.domain.models.JobCustomer
+import com.unitip.mobile.features.job.domain.models.JobV2
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -15,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SingleJobRepository @Inject constructor(
-    private val sessionManager: SessionManager,
+    sessionManager: SessionManager,
     private val singleJobApi: SingleJobApi
 ) {
     private val session = sessionManager.read()
@@ -47,31 +45,33 @@ class SingleJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun get(jobId: String, service: String): Either<Failure, Job> = try {
+    suspend fun get(jobId: String, type: String): Either<Failure, JobV2.Detail> = try {
         val response = singleJobApi.get(
             token = "Bearer ${session.token}",
             jobId = jobId,
-            type = service
+            type = type
         )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
             true -> Either.Right(
-                Job(
+                JobV2.Detail(
                     id = result.id,
                     title = result.title,
-                    note = result.note,
-                    pickupLocation = result.pickupLocation,
                     destination = result.destination,
+                    note = result.note,
                     service = result.service,
-                    customer = JobCustomer(name = "no data"),
-                    applicants = result.applicants.map {
-                        Applicant(
-                            id = it.id,
-                            name = it.name,
-                            price = it.price
+                    pickupLocation = result.pickupLocation,
+                    createdAt = result.createdAt,
+                    updatedAt = result.updatedAt,
+                    customerId = result.customerId,
+                    applications = result.applications.map { application ->
+                        JobV2.Detail.Application(
+                            id = application.id,
+                            freelancerName = application.freelancerName,
+                            price = application.price
                         )
-                    },
+                    }
                 )
             )
 

@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.job.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,7 +42,7 @@ class DetailJobViewModel @Inject constructor(
         _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
         singleJobRepository.get(
             jobId = parameters.jobId,
-            service = parameters.service
+            type = parameters.type.toString()
         ).fold(
             ifLeft = { left ->
                 _uiState.update {
@@ -63,29 +62,19 @@ class DetailJobViewModel @Inject constructor(
         )
     }
 
-    fun approveApplicant(jobId: String, applicantId: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
-            Log.d("detailJobScreen", "on click kepanggil")
-
-            singleJobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
-                ifLeft = { left ->
-                    _uiState.update {
-                        it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
-                    }
-                    Log.d("detailJobScreen", "kiri: ${left.message}")
-
-                },
-                ifRight = {
-                    _uiState.update {
-                        it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
-                    }
-                    Log.d("detailJobScreen", "kanan")
-
+    fun approveApplicant(jobId: String, applicantId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
+        singleJobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
+            ifLeft = { left ->
+                _uiState.update {
+                    it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
                 }
-            )
-        }
-
+            },
+            ifRight = {
+                _uiState.update {
+                    it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
+                }
+            }
+        )
     }
-
 }
