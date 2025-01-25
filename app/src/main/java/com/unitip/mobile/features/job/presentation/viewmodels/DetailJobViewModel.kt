@@ -20,8 +20,7 @@ import javax.inject.Inject
 class DetailJobViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
-    private val singleJobRepository: SingleJobRepository,
-//    private val jobCache: JobCache
+    private val singleJobRepository: SingleJobRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "DetailJobViewModel"
@@ -36,15 +35,6 @@ class DetailJobViewModel @Inject constructor(
     init {
         _uiState.update { it.copy(session = session) }
 
-//        val cachedJob = jobCache.getJob(jobId = parameters.jobId)
-//        if (cachedJob != null)
-//            _uiState.update {
-//                it.copy(
-//                    detail = DetailJobState.Detail.Success,
-//                    job = cachedJob
-//                )
-//            }
-//        else
         if (uiState.value.detail !is DetailJobState.Detail.Success)
             fetchData()
     }
@@ -63,10 +53,6 @@ class DetailJobViewModel @Inject constructor(
                 }
             },
             ifRight = { right ->
-//                jobCache.updateJob(
-//                    jobId = right.id,
-//                    job = right
-//                )
                 _uiState.update {
                     it.copy(
                         detail = DetailJobState.Detail.Success,
