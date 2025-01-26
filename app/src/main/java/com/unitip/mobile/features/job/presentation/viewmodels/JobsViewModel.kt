@@ -48,7 +48,7 @@ class JobsViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         detail = JobsState.Detail.Success,
-                        jobs = right.jobs
+                        jobs = right
                     )
                 }
             }

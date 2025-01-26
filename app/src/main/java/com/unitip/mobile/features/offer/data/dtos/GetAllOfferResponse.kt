@@ -1,14 +1,13 @@
 package com.unitip.mobile.features.offer.data.dtos
 
 import com.google.gson.annotations.SerializedName
-import com.unitip.mobile.features.job.data.dtos.GetAllJobsResponse.PageInfo
 
 data class GetAllOfferResponse(
     val offers: List<Offer>,
     @SerializedName("page_info") val pageInfo: PageInfo
-){
+) {
     data class Offer(
-        val id:  String,
+        val id: String,
         val title: String,
         val description: String,
 
@@ -21,7 +20,7 @@ data class GetAllOfferResponse(
         @SerializedName("offer_status") val offerStatus: String,
         @SerializedName("created_at") val createdAt: String,
         @SerializedName("updated_at") val updatedAt: String,
-    ){
+    ) {
         data class Freelencer(
             val name: String
         )
@@ -32,8 +31,8 @@ data class GetAllOfferResponse(
         val page: Int,
         @SerializedName("total_pages") val totalPages: Int,
         val type: OfferType
-    ){
-        enum class OfferType (val value: String){
+    ) {
+        enum class OfferType(val value: String) {
             ALL("all"),
             SINGLE("single"),
             MULTI("multi");

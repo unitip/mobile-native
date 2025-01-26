@@ -3,7 +3,6 @@ package com.unitip.mobile.features.job.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.data.sources.JobApi
-import com.unitip.mobile.features.job.domain.models.GetAllJobsResult
 import com.unitip.mobile.features.job.domain.models.JobV2
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -18,7 +17,7 @@ class JobRepository @Inject constructor(
 ) {
     private val session = sessionManager.read()
 
-    suspend fun getAll(): Either<Failure, GetAllJobsResult> = try {
+    suspend fun getAll(): Either<Failure, List<JobV2.ListItem>> = try {
         val response = jobApi.getAll(
             token = "Bearer ${session.token}"
         )
@@ -26,29 +25,26 @@ class JobRepository @Inject constructor(
 
         when (response.isSuccessful && result != null) {
             true -> Either.Right(
-                GetAllJobsResult(
-                    jobs = result.jobs.map { job ->
-                        JobV2.ListItem(
-                            type = when (job.type == "single") {
-                                true -> JobConstants.Type.SINGLE
-                                else -> JobConstants.Type.MULTI
-                            },
-                            id = job.id,
-                            title = job.title,
-                            note = job.note,
-                            service = job.service,
-                            pickupLocation = job.pickupLocation,
-                            destination = job.destination,
-                            createdAt = job.createdAt,
-                            updatedAt = job.updatedAt,
-                            totalApplications = 0,
-                            customer = JobV2.ListItem.Customer(
-                                name = job.customer.name
-                            )
+                result.jobs.map { job ->
+                    JobV2.ListItem(
+                        type = when (job.type == "single") {
+                            true -> JobConstants.Type.SINGLE
+                            else -> JobConstants.Type.MULTI
+                        },
+                        id = job.id,
+                        title = job.title,
+                        note = job.note,
+                        service = job.service,
+                        pickupLocation = job.pickupLocation,
+                        destination = job.destination,
+                        createdAt = job.createdAt,
+                        updatedAt = job.updatedAt,
+                        totalApplications = job.totalApplications,
+                        customer = JobV2.ListItem.Customer(
+                            name = job.customer.name
                         )
-                    },
-                    hasNext = result.pageInfo.page < result.pageInfo.totalPages
-                )
+                    )
+                }
             )
 
             false -> Either.Left(response.mapToFailure())
