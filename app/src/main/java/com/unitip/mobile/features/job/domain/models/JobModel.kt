@@ -26,13 +26,11 @@ sealed class JobModel {
         val pickupLocation: String = "",
         val createdAt: String = "",
         val updatedAt: String = "",
-        val customerId: String = "",
-        val applications: List<Application> = emptyList(),
+        val customer: Customer = Customer()
     ) {
-        data class Application(
+        data class Customer(
             val id: String = "",
-            val freelancerName: String = "",
-            val price: Int = 0
+            val name: String = ""
         )
     }
 }

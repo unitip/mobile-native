@@ -48,4 +48,36 @@ class JobRepository @Inject constructor(
         e.printStackTrace()
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+    suspend fun get(jobId: String): Either<Failure, JobModel.Detail> = try {
+        val response = jobApi.get(
+            token = "Bearer ${session.token}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(
+                JobModel.Detail(
+                    id = result.id,
+                    title = result.title,
+                    note = result.note,
+                    service = result.service,
+                    pickupLocation = result.pickupLocation,
+                    destination = result.destination,
+                    createdAt = result.createdAt,
+                    updatedAt = result.updatedAt,
+                    customer = JobModel.Detail.Customer(
+                        id = result.customer.id,
+                        name = result.customer.name
+                    )
+                )
+            )
+
+            false -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
 }

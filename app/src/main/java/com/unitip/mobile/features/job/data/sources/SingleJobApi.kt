@@ -5,7 +5,7 @@ import com.unitip.mobile.features.job.data.dtos.ApplySingleJobResponse
 import com.unitip.mobile.features.job.data.dtos.ApproveApplicantResponse
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobResponse
-import com.unitip.mobile.features.job.data.dtos.GetSingleJobResponse
+import com.unitip.mobile.features.job.data.dtos.GetJobResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,7 +27,7 @@ interface SingleJobApi {
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String,
         @Query("type") type: String
-    ): Response<GetSingleJobResponse>
+    ): Response<GetJobResponse>
 
     @POST("jobs/single/{job_id}/applications")
     suspend fun apply(
