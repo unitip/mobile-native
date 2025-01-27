@@ -1,112 +1,122 @@
 package com.unitip.mobile.features.test
 
-import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.unitip.mobile.R
+import com.composables.icons.lucide.CircleDot
+import com.composables.icons.lucide.Lucide
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TestScreen(viewModel: TestViewModel = hiltViewModel()) {
     val uiState = viewModel.uiState.collectAsState()
-
     val context = LocalContext.current
 
-    var isLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(uiState.value.details) {
-        with(uiState.value.details) {
-            if (this is TestUiDetails.Success)
-                Toast.makeText(context, this.data, Toast.LENGTH_SHORT).show()
-            else if (this is TestUiDetails.Failure)
-                Toast.makeText(context, this.message, Toast.LENGTH_SHORT).show()
-        }
+    var markerPosition by remember {
+        mutableStateOf(GeoPoint(-7.5634, 110.8559))
     }
+
+//    val mapEventsReceiver = object : MapEventsReceiver {
+//        override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+//            if (p != null) {
+//                Toast.makeText(context, "${p.latitude},${p.longitude}", Toast.LENGTH_SHORT).show()
+//                markerPosition = p
+//            }
+//            return true
+//        }
+//
+//        override fun longPressHelper(p: GeoPoint?): Boolean {
+//            return true
+//        }
+//    }
 
     Scaffold {
         Column(modifier = Modifier.padding(it)) {
-            Switch(
-                checked = uiState.value.isLogin,
-                onCheckedChange = { viewModel.switchAuthMode() },
-            )
+            Text(text = "${markerPosition.latitude},${markerPosition.longitude}")
+            Spacer(modifier = Modifier.height(56.dp))
+            Box(modifier = Modifier.fillMaxSize()) {
+                AndroidView(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    factory = { context ->
+                        val mapView = MapView(context).apply {
+                            setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+                            setMultiTouchControls(true)
 
-            Text("list count: ${uiState.value.sharedList.size}")
+                            controller.setCenter(GeoPoint(-7.5634, 110.8559))
+                            controller.setZoom(20.0)
+                            Log.d("MapView", "TestScreen: ${this.mapCenter}")
 
-            if (uiState.value.details is TestUiDetails.Loading)
-                CircularProgressIndicator()
+                            // Add marker
 
-            Row {
-                Button(onClick = { viewModel.login() }) {
-                    Text("Login")
-                }
-                Button(onClick = { viewModel.fetchData() }) {
-                    Text("Fetch data")
-                }
-            }
+                        }
+//                    mapView.overlays.add(MapEventsOverlay(mapEventsReceiver))
+                        mapView.addMapListener(object : MapListener {
+                            override fun onScroll(event: ScrollEvent?): Boolean {
+                                markerPosition = GeoPoint(
+                                    mapView.mapCenter.latitude,
+                                    mapView.mapCenter.longitude
+                                )
+                                return true
+                            }
 
-            Button(onClick = { isLoading = true }) {
-                Text(text = "Show loading")
-            }
-        }
-
-        // loading placeholder
-        Dialog(onDismissRequest = {}) {
-            Card {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth(),
-                    strokeCap = StrokeCap.Round
+                            override fun onZoom(event: ZoomEvent?): Boolean {
+                                markerPosition = GeoPoint(
+                                    mapView.mapCenter.latitude,
+                                    mapView.mapCenter.longitude
+                                )
+                                return true
+                            }
+                        })
+                        mapView
+                    },
+//                update = { mapView ->
+//                    val marker = Marker(mapView).apply {
+//                        position = mapView.mapCenter as GeoPoint
+//                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                        title = "My Location"
+//                        snippet = "This is my location"
+//                    }
+//
+//                    mapView.overlays.clear()
+////                    mapView.overlays.add(MapEventsOverlay(mapEventsReceiver))
+//                    mapView.overlays.add(marker)
+//                }
                 )
-                Column(
-                    modifier = Modifier.padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.undraw_login),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(fraction = .56f)
-                    )
 
-                    Text(
-                        text = "Mohon tunggu sebentar",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                    Text(
-                        text = "Kami sedang memproses permintaan Anda untuk masuk ke akun Unitip",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                // center marker
+                Icon(
+                    Lucide.CircleDot,
+                    contentDescription = null,
+                    tint = Color.Red,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
