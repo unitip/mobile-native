@@ -4,7 +4,7 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplySingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.sources.SingleJobApi
-import com.unitip.mobile.features.job.domain.models.JobV2
+import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -45,7 +45,7 @@ class SingleJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun get(jobId: String, type: String): Either<Failure, JobV2.Detail> = try {
+    suspend fun get(jobId: String, type: String): Either<Failure, JobModel.Detail> = try {
         val response = singleJobApi.get(
             token = "Bearer ${session.token}",
             jobId = jobId,
@@ -55,7 +55,7 @@ class SingleJobRepository @Inject constructor(
 
         when (response.isSuccessful && result != null) {
             true -> Either.Right(
-                JobV2.Detail(
+                JobModel.Detail(
                     id = result.id,
                     title = result.title,
                     destination = result.destination,
@@ -66,7 +66,7 @@ class SingleJobRepository @Inject constructor(
                     updatedAt = result.updatedAt,
                     customerId = result.customerId,
                     applications = result.applications.map { application ->
-                        JobV2.Detail.Application(
+                        JobModel.Detail.Application(
                             id = application.id,
                             freelancerName = application.freelancerName,
                             price = application.price
