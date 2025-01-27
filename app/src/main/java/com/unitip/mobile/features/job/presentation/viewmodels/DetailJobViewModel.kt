@@ -42,7 +42,7 @@ class DetailJobViewModel @Inject constructor(
         _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
         singleJobRepository.get(
             jobId = parameters.jobId,
-            type = parameters.jobType.toString()
+            type = ""
         ).fold(
             ifLeft = { left ->
                 _uiState.update {
@@ -55,7 +55,7 @@ class DetailJobViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         detail = DetailJobState.Detail.Success,
-                        job = right
+                        jobModel = right
                     )
                 }
             }

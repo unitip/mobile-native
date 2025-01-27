@@ -54,7 +54,6 @@ import com.unitip.mobile.shared.presentation.components.CustomIconButton
 @Composable
 fun DetailJobScreen(
     jobId: String,
-    jobType: JobConstants.Type,
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
@@ -120,11 +119,11 @@ fun DetailJobScreen(
                     item {
                         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
                             Text(
-                                text = uiState.job.title,
+                                text = uiState.jobModel.title,
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Text(
-                                text = uiState.job.note,
+                                text = uiState.jobModel.note,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
@@ -138,7 +137,7 @@ fun DetailJobScreen(
                                 "icon" to Lucide.Bike,
                                 "title" to "Jenis Pekerjaan",
                                 "value" to JobConstants.services
-                                    .find { item -> item.value == uiState.job.service }
+                                    .find { item -> item.value == uiState.jobModel.service }
                                     .let { service ->
                                         when (service != null) {
                                             true -> service.title
@@ -149,12 +148,12 @@ fun DetailJobScreen(
                             mapOf(
                                 "icon" to Lucide.MapPinned,
                                 "title" to "Titik Jemput",
-                                "value" to uiState.job.pickupLocation
+                                "value" to uiState.jobModel.pickupLocation
                             ),
                             mapOf(
                                 "icon" to Lucide.MapPin,
                                 "title" to "Destinasi",
-                                "value" to uiState.job.destination
+                                "value" to uiState.jobModel.destination
                             ),
                         )
                     ) { index, item ->
@@ -235,7 +234,7 @@ fun DetailJobScreen(
                         }
                     }
 
-                    itemsIndexed(uiState.job.applications) { index, applicant ->
+                    itemsIndexed(uiState.jobModel.applications) { index, applicant ->
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -305,12 +304,7 @@ fun DetailJobScreen(
                 if (uiState.session.isDriver()) {
                     Button(
                         onClick = {
-                            navController.navigate(
-                                JobRoutes.Apply(
-                                    jobId = jobId,
-                                    jobType = jobType
-                                )
-                            )
+                            navController.navigate(JobRoutes.Apply(jobId = jobId))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
