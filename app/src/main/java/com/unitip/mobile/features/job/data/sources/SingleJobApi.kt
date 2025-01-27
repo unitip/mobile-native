@@ -15,6 +15,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+@Deprecated("Gunakan JobApi")
 interface SingleJobApi {
     @POST("jobs/single")
     suspend fun create(

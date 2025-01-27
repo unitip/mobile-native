@@ -11,6 +11,7 @@ import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Deprecated("This class is deprecated, use JobRepository instead")
 @Singleton
 class SingleJobRepository @Inject constructor(
     sessionManager: SessionManager,
@@ -46,37 +47,38 @@ class SingleJobRepository @Inject constructor(
     }
 
     suspend fun get(jobId: String, type: String): Either<Failure, JobModel.Detail> = try {
-        val response = singleJobApi.get(
-            token = "Bearer ${session.token}",
-            jobId = jobId,
-            type = type
-        )
-        val result = response.body()
-
-        when (response.isSuccessful && result != null) {
-            true -> Either.Right(
-                JobModel.Detail(
-                    id = result.id,
-                    title = result.title,
-                    destination = result.destination,
-                    note = result.note,
-                    service = result.service,
-                    pickupLocation = result.pickupLocation,
-                    createdAt = result.createdAt,
-                    updatedAt = result.updatedAt,
-                    customerId = result.customerId,
-                    applications = result.applications.map { application ->
-                        JobModel.Detail.Application(
-                            id = application.id,
-                            freelancerName = application.freelancerName,
-                            price = application.price
-                        )
-                    }
-                )
-            )
-
-            false -> Either.Left(response.mapToFailure())
-        }
+//        val response = singleJobApi.get(
+//            token = "Bearer ${session.token}",
+//            jobId = jobId,
+//            type = type
+//        )
+//        val result = response.body()
+//
+//        when (response.isSuccessful && result != null) {
+//            true -> Either.Right(
+//                JobModel.Detail(
+//                    id = result.id,
+//                    title = result.title,
+//                    destination = result.destination,
+//                    note = result.note,
+//                    service = result.service,
+//                    pickupLocation = result.pickupLocation,
+//                    createdAt = result.createdAt,
+//                    updatedAt = result.updatedAt,
+//                    customerId = result.customerId,
+//                    applications = result.applications.map { application ->
+//                        JobModel.Detail.Application(
+//                            id = application.id,
+//                            freelancerName = application.freelancerName,
+//                            price = application.price
+//                        )
+//                    }
+//                )
+//            )
+//
+//            false -> Either.Left(response.mapToFailure())
+//        }
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     } catch (e: Exception) {
         e.printStackTrace()
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))

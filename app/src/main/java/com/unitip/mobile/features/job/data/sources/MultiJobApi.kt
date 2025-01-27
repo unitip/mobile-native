@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
+@Deprecated("Gunakan JobApi")
 interface MultiJobApi {
     @POST("jobs/multi")
     suspend fun create(

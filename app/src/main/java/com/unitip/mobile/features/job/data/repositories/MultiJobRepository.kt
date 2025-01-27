@@ -9,6 +9,7 @@ import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Deprecated("This class is deprecated, use JobRepository instead")
 @Singleton
 class MultiJobRepository @Inject constructor(
     private val sessionManager: SessionManager,
