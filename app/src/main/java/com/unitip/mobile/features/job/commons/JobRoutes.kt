@@ -9,13 +9,11 @@ sealed class JobRoutes {
 
     @Serializable
     data class Detail(
-        val jobId: String,
-        val jobType: JobConstants.Type
+        val jobId: String
     )
 
     @Serializable
     data class Apply(
-        val jobId: String,
-        val jobType: JobConstants.Type
+        val jobId: String
     )
 }

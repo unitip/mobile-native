@@ -1,9 +1,8 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.data.sources.JobApi
-import com.unitip.mobile.features.job.domain.models.JobV2
+import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -17,7 +16,7 @@ class JobRepository @Inject constructor(
 ) {
     private val session = sessionManager.read()
 
-    suspend fun getAll(): Either<Failure, List<JobV2.ListItem>> = try {
+    suspend fun getAll(): Either<Failure, List<JobModel.ListItem>> = try {
         val response = jobApi.getAll(
             token = "Bearer ${session.token}"
         )
@@ -26,11 +25,7 @@ class JobRepository @Inject constructor(
         when (response.isSuccessful && result != null) {
             true -> Either.Right(
                 result.jobs.map { job ->
-                    JobV2.ListItem(
-                        type = when (job.type == "single") {
-                            true -> JobConstants.Type.SINGLE
-                            else -> JobConstants.Type.MULTI
-                        },
+                    JobModel.ListItem(
                         id = job.id,
                         title = job.title,
                         note = job.note,
@@ -39,8 +34,7 @@ class JobRepository @Inject constructor(
                         destination = job.destination,
                         createdAt = job.createdAt,
                         updatedAt = job.updatedAt,
-                        totalApplications = job.totalApplications,
-                        customer = JobV2.ListItem.Customer(
+                        customer = JobModel.ListItem.Customer(
                             name = job.customer.name
                         )
                     )

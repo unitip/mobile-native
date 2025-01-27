@@ -1,11 +1,8 @@
 package com.unitip.mobile.features.job.domain.models
 
-import com.unitip.mobile.features.job.commons.JobConstants
-
-sealed class JobV2 {
+sealed class JobModel {
     data class ListItem(
         val id: String,
-        val type: JobConstants.Type,
         val title: String,
         val note: String,
         val service: String,
@@ -13,7 +10,6 @@ sealed class JobV2 {
         val destination: String,
         val createdAt: String,
         val updatedAt: String,
-        val totalApplications: Int,
         val customer: Customer
     ) {
         data class Customer(

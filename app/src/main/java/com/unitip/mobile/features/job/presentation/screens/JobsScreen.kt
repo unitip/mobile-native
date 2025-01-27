@@ -163,12 +163,7 @@ fun JobsScreen(
                                 top = if (index == 0) 0.dp else 8.dp
                             ),
                             onClick = {
-                                navController.navigate(
-                                    JobRoutes.Detail(
-                                        jobId = job.id,
-                                        jobType = job.type
-                                    )
-                                )
+                                navController.navigate(JobRoutes.Detail(jobId = job.id))
                             }
                         ) {
                             Column {
@@ -196,7 +191,7 @@ fun JobsScreen(
                                         )
                                     }
                                     Text(
-                                        text = job.customer.name + " (debug: ${job.type.toString()})",
+                                        text = job.customer.name,
                                         style = MaterialTheme.typography.labelMedium,
                                         modifier = Modifier.padding(start = 8.dp)
                                     )
@@ -263,6 +258,7 @@ fun JobsScreen(
                                                     start = 16.dp,
                                                     end = 16.dp,
                                                     top = if (index == 0) 16.dp else 4.dp,
+                                                    bottom = if (index == 2) 16.dp else 0.dp
                                                 )
                                             ) {
                                                 Text(
@@ -277,37 +273,6 @@ fun JobsScreen(
                                                     modifier = Modifier.weight(8f)
                                                 )
                                             }
-                                        }
-
-                                        Row(
-                                            modifier = Modifier.padding(
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                top = 8.dp,
-                                                bottom = 16.dp
-                                            ),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .size(20.dp)
-                                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                                            ) {
-                                                Icon(
-                                                    Lucide.User, contentDescription = null,
-                                                    modifier = Modifier
-                                                        .size(12.dp)
-                                                        .align(Alignment.Center)
-                                                )
-                                            }
-                                            Text(
-                                                text = "${job.totalApplications} orang melamar pekerjaan ini",
-                                                style = MaterialTheme.typography.labelMedium,
-                                                modifier = Modifier
-                                                    .padding(start = 8.dp)
-                                                    .weight(1f)
-                                            )
                                         }
                                     }
                                 }

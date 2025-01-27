@@ -7,7 +7,6 @@ data class GetAllJobsResponse(
 ) {
     data class Job(
         val id: String,
-        val type: String,
         val title: String,
         val destination: String,
         val note: String,
@@ -15,7 +14,6 @@ data class GetAllJobsResponse(
         @SerializedName("pickup_location") val pickupLocation: String,
         @SerializedName("created_at") val createdAt: String,
         @SerializedName("updated_at") val updatedAt: String,
-        @SerializedName("total_applications") val totalApplications: Int,
         val customer: Customer
     ) {
         data class Customer(
