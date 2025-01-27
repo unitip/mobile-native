@@ -12,6 +12,7 @@ import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
+import com.unitip.mobile.features.location.commons.locationNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
 
@@ -24,6 +25,8 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
+//            true -> LocationRoutes.PickLocation
+//            true -> JobRoutes.Create
 //            true -> ChatRoutes.Conversation(
 //                roomId = "b48fc434-6b59-4dfb-9b22-8ba4d27068ac",
 //                otherUserId = "rec_cscfpbjss7tdpjmkt6m0",
@@ -43,6 +46,7 @@ fun ApplicationNavigationGraph(
         offerNavigation()
         chatNavigation()
         exampleNavigation()
+        locationNavigation()
 
         // test
         composable<Routes.Test> {
