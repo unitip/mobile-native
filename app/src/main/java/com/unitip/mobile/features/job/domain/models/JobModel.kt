@@ -7,7 +7,7 @@ sealed class JobModel {
         val note: String,
         val service: String,
         val pickupLocation: String,
-        val destination: String,
+        val destinationLocation: String,
         val createdAt: String,
         val updatedAt: String,
         val customer: Customer

@@ -249,7 +249,7 @@ fun JobsScreen(
                                             ),
                                             mapOf(
                                                 "title" to "Destinasi",
-                                                "value" to job.destination
+                                                "value" to job.destinationLocation
                                             ),
                                         ).mapIndexed { index, item ->
                                             Row(

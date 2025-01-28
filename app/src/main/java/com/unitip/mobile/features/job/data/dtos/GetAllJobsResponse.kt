@@ -8,7 +8,7 @@ data class GetAllJobsResponse(
     data class Job(
         val id: String,
         val title: String,
-        val destination: String,
+        @SerializedName("destination_location") val destinationLocation: String,
         val note: String,
         val service: String,
         @SerializedName("pickup_location") val pickupLocation: String,

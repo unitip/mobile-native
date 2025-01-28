@@ -67,7 +67,7 @@ class JobRepository @Inject constructor(
                         note = job.note,
                         service = job.service,
                         pickupLocation = job.pickupLocation,
-                        destination = job.destination,
+                        destinationLocation = job.destinationLocation,
                         createdAt = job.createdAt,
                         updatedAt = job.updatedAt,
                         customer = JobModel.ListItem.Customer(
