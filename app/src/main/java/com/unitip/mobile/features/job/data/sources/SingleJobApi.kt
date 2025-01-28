@@ -3,8 +3,8 @@ package com.unitip.mobile.features.job.data.sources
 import com.unitip.mobile.features.job.data.dtos.ApplySingleJobPayload
 import com.unitip.mobile.features.job.data.dtos.ApplySingleJobResponse
 import com.unitip.mobile.features.job.data.dtos.ApproveApplicantResponse
-import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
-import com.unitip.mobile.features.job.data.dtos.CreateSingleJobResponse
+import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
+import com.unitip.mobile.features.job.data.dtos.CreateJobResponse
 import com.unitip.mobile.features.job.data.dtos.GetJobResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,8 +20,8 @@ interface SingleJobApi {
     @POST("jobs/single")
     suspend fun create(
         @Header("Authorization") token: String,
-        @Body payload: CreateSingleJobPayload
-    ): Response<CreateSingleJobResponse>
+        @Body payload: CreateJobPayload
+    ): Response<CreateJobResponse>
 
     @GET("jobs/single/{job_id}")
     suspend fun get(

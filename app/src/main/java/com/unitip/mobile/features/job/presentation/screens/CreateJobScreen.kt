@@ -86,7 +86,6 @@ fun CreateJobScreen(
     var destinationLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
     var isSelectServiceVisible by rememberSaveable { mutableStateOf(false) }
     var selectedService by rememberSaveable { mutableStateOf("") }
-    var isJoinAllowed by rememberSaveable { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
     navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
@@ -398,24 +397,35 @@ fun CreateJobScreen(
                     Button(
                         onClick = {
                             if (selectedService.isNotBlank())
-                                if (!isJoinAllowed) {
-                                    viewModel.createSingleJob(
-                                        title = title,
-                                        note = note,
-                                        pickupLocation = pickupLocation,
-                                        destination = destinationLocation,
-                                        service = selectedService
-
-                                    )
-                                } else {
-                                    viewModel.createMultiJob(
-                                        title = title,
-                                        note = note,
-                                        pickupLocation = pickupLocation,
-                                        service = selectedService
-
-                                    )
-                                }
+                                viewModel.create(
+                                    title = title,
+                                    destinationLocation = destinationLocation,
+                                    destinationLatitude = destinationLocationGeoPoint?.latitude,
+                                    destinationLongitude = destinationLocationGeoPoint?.longitude,
+                                    note = note,
+                                    service = selectedService,
+                                    pickupLocation = pickupLocation,
+                                    pickupLatitude = pickupLocationGeoPoint?.latitude,
+                                    pickupLongitude = pickupLocationGeoPoint?.longitude
+                                )
+//                                if (!isJoinAllowed) {
+//                                    viewModel.createSingleJob(
+//                                        title = title,
+//                                        note = note,
+//                                        pickupLocation = pickupLocation,
+//                                        destination = destinationLocation,
+//                                        service = selectedService
+//
+//                                    )
+//                                } else {
+//                                    viewModel.createMultiJob(
+//                                        title = title,
+//                                        note = note,
+//                                        pickupLocation = pickupLocation,
+//                                        service = selectedService
+//
+//                                    )
+//                                }
 
                         },
                         modifier = Modifier

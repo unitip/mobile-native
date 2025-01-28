@@ -2,7 +2,6 @@ package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplySingleJobPayload
-import com.unitip.mobile.features.job.data.dtos.CreateSingleJobPayload
 import com.unitip.mobile.features.job.data.sources.SingleJobApi
 import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
@@ -26,22 +25,23 @@ class SingleJobRepository @Inject constructor(
         destination: String,
         service: String,
     ): Either<Failure, Unit> = try {
-        val response = singleJobApi.create(
-            token = "Bearer ${session.token}",
-            payload = CreateSingleJobPayload(
-                title = title,
-                note = note,
-                pickupLocation = pickupLocation,
-                destination = destination,
-                service = service,
-            )
-        )
-        val result = response.body()
-
-        when (response.isSuccessful && result != null) {
-            true -> Either.Right(Unit)
-            false -> Either.Left(response.mapToFailure())
-        }
+//        val response = singleJobApi.create(
+//            token = "Bearer ${session.token}",
+//            payload = CreateJobPayload(
+//                title = title,
+//                note = note,
+//                pickupLocation = pickupLocation,
+//                destination = destination,
+//                service = service,
+//            )
+//        )
+//        val result = response.body()
+//
+//        when (response.isSuccessful && result != null) {
+//            true -> Either.Right(Unit)
+//            false -> Either.Left(response.mapToFailure())
+//        }
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }

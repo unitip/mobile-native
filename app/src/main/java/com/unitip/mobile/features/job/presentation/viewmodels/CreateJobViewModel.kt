@@ -2,6 +2,7 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unitip.mobile.features.job.data.repositories.JobRepository
 import com.unitip.mobile.features.job.data.repositories.MultiJobRepository
 import com.unitip.mobile.features.job.data.repositories.SingleJobRepository
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class CreateJobViewModel @Inject constructor(
     private val singleJobRepository: SingleJobRepository,
     private val multiJobRepository: MultiJobRepository,
+    private val jobRepository: JobRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreateJobState())
     val uiState get() = _uiState
@@ -23,6 +25,46 @@ class CreateJobViewModel @Inject constructor(
         _uiState.value = with(uiState.value) {
             copy(detail = CreateJobState.Detail.Initial)
         }
+    }
+
+    fun create(
+        title: String,
+        destinationLocation: String,
+        destinationLatitude: Double?,
+        destinationLongitude: Double?,
+        note: String,
+        service: String,
+        pickupLocation: String,
+        pickupLatitude: Double?,
+        pickupLongitude: Double?
+    ) = viewModelScope.launch {
+        _uiState.update { it.copy(detail = CreateJobState.Detail.Loading) }
+        jobRepository.create(
+            title = title,
+            destinationLocation = destinationLocation,
+            destinationLatitude = destinationLatitude,
+            destinationLongitude = destinationLongitude,
+            note = note,
+            service = service,
+            pickupLocation = pickupLocation,
+            pickupLatitude = pickupLatitude,
+            pickupLongitude = pickupLongitude
+        ).fold(
+            ifLeft = { left ->
+                _uiState.update {
+                    it.copy(
+                        detail = CreateJobState.Detail.Failure(
+                            message = left.message
+                        )
+                    )
+                }
+            },
+            ifRight = {
+                _uiState.update {
+                    it.copy(detail = CreateJobState.Detail.Success)
+                }
+            }
+        )
     }
 
     fun createSingleJob(
