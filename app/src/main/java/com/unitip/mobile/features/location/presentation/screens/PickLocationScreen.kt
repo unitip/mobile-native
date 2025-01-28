@@ -45,7 +45,9 @@ val unsGeoPoint = GeoPoint(-7.559843, 110.856658)
 
 @Composable
 fun PickLocationScreen(
-    resultKey: String
+    resultKey: String,
+    initialLatitude: Double? = null,
+    initialLongitude: Double? = null,
 ) {
     val navController = LocalNavController.current
 
@@ -95,8 +97,13 @@ fun PickLocationScreen(
                             setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
                             setMultiTouchControls(true)
 
-                            controller.setCenter(unsGeoPoint)
-                            controller.setZoom(14.0)
+                            controller.setCenter(
+                                when (initialLatitude != null && initialLongitude != null) {
+                                    true -> GeoPoint(initialLatitude, initialLongitude)
+                                    else -> unsGeoPoint
+                                }
+                            )
+                            controller.setZoom(18.5)
                         }
                         mapView.addMapListener(object : MapListener {
                             override fun onScroll(event: ScrollEvent?): Boolean {

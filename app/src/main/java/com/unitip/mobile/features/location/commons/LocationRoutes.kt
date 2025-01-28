@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 sealed class LocationRoutes {
     @Serializable
     data class PickLocation(
-        val resultKey: String
+        val resultKey: String,
+        val initialLatitude: Double? = null,
+        val initialLongitude: Double? = null
     )
 }
