@@ -31,6 +31,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -43,7 +44,11 @@ import org.osmdroid.views.overlay.Polygon
 val unsGeoPoint = GeoPoint(-7.559843, 110.856658)
 
 @Composable
-fun PickLocationScreen() {
+fun PickLocationScreen(
+    resultKey: String
+) {
+    val navController = LocalNavController.current
+
     var currentGeoPoint by remember { mutableStateOf(GeoPoint(0.0, 0.0)) }
 
     Scaffold {
@@ -68,7 +73,10 @@ fun PickLocationScreen() {
             ) {
                 CustomIconButton(
                     icon = Lucide.ChevronLeft,
-                    onClick = {}
+                    onClick = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(resultKey, null)
+                        navController.popBackStack()
+                    }
                 )
                 Text(text = "Pilih Lokasi", style = MaterialTheme.typography.titleLarge)
             }
@@ -146,7 +154,14 @@ fun PickLocationScreen() {
 
             // button confirm
             Button(
-                onClick = {}, modifier = Modifier
+                onClick = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        resultKey,
+                        currentGeoPoint
+                    )
+                    navController.popBackStack()
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
