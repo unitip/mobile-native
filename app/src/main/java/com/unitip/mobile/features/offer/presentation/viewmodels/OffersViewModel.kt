@@ -41,7 +41,7 @@ class OffersViewModel @Inject constructor(
 
     private fun fetchOffer() = viewModelScope.launch {
         _uiState.update { it.copy(detail = OfferState.Detail.Loading) }
-        offerRepository.getAll().fold(
+        offerRepository.getAllOffers().fold(
             ifLeft = { left->
                 _uiState.update {
                     it.copy(
@@ -59,5 +59,4 @@ class OffersViewModel @Inject constructor(
             }
         )
     }
-
 }
