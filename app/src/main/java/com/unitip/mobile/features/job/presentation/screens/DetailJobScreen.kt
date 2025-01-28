@@ -50,6 +50,8 @@ import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import com.unitip.mobile.shared.presentation.components.StaticMapPreview
+import org.osmdroid.util.GeoPoint
 
 @Composable
 fun DetailJobScreen(
@@ -153,7 +155,7 @@ fun DetailJobScreen(
                             mapOf(
                                 "icon" to Lucide.MapPin,
                                 "title" to "Destinasi",
-                                "value" to uiState.jobModel.destination
+                                "value" to uiState.jobModel.destinationLocation
                             ),
                         )
                     ) { index, item ->
@@ -212,89 +214,51 @@ fun DetailJobScreen(
                         }
                     }
 
-                    // daftar applicants
-//                    item {
-//                        HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
-//                        Column(
-//                            modifier = Modifier.padding(
-//                                start = 16.dp,
-//                                end = 16.dp,
-//                                top = 16.dp
-//                            )
-//                        ) {
-//                            Text(
-//                                text = "Daftar Pelamar",
-//                                style = MaterialTheme.typography.titleMedium
-//                            )
-//                            Text(
-//                                text = "Berikut adalah daftar pelamar yang telah mengajukan lamaran untuk pekerjaan ini",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                modifier = Modifier.padding(top = 8.dp)
-//                            )
-//                        }
-//                    }
+                    if (uiState.jobModel.pickupLatitude != null && uiState.jobModel.pickupLongitude != null)
+                        item {
+                            Column(
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 16.dp
+                                )
+                            ) {
+                                Text(
+                                    text = "Lokasi Jemput",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                StaticMapPreview(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    geoPoint = GeoPoint(
+                                        uiState.jobModel.pickupLatitude!!,
+                                        uiState.jobModel.pickupLongitude!!
+                                    )
+                                )
+                            }
+                        }
 
-//                    itemsIndexed(uiState.jobModel.applications) { index, applicant ->
-//                        Box(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(
-//                                    start = 16.dp,
-//                                    end = 16.dp,
-//                                    top = if (index == 0) 16.dp else 8.dp
-//                                )
-//                                .clip(RoundedCornerShape(16.dp))
-//                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .08f))
-//                        ) {
-//                            Column(modifier = Modifier.padding(16.dp)) {
-//                                Row(
-//                                    verticalAlignment = Alignment.CenterVertically,
-//                                    horizontalArrangement = Arrangement.SpaceBetween,
-//                                    modifier = Modifier.fillMaxWidth()
-//                                ) {
-//                                    Text(
-//                                        text = applicant.freelancerName,
-//                                        style = MaterialTheme.typography.titleSmall,
-//                                        modifier = Modifier.weight(1f)
-//                                    )
-//                                    Text(
-//                                        text = "Rp ${applicant.price}",
-//                                        style = MaterialTheme.typography.labelSmall
-//                                    )
-//
-//                                }
-//                                Row(
-//                                    verticalAlignment = Alignment.CenterVertically,
-//                                    horizontalArrangement = Arrangement.SpaceBetween,
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(16.dp)
-//                                ) {
-//
-//                                    Button(
-//                                        onClick = {
-//                                            viewModel.approveApplicant(
-//                                                jobId = jobId,
-//                                                applicantId = applicant.id
-//                                            )
-//                                        },
-//                                        modifier = Modifier
-//                                            .weight(1f)
-//                                            .padding(start = 8.dp)
-//                                    ) {
-//                                        Text(text = "Terima")
-//                                    }
-//                                }
-//                                if (false) {
-//                                    Spacer(modifier = Modifier.height(4.dp))
-//                                    Text(
-//                                        text = "Ayo kak, free open BO! Nanti klo ini catatean e panhjang gimana dong, kan bakal nabrak badge e",
-//                                        style = MaterialTheme.typography.bodySmall
-//                                    )
-//                                }
-//                            }
-//                        }
-//                    }
+                    if (uiState.jobModel.destinationLatitude != null && uiState.jobModel.destinationLongitude != null)
+                        item {
+                            Column(
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 16.dp
+                                )
+                            ) {
+                                Text(
+                                    text = "Lokasi Pengantaran",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                StaticMapPreview(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    geoPoint = GeoPoint(
+                                        uiState.jobModel.destinationLatitude!!,
+                                        uiState.jobModel.destinationLongitude!!
+                                    )
+                                )
+                            }
+                        }
 
                     item {
                         Spacer(modifier = Modifier.height(16.dp))

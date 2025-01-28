@@ -99,8 +99,12 @@ class JobRepository @Inject constructor(
                     title = result.title,
                     note = result.note,
                     service = result.service,
+                    destinationLocation = result.destinationLocation,
+                    destinationLatitude = result.destinationLatitude,
+                    destinationLongitude = result.destinationLongitude,
                     pickupLocation = result.pickupLocation,
-                    destination = result.destination,
+                    pickupLatitude = result.pickupLatitude,
+                    pickupLongitude = result.pickupLongitude,
                     createdAt = result.createdAt,
                     updatedAt = result.updatedAt,
                     customer = JobModel.Detail.Customer(

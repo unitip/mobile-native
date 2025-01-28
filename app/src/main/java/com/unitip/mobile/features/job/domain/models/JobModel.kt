@@ -20,10 +20,14 @@ sealed class JobModel {
     data class Detail(
         val id: String = "",
         val title: String = "",
-        val destination: String = "",
+        val destinationLocation: String = "",
+        val destinationLatitude: Double? = null,
+        val destinationLongitude: Double? = null,
         val note: String = "",
         val service: String = "",
         val pickupLocation: String = "",
+        val pickupLatitude: Double? = null,
+        val pickupLongitude: Double? = null,
         val createdAt: String = "",
         val updatedAt: String = "",
         val customer: Customer = Customer()
