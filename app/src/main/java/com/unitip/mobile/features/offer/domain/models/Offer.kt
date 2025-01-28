@@ -1,9 +1,5 @@
 package com.unitip.mobile.features.offer.domain.models
 
-import com.google.gson.annotations.SerializedName
-import com.unitip.mobile.features.job.domain.models.Applicant
-import com.unitip.mobile.features.job.domain.models.JobCustomer
-
 data class Offer(
     val id: String = "",
     val title: String = "",

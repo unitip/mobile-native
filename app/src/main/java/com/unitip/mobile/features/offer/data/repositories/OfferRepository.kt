@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.offer.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.offer.commons.PageInfo
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetAllOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.GetMultiOfferResponse
