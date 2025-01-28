@@ -1,5 +1,6 @@
-package com.unitip.mobile.features.location.presentation.components
+package com.unitip.mobile.shared.presentation.hooks
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,22 +18,30 @@ import org.osmdroid.views.MapView
 
 private val unsGeoPoint = GeoPoint(-7.559843, 110.856658)
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun rememberMapView(
     context: Context,
     initialGeoPoint: GeoPoint? = null,
     initialZoom: Double = 18.5,
+    isStatic: Boolean = false,
     onChangeGeoPoint: (geoPoint: GeoPoint) -> Unit = {}
 ): MapView {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val mapView = remember {
         MapView(context).apply {
             setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-            setMultiTouchControls(true)
+            setMultiTouchControls(!isStatic)
             controller.setCenter(initialGeoPoint ?: unsGeoPoint)
             controller.setZoom(initialZoom)
 
             zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+
+            if (isStatic) {
+                isClickable = false
+                isFocusable = false
+                setOnTouchListener { _, _ -> true }
+            }
 
             addMapListener(object : MapListener {
                 override fun onScroll(event: ScrollEvent?): Boolean {

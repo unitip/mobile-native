@@ -38,11 +38,11 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.ZoomIn
 import com.composables.icons.lucide.ZoomOut
-import com.unitip.mobile.features.location.presentation.components.rememberMapView
 import com.unitip.mobile.features.location.presentation.states.PickLocationState
 import com.unitip.mobile.features.location.presentation.viewmodels.PickLocationViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
+import com.unitip.mobile.shared.presentation.hooks.rememberMapView
 import org.osmdroid.util.GeoPoint
 
 val unsGeoPoint = GeoPoint(-7.559843, 110.856658)

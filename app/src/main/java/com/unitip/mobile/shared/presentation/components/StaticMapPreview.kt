@@ -13,22 +13,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import com.unitip.mobile.shared.presentation.hooks.rememberMapView
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
-import org.osmdroid.views.MapView
 
 @SuppressLint("ClickableViewAccessibility")
 @Composable
-fun SimpleMapPreview(
+fun StaticMapPreview(
     modifier: Modifier = Modifier,
     geoPoint: GeoPoint,
     onClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val mapView = rememberMapView(
+        context = context,
+        initialZoom = 20.0,
+        isStatic = true,
+        initialGeoPoint = geoPoint
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -37,18 +45,18 @@ fun SimpleMapPreview(
     ) {
         AndroidView(
             factory = { context ->
-                val mapView = MapView(context).apply {
-                    setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-
-                    zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-                    controller.setZoom(20.0)
-                    controller.setCenter(geoPoint)
-
-                    setMultiTouchControls(false)
-                    isClickable = false
-                    isFocusable = false
-                    setOnTouchListener { _, _ -> true }
-                }
+//                val mapView = MapView(context).apply {
+//                    setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+//
+//                    zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+//                    controller.setZoom(20.0)
+//                    controller.setCenter(geoPoint)
+//
+//                    setMultiTouchControls(false)
+//                    isClickable = false
+//                    isFocusable = false
+//                    setOnTouchListener { _, _ -> true }
+//                }
                 mapView
             }
         )
