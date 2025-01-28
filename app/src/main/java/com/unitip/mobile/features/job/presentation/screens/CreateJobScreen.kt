@@ -65,6 +65,7 @@ import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
+import com.unitip.mobile.shared.presentation.components.SimpleMapPreview
 import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -89,7 +90,8 @@ fun CreateJobScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
-        pickupLocationGeoPoint = it
+        if (it != null)
+            pickupLocationGeoPoint = it
     }
 
     LaunchedEffect(uiState.detail) {
@@ -310,20 +312,28 @@ fun CreateJobScreen(
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
-                        Text(
-                            text = when (pickupLocationGeoPoint) {
-                                null -> "Lokasi penjemputan belum dipilih"
-                                else -> "Lokasi: ${pickupLocationGeoPoint!!.latitude},${pickupLocationGeoPoint!!.longitude}"
-                            }
-                        )
-                        Button(onClick = {
-                            navController.navigate(
-                                LocationRoutes.PickLocation(
-                                    resultKey = "pickupLocationGeoPoint"
+                        when (pickupLocationGeoPoint) {
+                            null -> Button(onClick = {
+                                navController.navigate(
+                                    LocationRoutes.PickLocation(
+                                        resultKey = "pickupLocationGeoPoint"
+                                    )
                                 )
-                            )
-                        }) {
-                            Text(text = "Pick location")
+                            }) {
+                                Text(text = "Ganti lokasi")
+                            }
+
+                            else -> SimpleMapPreview(
+                                geoPoint = pickupLocationGeoPoint!!,
+                                onClick = {
+                                    navController.navigate(
+                                        LocationRoutes.PickLocation(
+                                            resultKey = "pickupLocationGeoPoint",
+                                            initialLatitude = pickupLocationGeoPoint!!.latitude,
+                                            initialLongitude = pickupLocationGeoPoint!!.longitude
+                                        )
+                                    )
+                                })
                         }
 
                         CustomTextField(
