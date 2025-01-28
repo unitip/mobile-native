@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.composables.icons.lucide.ChevronLeft
@@ -37,6 +38,7 @@ import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Polygon
 
 val unsGeoPoint = GeoPoint(-7.559843, 110.856658)
 
@@ -86,7 +88,7 @@ fun PickLocationScreen() {
                             setMultiTouchControls(true)
 
                             controller.setCenter(unsGeoPoint)
-                            controller.setZoom(18.5)
+                            controller.setZoom(14.0)
                         }
                         mapView.addMapListener(object : MapListener {
                             override fun onScroll(event: ScrollEvent?): Boolean {
@@ -105,6 +107,22 @@ fun PickLocationScreen() {
                                 return true
                             }
                         })
+
+                        // circle zone radius
+                        val circle = Polygon().apply {
+                            points = Polygon.pointsAsCircle(unsGeoPoint, 2000.0)
+                            outlinePaint.strokeWidth = 4f
+                            outlinePaint.color = Color.Red.toArgb()
+                        }
+                        mapView.overlays.add(circle)
+
+                        val circle2 = Polygon().apply {
+                            points = Polygon.pointsAsCircle(unsGeoPoint, 4000.0)
+                            outlinePaint.strokeWidth = 4f
+                            outlinePaint.color = Color.Blue.toArgb()
+                        }
+                        mapView.overlays.add(circle2)
+
                         mapView
                     }
                 )
