@@ -59,10 +59,13 @@ import com.composables.icons.lucide.SquareCheck
 import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
+import com.unitip.mobile.features.location.commons.LocationRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
+import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -78,12 +81,16 @@ fun CreateJobScreen(
     var title by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     var pickupLocation by remember { mutableStateOf("") }
+    var pickupLocationGeoPoint by remember { mutableStateOf<GeoPoint?>(null) }
     var destination by remember { mutableStateOf("") }
     var isSelectServiceVisible by remember { mutableStateOf(false) }
     var selectedService by remember { mutableStateOf("") }
     var isJoinAllowed by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
+    navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
+        pickupLocationGeoPoint = it
+    }
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -302,6 +309,22 @@ fun CreateJobScreen(
                             modifier = Modifier.padding(top = 16.dp),
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
+
+                        Text(
+                            text = when (pickupLocationGeoPoint) {
+                                null -> "Lokasi penjemputan belum dipilih"
+                                else -> "Lokasi: ${pickupLocationGeoPoint!!.latitude},${pickupLocationGeoPoint!!.longitude}"
+                            }
+                        )
+                        Button(onClick = {
+                            navController.navigate(
+                                LocationRoutes.PickLocation(
+                                    resultKey = "pickupLocationGeoPoint"
+                                )
+                            )
+                        }) {
+                            Text(text = "Pick location")
+                        }
 
                         CustomTextField(
                             label = "Lokasi tujuan",
