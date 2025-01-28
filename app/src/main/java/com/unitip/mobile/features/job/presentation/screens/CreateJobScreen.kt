@@ -39,6 +39,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +55,6 @@ import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Circle
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Square
-import com.composables.icons.lucide.SquareCheck
 import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
@@ -65,7 +64,7 @@ import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
-import com.unitip.mobile.shared.presentation.components.SimpleMapPreview
+import com.unitip.mobile.shared.presentation.components.StaticMapPreview
 import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -79,19 +78,24 @@ fun CreateJobScreen(
     val listState = rememberLazyListState()
     val firstVisibleListItemIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
 
-    var title by remember { mutableStateOf("") }
-    var note by remember { mutableStateOf("") }
-    var pickupLocation by remember { mutableStateOf("") }
-    var pickupLocationGeoPoint by remember { mutableStateOf<GeoPoint?>(null) }
-    var destination by remember { mutableStateOf("") }
-    var isSelectServiceVisible by remember { mutableStateOf(false) }
-    var selectedService by remember { mutableStateOf("") }
-    var isJoinAllowed by remember { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf("") }
+    var note by rememberSaveable { mutableStateOf("") }
+    var pickupLocation by rememberSaveable { mutableStateOf("") }
+    var pickupLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
+    var destinationLocation by rememberSaveable { mutableStateOf("") }
+    var destinationLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
+    var isSelectServiceVisible by rememberSaveable { mutableStateOf(false) }
+    var selectedService by rememberSaveable { mutableStateOf("") }
+    var isJoinAllowed by rememberSaveable { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
     navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
         if (it != null)
             pickupLocationGeoPoint = it
+    }
+    navController.GetPopResult<GeoPoint>(key = "destinationLocationGeoPoint") {
+        if (it != null)
+            destinationLocationGeoPoint = it
     }
 
     LaunchedEffect(uiState.detail) {
@@ -323,7 +327,8 @@ fun CreateJobScreen(
                                 Text(text = "Ganti lokasi")
                             }
 
-                            else -> SimpleMapPreview(
+                            else -> StaticMapPreview(
+                                modifier = Modifier.padding(top = 8.dp),
                                 geoPoint = pickupLocationGeoPoint!!,
                                 onClick = {
                                     navController.navigate(
@@ -338,12 +343,37 @@ fun CreateJobScreen(
 
                         CustomTextField(
                             label = "Lokasi tujuan",
-                            value = destination,
-                            onValueChange = { destination = it },
+                            value = destinationLocation,
+                            onValueChange = { destinationLocation = it },
                             placeholder = "Cth: Gacoan Jebres",
                             modifier = Modifier.padding(top = 16.dp),
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
+
+                        when (destinationLocationGeoPoint) {
+                            null -> Button(onClick = {
+                                navController.navigate(
+                                    LocationRoutes.PickLocation(
+                                        resultKey = "destinationLocationGeoPoint"
+                                    )
+                                )
+                            }) {
+                                Text(text = "Ganti lokasi")
+                            }
+
+                            else -> StaticMapPreview(
+                                modifier = Modifier.padding(top = 8.dp),
+                                geoPoint = destinationLocationGeoPoint!!,
+                                onClick = {
+                                    navController.navigate(
+                                        LocationRoutes.PickLocation(
+                                            resultKey = "destinationLocationGeoPoint",
+                                            initialLatitude = destinationLocationGeoPoint!!.latitude,
+                                            initialLongitude = destinationLocationGeoPoint!!.longitude
+                                        )
+                                    )
+                                })
+                        }
 
                         CustomTextField(
                             label = "Catatan tambahan",
@@ -354,40 +384,6 @@ fun CreateJobScreen(
                             modifier = Modifier.padding(top = 16.dp),
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
-                    }
-                }
-
-                item {
-                    AnimatedVisibility(visible = selectedService == "jasa-titip") {
-                        CustomCard(
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp
-                            ),
-                            onClick = {
-                                isJoinAllowed = !isJoinAllowed
-                            }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                verticalAlignment = Alignment.Top,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Icon(
-                                    when (isJoinAllowed) {
-                                        true -> Lucide.SquareCheck
-                                        else -> Lucide.Square
-                                    },
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = "Izinkan orang lain bergabung dengan pekerjaan yang Anda buat. Proses pengantaran mungkin akan lebih lama karena driver harus mengantarkan ke setiap orang yang bergabung",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                        }
                     }
                 }
 
@@ -407,7 +403,7 @@ fun CreateJobScreen(
                                         title = title,
                                         note = note,
                                         pickupLocation = pickupLocation,
-                                        destination = destination,
+                                        destination = destinationLocation,
                                         service = selectedService
 
                                     )
