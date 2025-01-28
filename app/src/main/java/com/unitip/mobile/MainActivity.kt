@@ -1,9 +1,11 @@
 package com.unitip.mobile
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import com.unitip.mobile.shared.commons.Application
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.repositories.MqttRepository
@@ -34,7 +36,23 @@ class MainActivity : ComponentActivity() {
         )
         Configuration.getInstance().userAgentValue = "unitip"
 
-        // memulai aplikasi compose
+        /**
+         * request location permission
+         */
+        val locationPermissionRequest = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+        }
+        locationPermissionRequest.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+
+        /**
+         * memulai aplikasi compose
+         */
         setContent {
             Application(
                 isAuthenticated = sessionManager.isAuthenticated()
