@@ -3,7 +3,7 @@ package com.unitip.mobile.features.offer.data.dtos
 import com.google.gson.annotations.SerializedName
 import com.unitip.mobile.features.offer.commons.PageInfo
 
-data class GetAllOfferResponse(
+data class GetOfferResponse(
     @SerializedName("offers") val offers: List<AllOffer>,
     @SerializedName("page_info") val pageInfo: PageInfo
 ) {
@@ -12,7 +12,7 @@ data class GetAllOfferResponse(
         @SerializedName("title") val title: String,
         @SerializedName("description") val description: String,
         @SerializedName("type") val type: String,
-        @SerializedName("delivery_area") val deliveryArea: String,
+        @SerializedName("destination_area") val destinationArea: String,
         @SerializedName("pickup_area") val pickupArea: String,
         @SerializedName("available_until") val availableUntil: String,
         @SerializedName("price") val price: Double,
