@@ -34,7 +34,9 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             applicationContext.getSharedPreferences("osmdroid", MODE_PRIVATE)
         )
-        Configuration.getInstance().userAgentValue = "unitip"
+        Configuration.getInstance().apply {
+            userAgentValue = "unitip"
+        }
 
         /**
          * request location permission
