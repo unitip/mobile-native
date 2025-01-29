@@ -39,7 +39,7 @@ import com.unitip.mobile.features.home.presentation.viewmodels.DashboardViewMode
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
-fun DashboardScreen(
+fun DashboardCustomerScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val configuration = LocalConfiguration.current

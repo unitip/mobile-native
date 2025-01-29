@@ -30,7 +30,7 @@ fun rememberMapView(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val mapView = remember {
         MapView(context).apply {
-            setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+            setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(!isStatic)
             controller.setCenter(initialGeoPoint ?: unsGeoPoint)
             controller.setZoom(initialZoom)
