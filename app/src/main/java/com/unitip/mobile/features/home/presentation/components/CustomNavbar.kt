@@ -41,18 +41,24 @@ private data class NavigationItem<T : Any>(
 )
 
 @Composable
-fun CustomNavbar() {
-    val navigationItems = listOf(
+fun CustomNavbar(
+    isDriver: Boolean
+) {
+    val navigationItems = listOfNotNull(
         NavigationItem(
             "Dashboard",
             icon = Lucide.LayoutDashboard,
             route = HomeRoutes.Dashboard
         ),
-        NavigationItem(
-            "Jobs",
-            icon = Lucide.BriefcaseBusiness,
-            route = HomeRoutes.Jobs
-        ),
+        when (isDriver) {
+            true -> NavigationItem(
+                "Jobs",
+                icon = Lucide.BriefcaseBusiness,
+                route = HomeRoutes.Jobs
+            )
+
+            else -> null
+        },
         NavigationItem(
             "Offers",
             icon = Lucide.BadgeHelp,
