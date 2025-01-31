@@ -25,12 +25,8 @@ fun ApplicationNavigationGraph(
         navController = navController,
         startDestination = when (isAuthenticated) {
             true -> HomeRoutes.Index
-//            true -> LocationRoutes.PickLocation
-//            true -> JobRoutes.Create
-//            true -> ChatRoutes.Conversation(
-//                roomId = "b48fc434-6b59-4dfb-9b22-8ba4d27068ac",
-//                otherUserId = "rec_cscfpbjss7tdpjmkt6m0",
-//                otherUserName = "Rizal Dwi Anggoro"
+//            true -> JobRoutes.Detail(
+//                jobId = "rec_cucg585c8vb430m9jr00"
 //            )
 
             false -> AuthRoutes.Index
