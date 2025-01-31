@@ -18,8 +18,8 @@ fun NavGraphBuilder.nestedHomeNavigation(
             else -> DashboardCustomerScreen()
         }
     }
-    if (isDriver)
-        composable<HomeRoutes.Jobs> { JobsScreen() }
+//    if (isDriver)
+    composable<HomeRoutes.Jobs> { JobsScreen() }
     composable<HomeRoutes.Offers> { OffersScreen() }
     composable<HomeRoutes.Chats> { ChatsScreen() }
     composable<HomeRoutes.Profile> { ProfileScreen() }
