@@ -6,4 +6,5 @@ data class Session(
     val email: String = "",
     val token: String = "",
     val role: String = "",
+    val gender: String = ""
 )
