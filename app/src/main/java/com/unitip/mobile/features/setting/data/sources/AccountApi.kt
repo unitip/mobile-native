@@ -8,7 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 
 interface AccountApi {
-    @PATCH("accounts")
+    @PATCH("accounts/profile")
     suspend fun edit(
         @Header("Authorization") token: String,
         @Body payload: EditPayload
