@@ -156,11 +156,11 @@ fun ProfileScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     modifier = Modifier.alpha(.8f)
                                 )
-//                        Text(
-//                            text = token,
-//                            style = MaterialTheme.typography.bodySmall,
-//                            modifier = Modifier.alpha(.8f)
-//                        )
+                                Text(
+                                    text = token,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.alpha(.8f)
+                                )
                                 Text(
                                     text = role,
                                     modifier = Modifier
