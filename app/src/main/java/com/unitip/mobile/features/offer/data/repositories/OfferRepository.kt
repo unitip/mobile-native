@@ -2,8 +2,8 @@ package com.unitip.mobile.features.offer.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
-import com.unitip.mobile.features.offer.data.models.CreateOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
+import com.unitip.mobile.features.offer.domain.models.CreateOfferResult
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -27,9 +27,9 @@ class OfferRepository @Inject constructor(
         destinationArea: String,
         availableUntil: String,
         maxParticipants: Number
-    ): Either<Failure, CreateOfferResult> {
+    ): Either<Failure,CreateOfferResult> {
         try {
-            val token = sessionManager.read()?.token
+            val token = sessionManager.read().token
             val response = offerApi.create(
                 token = "Bearer $token",
                 payload = CreateOfferPayload(
@@ -47,7 +47,7 @@ class OfferRepository @Inject constructor(
             val result = response.body()
             // mereturn jika sukses dan jika tidak
             return when (response.isSuccessful && result != null) {
-                true -> Either.Right(CreateOfferResult(id = result.id))
+                true -> Either.Right(CreateOfferResult(message = result.message, id = result.data.id))
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
