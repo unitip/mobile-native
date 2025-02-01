@@ -7,12 +7,13 @@ data class Offer(
     val price: Number = 0,
     val type: String = "",
     val pickupArea: String = "",
-    val deliveryArea: String = "",
+    val destinationArea: String = "",
     val availableUntil: String = "",
     val offerStatus: String = "",
     val freelancer: OfferFreelancer = OfferFreelancer(),
     val createdAt: String = "",
     val updatedAt: String = "",
+    val maxParticipants: Number = 0,
     val totalApplicants: Int = 0,
     val applicants: List<Any> = emptyList()
 )

@@ -272,7 +272,11 @@ fun OffersScreen(
                                             ),
                                             mapOf(
                                                 "title" to "Area pengantaran",
-                                                "value" to offer.deliveryArea
+                                                "value" to offer.destinationArea
+                                            ),
+                                            mapOf(
+                                                "title" to "Maksimal orang",
+                                                "value" to offer.maxParticipants.toString()
                                             ),
                                         ).mapIndexed { index, item ->
                                             Row(

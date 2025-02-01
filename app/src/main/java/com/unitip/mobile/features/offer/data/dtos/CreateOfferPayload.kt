@@ -8,6 +8,7 @@ data class CreateOfferPayload(
     val price: Number,
     val type: String,
     @SerializedName("pickup_area") val pickupArea: String,
-    @SerializedName("delivery_area") val deliveryArea: String,
+    @SerializedName("destination_area") val destinationArea: String,
     @SerializedName("available_until") val availableUntil: String,
+    @SerializedName("max_participants") val maxParticipants: Number
 )

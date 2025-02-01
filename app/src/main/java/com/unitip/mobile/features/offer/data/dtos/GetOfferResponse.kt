@@ -17,6 +17,7 @@ data class GetOfferResponse(
         @SerializedName("available_until") val availableUntil: String,
         @SerializedName("price") val price: Double,
         @SerializedName("offer_status") val offerStatus: String,
+        @SerializedName("max_participants") val maxParticipants: Number,
         @SerializedName("freelancer") val freelancer: Freelancer,
         @SerializedName("created_at") val createdAt: String,
         @SerializedName("updated_at") val updatedAt: String

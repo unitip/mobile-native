@@ -24,8 +24,9 @@ class OfferRepository @Inject constructor(
         price: Number,
         type: String,
         pickupArea: String,
-        deliveryArea: String,
-        availableUntil: String
+        destinationArea: String,
+        availableUntil: String,
+        maxParticipants: Number
     ): Either<Failure, CreateOfferResult> {
         try {
             val token = sessionManager.read()?.token
@@ -37,8 +38,9 @@ class OfferRepository @Inject constructor(
                     price = price,
                     type = type,
                     pickupArea = pickupArea,
-                    deliveryArea = deliveryArea,
+                    destinationArea = destinationArea,
                     availableUntil = availableUntil,
+                    maxParticipants = maxParticipants
                 )
             )
 
@@ -78,10 +80,11 @@ class OfferRepository @Inject constructor(
                                         description = apiOffer.description,
                                         price = apiOffer.price,
                                         type = apiOffer.type,
-                                        deliveryArea = apiOffer.destinationArea,
+                                        destinationArea = apiOffer.destinationArea,
                                         pickupArea = apiOffer.pickupArea,
                                         availableUntil = apiOffer.availableUntil,
                                         offerStatus = apiOffer.offerStatus,
+                                        maxParticipants = apiOffer.maxParticipants,
                                         freelancer = OfferFreelancer(name = apiOffer.freelancer.name)
                                     )
                                 },
