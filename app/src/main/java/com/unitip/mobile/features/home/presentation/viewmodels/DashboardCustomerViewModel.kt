@@ -2,28 +2,32 @@ package com.unitip.mobile.features.home.presentation.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.BuildConfig
-import com.unitip.mobile.features.home.presentation.states.DashboardState
+import com.unitip.mobile.features.home.data.repositories.OrderRepository
+import com.unitip.mobile.features.home.presentation.states.DashboardCustomerState
 import com.unitip.mobile.shared.data.providers.MqttProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.mqtt.android.service.MqttAndroidClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(
-    mqttProvider: MqttProvider
+class DashboardCustomerViewModel @Inject constructor(
+    mqttProvider: MqttProvider,
+    private val orderRepository: OrderRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "DashboardViewModel"
     }
 
-    private val _uiState = MutableStateFlow(DashboardState())
+    private val _uiState = MutableStateFlow(DashboardCustomerState())
     val uiState get() = _uiState.asStateFlow()
 
     private val client: MqttAndroidClient = mqttProvider.client
@@ -31,6 +35,30 @@ class DashboardViewModel @Inject constructor(
     init {
         listenMqttCallback()
         subscribeToOnlineDriverCount()
+        getAllOrders()
+    }
+
+    fun getAllOrders() = viewModelScope.launch {
+        _uiState.update { it.copy(detail = DashboardCustomerState.Detail.Loading) }
+        orderRepository.getAll()
+            .onLeft { left ->
+                _uiState.update {
+                    it.copy(
+                        detail = DashboardCustomerState.Detail.Failure(
+                            message = left.message
+                        )
+                    )
+                }
+            }
+            .onRight { right ->
+                _uiState.update {
+                    it.copy(
+                        detail = DashboardCustomerState.Detail.Success(
+                            orders = right
+                        )
+                    )
+                }
+            }
     }
 
     private fun listenMqttCallback() {
