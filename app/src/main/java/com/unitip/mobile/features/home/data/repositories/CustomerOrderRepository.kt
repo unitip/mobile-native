@@ -1,7 +1,7 @@
 package com.unitip.mobile.features.home.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.home.data.sources.OrderApi
+import com.unitip.mobile.features.home.data.sources.CustomerOrderApi
 import com.unitip.mobile.features.home.domain.models.Order
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -10,14 +10,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class OrderRepository @Inject constructor(
+class CustomerOrderRepository @Inject constructor(
     sessionManager: SessionManager,
-    private val orderApi: OrderApi
+    private val customerOrderApi: CustomerOrderApi
 ) {
     private val session = sessionManager.read()
 
     suspend fun getAll(): Either<Failure, List<Order>> = try {
-        val response = orderApi.getAll(
+        val response = customerOrderApi.getAll(
             token = "Bearer ${session.token}"
         )
         val result = response.body()
