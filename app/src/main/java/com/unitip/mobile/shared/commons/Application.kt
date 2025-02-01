@@ -10,7 +10,7 @@ import com.unitip.mobile.shared.presentation.ui.theme.UnitipTheme
 @Composable
 fun Application(isAuthenticated: Boolean) {
     UnitipTheme(
-        darkTheme = true,
+//        darkTheme = true,
         dynamicColor = false,
     ) {
         Surface {
