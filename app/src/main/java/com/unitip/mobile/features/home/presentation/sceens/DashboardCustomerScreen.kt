@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,21 +35,35 @@ import androidx.compose.ui.unit.times
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.home.presentation.viewmodels.DashboardViewModel
+import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
 fun DashboardCustomerScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
+    val navController = LocalNavController.current
     val configuration = LocalConfiguration.current
 
     val screenWidth = configuration.screenWidthDp.dp
 
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(JobRoutes.Create)
+                }
+            ) {
+                Icon(Lucide.Plus, contentDescription = null)
+            }
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
