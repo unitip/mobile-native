@@ -11,14 +11,12 @@ import javax.inject.Singleton
 
 @Singleton
 class CustomerOrderRepository @Inject constructor(
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val customerOrderApi: CustomerOrderApi
 ) {
-    private val session = sessionManager.read()
-
     suspend fun getAll(): Either<Failure, List<Order>> = try {
         val response = customerOrderApi.getAll(
-            token = "Bearer ${session.token}"
+            token = "Bearer ${sessionManager.getToken()}"
         )
         val result = response.body()
 
