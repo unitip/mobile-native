@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.account.presentation.states
 
+import com.unitip.mobile.features.account.domain.models.Order
+
 data class OrderHistoryState(
     val detail: Detail = Detail.Initial
 ) {
@@ -7,7 +9,7 @@ data class OrderHistoryState(
         data object Initial : Detail
         data object Loading : Detail
         data class Success(
-            val orders: List<Any>
+            val orders: List<Order>
         ) : Detail
 
         data class Failure(

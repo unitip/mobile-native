@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -42,6 +43,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.ListOrdered
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
@@ -263,6 +266,21 @@ fun ProfileScreen(
                                     )
                                 }
                             }
+
+                            ListItem(
+                                modifier = Modifier.clickable {
+                                    navController.navigate(AccountRoutes.OrderHistory)
+                                },
+                                leadingContent = {
+                                    Icon(Lucide.ListOrdered, contentDescription = null)
+                                },
+                                headlineContent = {
+                                    Text(text = "Riwayat Pemesanan")
+                                },
+                                trailingContent = {
+                                    Icon(Lucide.ChevronRight, contentDescription = null)
+                                }
+                            )
                         }
                     }
                 }
