@@ -133,4 +133,34 @@ class JobRepository @Inject constructor(
     } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+    suspend fun complete(jobId: String): Either<Failure, String> = try {
+        val response = jobApi.complete(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun cancelApplication(jobId: String): Either<Failure, String> = try {
+        val response = jobApi.cancelApplication(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
 }
