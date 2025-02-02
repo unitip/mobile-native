@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation.states
+package com.unitip.mobile.features.account.presentation.states
 
 import com.unitip.mobile.shared.domain.models.Session
 

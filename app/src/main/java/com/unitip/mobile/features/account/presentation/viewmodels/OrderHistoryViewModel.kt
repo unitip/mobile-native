@@ -1,7 +1,7 @@
-package com.unitip.mobile.features.setting.presentation.viewmodels
+package com.unitip.mobile.features.account.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.unitip.mobile.features.setting.presentation.states.OrderHistoryState
+import com.unitip.mobile.features.account.presentation.states.OrderHistoryState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

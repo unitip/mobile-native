@@ -1,6 +1,6 @@
-package com.unitip.mobile.features.setting.data.sources
+package com.unitip.mobile.features.account.data.sources
 
-import com.unitip.mobile.features.setting.data.dtos.LogoutResponse
+import com.unitip.mobile.features.account.data.dtos.LogoutResponse
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.Header

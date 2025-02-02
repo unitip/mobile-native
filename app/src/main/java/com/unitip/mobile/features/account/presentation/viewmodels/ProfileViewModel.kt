@@ -1,9 +1,9 @@
-package com.unitip.mobile.features.setting.presentation.viewmodels
+package com.unitip.mobile.features.account.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.setting.data.repositories.AuthRepository
-import com.unitip.mobile.features.setting.presentation.states.ProfileState
+import com.unitip.mobile.features.account.data.repositories.AuthRepository
+import com.unitip.mobile.features.account.presentation.states.ProfileState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation.states
+package com.unitip.mobile.features.account.presentation.states
 
 data class OrderHistoryState(
     val detail: Detail = Detail.Initial

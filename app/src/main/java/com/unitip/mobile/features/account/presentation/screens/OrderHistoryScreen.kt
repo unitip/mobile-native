@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation.screens
+package com.unitip.mobile.features.account.presentation.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

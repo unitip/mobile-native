@@ -1,9 +1,9 @@
-package com.unitip.mobile.features.setting.presentation.viewmodels
+package com.unitip.mobile.features.account.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.setting.data.repositories.AccountRepository
-import com.unitip.mobile.features.setting.presentation.states.EditProfileState
+import com.unitip.mobile.features.account.data.repositories.AccountRepository
+import com.unitip.mobile.features.account.presentation.states.EditProfileState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ class EditProfileViewModel @Inject constructor(
     fun edit(name: String, gender: String) =
         viewModelScope.launch {
             _uiState.update { it.copy(editDetail = EditProfileState.EditDetail.Loading) }
-            accountRepository.edit(
+            accountRepository.editProfile(
                 name = name,
                 gender = gender,
 

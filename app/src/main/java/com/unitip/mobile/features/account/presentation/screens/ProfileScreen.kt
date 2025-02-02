@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation.screens
+package com.unitip.mobile.features.account.presentation.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -47,11 +47,11 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.composables.icons.lucide.UserRoundPen
 import com.unitip.mobile.R
+import com.unitip.mobile.features.account.commons.AccountRoutes
+import com.unitip.mobile.features.account.presentation.states.ProfileState
+import com.unitip.mobile.features.account.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.commons.HomeRoutes
-import com.unitip.mobile.features.setting.commons.SettingRoutes
-import com.unitip.mobile.features.setting.presentation.states.ProfileState
-import com.unitip.mobile.features.setting.presentation.viewmodels.ProfileViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.commons.extensions.redirectToUnauthorized
@@ -172,9 +172,17 @@ fun ProfileScreen(
                                 )
                                 Button(modifier = Modifier.padding(top = 16.dp),
 
-                                    onClick = { navController.navigate(SettingRoutes.Edit) }) {
+                                    onClick = { navController.navigate(AccountRoutes.EditProfile) }) {
                                     Text(
                                         text = "Edit Profil",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Button(modifier = Modifier.padding(top = 16.dp),
+
+                                    onClick = { navController.navigate(AccountRoutes.EditPassword) }) {
+                                    Text(
+                                        text = "Edit Password",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }

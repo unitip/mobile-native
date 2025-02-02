@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.presentation.screens
+package com.unitip.mobile.features.account.presentation.screens
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -36,15 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.setting.presentation.states.EditProfileState
-import com.unitip.mobile.features.setting.presentation.viewmodels.EditProfileViewModel
+import com.unitip.mobile.features.account.presentation.states.EditPasswordState
+import com.unitip.mobile.features.account.presentation.viewmodels.EditPasswordViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
 
 @Composable
-fun EditProfileScreen(
-    viewModel: EditProfileViewModel = hiltViewModel(),
+fun EditPasswordScreen(
+    viewModel: EditPasswordViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
@@ -52,15 +52,13 @@ fun EditProfileScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    var name by rememberSaveable { mutableStateOf(uiState.session.name) }
-    var gender by rememberSaveable { mutableStateOf(uiState.session.gender) }
     var newPassword by rememberSaveable { mutableStateOf("") }
     var confirmNewPassword by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(uiState.editDetail) {
         with(uiState.editDetail) {
             when (this) {
-                is EditProfileState.EditDetail.Failure -> {
+                is EditPasswordState.EditDetail.Failure -> {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
 
@@ -69,11 +67,7 @@ fun EditProfileScreen(
         }
     }
 
-
-    Scaffold(
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(WindowInsetsSides.Top)
-    ) {
-
+    Scaffold(contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(WindowInsetsSides.Top)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -113,7 +107,7 @@ fun EditProfileScreen(
 
                 AnimatedVisibility(
                     visible = listState.canScrollBackward &&
-                            uiState.editDetail !is EditProfileState.EditDetail.Loading
+                            uiState.editDetail !is EditPasswordState.EditDetail.Loading
                 ) {
                     HorizontalDivider()
                 }
@@ -126,12 +120,12 @@ fun EditProfileScreen(
             ) {
                 item {
                     Text(
-                        text = "Edit Profile",
+                        text = "Edit Password",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = when (uiState.editDetail is EditProfileState.EditDetail.Loading) {
+                            top = when (uiState.editDetail is EditPasswordState.EditDetail.Loading) {
                                 true -> 16.dp
                                 else -> 0.dp
                             }
@@ -149,44 +143,30 @@ fun EditProfileScreen(
                     Column(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
                     ) {
-                        CustomTextField(
-                            label = "Nama Pengguna",
-                            value = name,
-                            onValueChange = { name = it },
-                            enabled = uiState.editDetail !is EditProfileState.EditDetail.Loading
-                        )
-                        CustomTextField(
-                            label = "Jenis Kelamin",
-                            value = gender,
-                            onValueChange = { gender = it },
-                            enabled = uiState.editDetail !is EditProfileState.EditDetail.Loading
-                        )
+
                         CustomTextField(
                             label = "Password Baru",
                             value = newPassword,
                             onValueChange = { newPassword = it },
-                            enabled = uiState.editDetail !is EditProfileState.EditDetail.Loading
+                            enabled = uiState.editDetail !is EditPasswordState.EditDetail.Loading
                         )
                         CustomTextField(
                             label = "Konfirmasi Password",
                             value = confirmNewPassword,
                             onValueChange = { confirmNewPassword = it },
-                            enabled = uiState.editDetail !is EditProfileState.EditDetail.Loading
+                            enabled = uiState.editDetail !is EditPasswordState.EditDetail.Loading
                         )
                         Button(modifier = Modifier.padding(top = 16.dp),
                             onClick = {
                                 viewModel.edit(
-                                    name = name,
-                                    gender = gender,
+                                    password = newPassword,
+                                    confirmPassword = confirmNewPassword
                                 )
                             }) { Text("Simpan Perubahan") }
                     }
+
                 }
             }
-
-
         }
     }
-
-
 }

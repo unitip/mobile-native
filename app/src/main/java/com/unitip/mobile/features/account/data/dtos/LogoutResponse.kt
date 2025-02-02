@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.setting.data.dtos
+package com.unitip.mobile.features.account.data.dtos
 
 data class LogoutResponse(
     val success: Boolean,

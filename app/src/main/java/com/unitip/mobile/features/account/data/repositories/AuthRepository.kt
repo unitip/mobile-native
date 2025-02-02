@@ -1,7 +1,7 @@
-package com.unitip.mobile.features.setting.data.repositories
+package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.setting.data.sources.AuthApi
+import com.unitip.mobile.features.account.data.sources.AuthApi
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure

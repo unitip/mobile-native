@@ -1,7 +1,7 @@
-package com.unitip.mobile.features.setting.commons
+package com.unitip.mobile.features.account.commons
 
-import com.unitip.mobile.features.setting.data.sources.AccountApi
-import com.unitip.mobile.features.setting.data.sources.AuthApi
+import com.unitip.mobile.features.account.data.sources.AccountApi
+import com.unitip.mobile.features.account.data.sources.AuthApi
 import com.unitip.mobile.shared.commons.configs.ApiConfig
 import dagger.Module
 import dagger.Provides
