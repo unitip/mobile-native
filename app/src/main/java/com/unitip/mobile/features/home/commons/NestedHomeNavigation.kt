@@ -2,12 +2,12 @@ package com.unitip.mobile.features.home.commons
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.unitip.mobile.features.account.presentation.screens.ProfileScreen
 import com.unitip.mobile.features.chat.presentation.screens.ChatsScreen
 import com.unitip.mobile.features.home.presentation.sceens.DashboardCustomerScreen
 import com.unitip.mobile.features.home.presentation.sceens.DashboardDriverScreen
 import com.unitip.mobile.features.job.presentation.screens.JobsScreen
 import com.unitip.mobile.features.offer.presentation.screens.OffersScreen
-import com.unitip.mobile.features.setting.presentation.screens.ProfileScreen
 
 fun NavGraphBuilder.nestedHomeNavigation(
     isDriver: Boolean

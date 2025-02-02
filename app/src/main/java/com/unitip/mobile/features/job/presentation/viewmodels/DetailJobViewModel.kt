@@ -19,7 +19,6 @@ import javax.inject.Inject
 class DetailJobViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
-//    private val singleJobRepository: SingleJobRepository
     private val jobRepository: JobRepository
 ) : ViewModel() {
     companion object {
@@ -60,19 +59,22 @@ class DetailJobViewModel @Inject constructor(
         )
     }
 
-//    fun approveApplicant(jobId: String, applicantId: String) = viewModelScope.launch {
-//        _uiState.update { it.copy(approveDetail = DetailJobState.ApproveDetail.Loading) }
-//        singleJobRepository.approve(jobId = jobId, applicantId = applicantId).fold(
-//            ifLeft = { left ->
-//                _uiState.update {
-//                    it.copy(approveDetail = DetailJobState.ApproveDetail.Failure(message = left.message))
-//                }
-//            },
-//            ifRight = {
-//                _uiState.update {
-//                    it.copy(approveDetail = DetailJobState.ApproveDetail.Success)
-//                }
-//            }
-//        )
-//    }
+    fun apply() = viewModelScope.launch {
+        _uiState.update { it.copy(applyDetail = DetailJobState.ApplyDetail.Loading) }
+        jobRepository.apply(jobId = parameters.jobId)
+            .onLeft { left ->
+                _uiState.update {
+                    it.copy(
+                        applyDetail = DetailJobState.ApplyDetail.Failure(
+                            message = left.message
+                        )
+                    )
+                }
+            }
+            .onRight {
+                _uiState.update {
+                    it.copy(applyDetail = DetailJobState.ApplyDetail.Success)
+                }
+            }
+    }
 }

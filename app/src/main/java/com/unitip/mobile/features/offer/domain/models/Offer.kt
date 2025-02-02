@@ -13,7 +13,7 @@ data class Offer(
     val freelancer: OfferFreelancer = OfferFreelancer(),
     val createdAt: String = "",
     val updatedAt: String = "",
-    val maxParticipants: Number = 0,
-    val totalApplicants: Int = 0,
-    val applicants: List<Any> = emptyList()
+    val applicantsCount: Int = 0,
+    val hasApplied: Boolean = false,
+    val maxParticipants: Int = 1
 )
