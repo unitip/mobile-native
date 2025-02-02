@@ -27,9 +27,10 @@ class OfferRepository @Inject constructor(
         price: Number,
         type: String,
         pickupArea: String,
-        deliveryArea: String,
-        availableUntil: String
-    ): Either<Failure, CreateOfferResult> {
+        destinationArea: String,
+        availableUntil: String,
+        maxParticipants: Number
+    ): Either<Failure,CreateOfferResult> {
         try {
             val token = sessionManager.read().token
             val response = offerApi.create(
@@ -40,15 +41,16 @@ class OfferRepository @Inject constructor(
                     price = price,
                     type = type,
                     pickupArea = pickupArea,
-                    deliveryArea = deliveryArea,
+                    destinationArea = destinationArea,
                     availableUntil = availableUntil,
+                    maxParticipants = maxParticipants
                 )
             )
 
             val result = response.body()
             // mereturn jika sukses dan jika tidak
             return when (response.isSuccessful && result != null) {
-                true -> Either.Right(CreateOfferResult(id = result.id))
+                true -> Either.Right(CreateOfferResult(message = result.message, id = result.data.id))
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
@@ -81,12 +83,12 @@ class OfferRepository @Inject constructor(
                                         description = apiOffer.description,
                                         price = apiOffer.price,
                                         type = apiOffer.type,
-                                        deliveryArea = apiOffer.destinationArea,
+                                        destinationArea = apiOffer.destinationArea,
                                         pickupArea = apiOffer.pickupArea,
                                         availableUntil = apiOffer.availableUntil,
                                         offerStatus = apiOffer.offerStatus,
-                                        freelancer = OfferFreelancer(name = apiOffer.freelancer.name),
                                         maxParticipants = apiOffer.maxParticipants,
+                                        freelancer = OfferFreelancer(name = apiOffer.freelancer.name)
                                     )
                                 },
                                 hasNext = body.pageInfo.page < body.pageInfo.totalPages

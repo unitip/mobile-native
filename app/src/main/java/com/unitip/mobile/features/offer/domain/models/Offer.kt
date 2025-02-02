@@ -7,7 +7,7 @@ data class Offer(
     val price: Number = 0,
     val type: String = "",
     val pickupArea: String = "",
-    val deliveryArea: String = "",
+    val destinationArea: String = "",
     val availableUntil: String = "",
     val offerStatus: String = "",
     val freelancer: OfferFreelancer = OfferFreelancer(),
