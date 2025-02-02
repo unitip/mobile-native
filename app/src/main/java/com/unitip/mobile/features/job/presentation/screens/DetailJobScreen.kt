@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.job.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Bike
@@ -41,10 +44,8 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MapPinned
-import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.job.commons.JobConstants
-import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -59,9 +60,33 @@ fun DetailJobScreen(
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
+    val context = LocalContext.current
 
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.applyDetail) {
+        with(uiState.applyDetail) {
+            when (this) {
+                is DetailJobState.ApplyDetail.Success -> {
+                    Toast.makeText(
+                        context,
+                        "berhasil!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.popBackStack()
+                }
+
+                is DetailJobState.ApplyDetail.Failure -> Toast.makeText(
+                    context,
+                    message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                else -> Unit
+            }
+        }
+    }
 
     Scaffold {
         Column(
@@ -82,20 +107,15 @@ fun DetailJobScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 CustomIconButton(
                     onClick = { navController.popBackStack() },
                     icon = Lucide.ChevronLeft
                 )
-                Spacer(modifier = Modifier.weight(1f))
                 CustomIconButton(
                     onClick = { viewModel.fetchData() },
                     icon = Lucide.RefreshCw
-                )
-                CustomIconButton(
-                    onClick = { },
-                    icon = Lucide.Menu
                 )
             }
 
@@ -266,15 +286,25 @@ fun DetailJobScreen(
                 }
 
                 if (uiState.session.isDriver()) {
-                    Button(
-                        onClick = {
-                            navController.navigate(JobRoutes.Apply(jobId = jobId))
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 16.dp)
-                    ) {
-                        Text(text = "Lamar pekerjaan")
+                    with(uiState.applyDetail) {
+                        when (this) {
+                            is DetailJobState.ApplyDetail.Loading -> CircularProgressIndicator()
+                            else -> Button(
+                                onClick = {
+                                    viewModel.apply()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp,
+                                        top = 16.dp
+                                    )
+                            ) {
+                                Text(text = "Ambil pekerjaan")
+                            }
+                        }
                     }
                 }
             }
