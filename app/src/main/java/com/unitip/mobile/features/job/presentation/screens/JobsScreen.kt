@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,15 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +46,6 @@ import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.states.JobsState
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.commons.extensions.isCustomer
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
@@ -79,20 +72,7 @@ fun JobsScreen(
         }
     }
 
-    Scaffold(
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(
-            WindowInsetsSides.Top
-        ),
-        floatingActionButton = {
-            if (uiState.session.isCustomer()) {
-                FloatingActionButton(
-                    onClick = { navController.navigate(JobRoutes.Create) },
-                ) {
-                    Icon(Icons.TwoTone.Add, contentDescription = null)
-                }
-            }
-        },
-    ) {
+    Scaffold {
         Column(
             modifier = Modifier
                 .fillMaxSize()
