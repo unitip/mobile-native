@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class AccountRoutes {
-
     @Serializable
     object EditProfile
 
