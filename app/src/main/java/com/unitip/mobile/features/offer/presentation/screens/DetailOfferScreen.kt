@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.offer.presentation.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,24 +34,22 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MapPinned
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
-import com.unitip.mobile.features.offer.presentation.viewmodels.DetailOfferViewModel
-import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.presentation.components.CustomIconButton
-
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Wallet
 import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.presentation.components.ErrorState
 import com.unitip.mobile.features.offer.presentation.states.DetailOfferState
+import com.unitip.mobile.features.offer.presentation.viewmodels.DetailOfferViewModel
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isCustomer
-import com.unitip.mobile.shared.commons.extensions.isDriver
+import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
 fun DetailOfferScreen(
@@ -153,7 +149,7 @@ fun DetailOfferScreen(
                                 mapOf(
                                     "icon" to Lucide.MapPinned,
                                     "title" to "Area Pengantaran",
-                                    "value" to offer.deliveryArea
+                                    "value" to offer.destinationArea
                                 )
                             )
                         ) { index, item ->

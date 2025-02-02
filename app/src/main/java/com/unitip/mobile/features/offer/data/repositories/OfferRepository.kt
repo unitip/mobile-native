@@ -5,8 +5,8 @@ import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
-import com.unitip.mobile.features.offer.data.models.CreateOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
+import com.unitip.mobile.features.offer.domain.models.CreateOfferResult
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -139,7 +139,7 @@ class OfferRepository @Inject constructor(
             price = this.price,
             type = this.type,
             pickupArea = this.pickupArea,
-            deliveryArea = this.destinationArea,
+            destinationArea = this.destinationArea,
             availableUntil = this.availableUntil,
             offerStatus = this.offerStatus,
             freelancer = OfferFreelancer(name = this.freelancer.name),
@@ -194,46 +194,3 @@ class OfferRepository @Inject constructor(
         }
     }
 }
-
-
-//
-//    suspend fun getAll(): Either<Failure, GetAllOffersResult> {
-//        try {
-//            val token = sessionManager.read()?.token
-//            val response = offerApi.getAll(
-//                token = "Bearer $token",
-//                type = GetAllOfferResponse.PageInfo.OfferType.SINGLE.value
-//            )
-//            val result = response.body()
-//
-//            return when (response.isSuccessful && result != null) {
-//                true -> Either.Right(
-//                    GetAllOffersResult(
-//                        offers = result.offers.map {
-//                            Offer(
-//                                id = it.id,
-//                                title = it.title,
-//                                description = it.description,
-//                                price = it.price,
-//                                type = it.type,
-//                                pickupArea = it.pickupArea,
-//                                deliveryArea = it.deliveryArea,
-//                                availableUntil = it.availableUntil,
-//                                offerStatus = it.offerStatus,
-//                                freelancer = OfferFreelancer(
-//                                    name = it.freelancer.name
-//                                )
-//                            )
-//                        },
-//                        hasNext = result.pageInfo.page < result.pageInfo.totalPages
-//                    )
-//                )
-//
-//                false -> Either.Left(response.mapToFailure())
-//            }
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga !"))
-//        }
-//    }
