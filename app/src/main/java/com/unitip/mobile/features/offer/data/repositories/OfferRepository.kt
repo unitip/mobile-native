@@ -6,7 +6,6 @@ import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
-import com.unitip.mobile.features.offer.domain.models.CreateOfferResult
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -30,7 +29,7 @@ class OfferRepository @Inject constructor(
         destinationArea: String,
         availableUntil: String,
         maxParticipants: Number
-    ): Either<Failure,CreateOfferResult> {
+    ): Either<Failure, Unit> {
         try {
             val token = sessionManager.read().token
             val response = offerApi.create(
@@ -50,7 +49,7 @@ class OfferRepository @Inject constructor(
             val result = response.body()
             // mereturn jika sukses dan jika tidak
             return when (response.isSuccessful && result != null) {
-                true -> Either.Right(CreateOfferResult(message = result.message, id = result.data.id))
+                true -> Either.Right(Unit)
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
