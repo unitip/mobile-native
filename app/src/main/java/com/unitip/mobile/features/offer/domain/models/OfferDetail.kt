@@ -1,6 +1,6 @@
 package com.unitip.mobile.features.offer.domain.models
 
-data class Offer(
+data class OfferDetail(
     val id: String = "",
     val title: String = "",
     val description: String = "",

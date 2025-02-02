@@ -169,12 +169,7 @@ fun OffersScreen(
                                 top = if (index == 0) 0.dp else 8.dp
                             ),
                             onClick = {
-//                                navController.navigate(
-//                                    JobRoutes.Detail(
-//                                        jobId = offer.id,
-//                                        type = offer.type
-//                                    )
-//                                )
+                                navController.navigate(OfferRoutes.Detail(offerId = offer.id))
                             }
                         ) {
                             Column {
@@ -226,11 +221,12 @@ fun OffersScreen(
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
-                                            text = offer.price.toString(),
+                                            text = "±Rp${offer.price}",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
-                                            text = offer.availableUntil,
+//                                            text = offer.availableUntil,
+                                            text = "Available sampai ${offer.availableUntil}",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
@@ -296,7 +292,7 @@ fun OffersScreen(
                                                 )
                                             }
                                         }
-
+                                        // max participants
                                         Row(
                                             modifier = Modifier.padding(
                                                 start = 16.dp,
@@ -320,7 +316,7 @@ fun OffersScreen(
                                                 )
                                             }
                                             Text(
-                                                text = "${offer.totalApplicants} orang melamar pekerjaan ini",
+                                                text = "Maksimal ${offer.maxParticipants} Customer",
                                                 style = MaterialTheme.typography.labelMedium,
                                                 modifier = Modifier
                                                     .padding(start = 8.dp)
@@ -338,9 +334,7 @@ fun OffersScreen(
                     }
                 }
             }
-
         }
-
     }
 }
 

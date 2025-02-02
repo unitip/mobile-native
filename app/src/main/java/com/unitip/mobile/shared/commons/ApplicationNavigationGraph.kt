@@ -40,7 +40,7 @@ fun ApplicationNavigationGraph(
         authNavigation()
         homeNavigation()
         jobNavigation()
-        offerNavigation()
+        offerNavigation(navController)
         chatNavigation()
         exampleNavigation()
         locationNavigation()

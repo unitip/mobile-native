@@ -390,7 +390,6 @@ fun CreateJobScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-
             // button create
             if (!isImeVisible) {
                 AnimatedVisibility(visible = uiState.detail !is CreateJobState.Detail.Loading) {
@@ -408,25 +407,6 @@ fun CreateJobScreen(
                                     pickupLatitude = pickupLocationGeoPoint?.latitude,
                                     pickupLongitude = pickupLocationGeoPoint?.longitude
                                 )
-//                                if (!isJoinAllowed) {
-//                                    viewModel.createSingleJob(
-//                                        title = title,
-//                                        note = note,
-//                                        pickupLocation = pickupLocation,
-//                                        destination = destinationLocation,
-//                                        service = selectedService
-//
-//                                    )
-//                                } else {
-//                                    viewModel.createMultiJob(
-//                                        title = title,
-//                                        note = note,
-//                                        pickupLocation = pickupLocation,
-//                                        service = selectedService
-//
-//                                    )
-//                                }
-
                         },
                         modifier = Modifier
                             .fillMaxWidth()
