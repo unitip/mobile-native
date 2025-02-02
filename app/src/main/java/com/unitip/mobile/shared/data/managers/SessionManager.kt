@@ -16,7 +16,7 @@ class SessionManager @Inject constructor(
 
     private val gson = Gson()
     private val preferences = preferencesProvider.client
-    
+
     fun isAuthenticated(): Boolean =
         preferences.getString(KEY, null) != null
 
@@ -29,6 +29,8 @@ class SessionManager @Inject constructor(
             else -> Session()
         }
     }
+
+    fun getToken(): String = read().token
 
     fun delete() = preferences.edit().remove(KEY).apply()
 }

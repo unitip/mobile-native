@@ -1,10 +1,12 @@
 package com.unitip.mobile.features.home.presentation.sceens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,10 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,14 +42,15 @@ import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.RefreshCw
-import com.unitip.mobile.features.home.presentation.viewmodels.DashboardViewModel
+import com.unitip.mobile.features.home.presentation.states.DashboardCustomerState
+import com.unitip.mobile.features.home.presentation.viewmodels.DashboardCustomerViewModel
 import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
 fun DashboardCustomerScreen(
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardCustomerViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val configuration = LocalConfiguration.current
@@ -102,7 +108,9 @@ fun DashboardCustomerScreen(
                     )
                 }
                 CustomIconButton(
-                    onClick = { },
+                    onClick = {
+                        viewModel.getAllOrders()
+                    },
                     icon = Lucide.RefreshCw
                 )
             }
@@ -207,6 +215,34 @@ fun DashboardCustomerScreen(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
+                }
+
+                with(uiState.detail) {
+                    when (this) {
+                        is DashboardCustomerState.Detail.Loading -> {
+                            item {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        is DashboardCustomerState.Detail.Success -> {
+                            items(orders) { order ->
+                                ListItem(
+                                    modifier = Modifier.clickable { },
+                                    overlineContent = { Text(text = order.id) },
+                                    headlineContent = { Text(text = order.title) },
+                                    supportingContent = { Text(text = order.note) }
+                                )
+                            }
+                        }
+
+                        else -> Unit
+                    }
+                }
+
+                // spacer
+                item {
+                    Spacer(modifier = Modifier.height((56 + 32).dp))
                 }
             }
         }

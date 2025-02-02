@@ -12,11 +12,9 @@ import javax.inject.Singleton
 
 @Singleton
 class JobRepository @Inject constructor(
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val jobApi: JobApi
 ) {
-    private val session = sessionManager.read()
-
     suspend fun create(
         title: String,
         destinationLocation: String,
@@ -29,7 +27,7 @@ class JobRepository @Inject constructor(
         pickupLongitude: Double?
     ): Either<Failure, Unit> = try {
         val response = jobApi.create(
-            token = "Bearer ${session.token}",
+            token = "Bearer ${sessionManager.getToken()}",
             payload = CreateJobPayload(
                 title = title,
                 destinationLocation = destinationLocation,
@@ -54,7 +52,7 @@ class JobRepository @Inject constructor(
 
     suspend fun getAll(): Either<Failure, List<JobModel.ListItem>> = try {
         val response = jobApi.getAll(
-            token = "Bearer ${session.token}"
+            token = "Bearer ${sessionManager.getToken()}"
         )
         val result = response.body()
 
@@ -87,7 +85,7 @@ class JobRepository @Inject constructor(
 
     suspend fun get(jobId: String): Either<Failure, JobModel.Detail> = try {
         val response = jobApi.get(
-            token = "Bearer ${session.token}",
+            token = "Bearer ${sessionManager.getToken()}",
             jobId = jobId
         )
         val result = response.body()
@@ -118,6 +116,51 @@ class JobRepository @Inject constructor(
         }
     } catch (e: Exception) {
         e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun apply(jobId: String): Either<Failure, String> = try {
+        val response = jobApi.apply(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun complete(jobId: String): Either<Failure, String> = try {
+        val response = jobApi.complete(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun cancelApplication(jobId: String): Either<Failure, String> = try {
+        val response = jobApi.cancelApplication(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 }

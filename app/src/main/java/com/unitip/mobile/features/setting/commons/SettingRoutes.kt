@@ -10,4 +10,7 @@ sealed class SettingRoutes {
 
     @Serializable
     object EditPassword
+
+    @Serializable
+    object OrderHistory
 }
