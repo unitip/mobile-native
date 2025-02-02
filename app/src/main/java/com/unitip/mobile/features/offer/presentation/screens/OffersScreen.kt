@@ -71,6 +71,11 @@ fun OffersScreen(
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
+    // Trigger reload
+    LaunchedEffect(Unit) {
+        viewModel.refreshOffer()
+    }
+
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {

@@ -3,7 +3,6 @@ package com.unitip.mobile.features.offer.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.sources.OfferApi
-import com.unitip.mobile.features.offer.domain.models.CreateOfferResult
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -27,7 +26,7 @@ class OfferRepository @Inject constructor(
         destinationArea: String,
         availableUntil: String,
         maxParticipants: Number
-    ): Either<Failure,CreateOfferResult> {
+    ): Either<Failure, Unit> {
         try {
             val token = sessionManager.read().token
             val response = offerApi.create(
@@ -47,7 +46,7 @@ class OfferRepository @Inject constructor(
             val result = response.body()
             // mereturn jika sukses dan jika tidak
             return when (response.isSuccessful && result != null) {
-                true -> Either.Right(CreateOfferResult(message = result.message, id = result.data.id))
+                true -> Either.Right(Unit)
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
@@ -60,7 +59,7 @@ class OfferRepository @Inject constructor(
         type: String? = null
     ): Either<Failure, GetAllOffersResult> {
         return try {
-            val session = sessionManager.read() ?: return Either.Left(Failure("Unauthorized"))
+            val session = sessionManager.read()
             val response = offerApi.getOffers(
                 token = "Bearer ${session.token}",
                 page = page,
@@ -95,6 +94,7 @@ class OfferRepository @Inject constructor(
                         Either.Left(Failure("Response body is null"))
                     }
                 }
+
                 else -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
