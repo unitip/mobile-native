@@ -11,9 +11,4 @@ sealed class JobRoutes {
     data class Detail(
         val jobId: String
     )
-
-    @Serializable
-    data class Apply(
-        val jobId: String
-    )
 }
