@@ -1,12 +1,14 @@
 package com.unitip.mobile.features.job.data.sources
 
 import com.unitip.mobile.features.job.data.dtos.ApplyJobResponse
+import com.unitip.mobile.features.job.data.dtos.CancelJobApplicationResponse
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobResponse
 import com.unitip.mobile.features.job.data.dtos.GetAllJobsResponse
 import com.unitip.mobile.features.job.data.dtos.GetJobResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -39,4 +41,10 @@ interface JobApi {
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String
     ): Response<ApplyJobResponse>
+
+    @DELETE("jobs/{job_id}/applications")
+    suspend fun cancelApplication(
+        @Header("Authorization") token: String,
+        @Path("job_id") jobId: String
+    ): Response<CancelJobApplicationResponse>
 }
