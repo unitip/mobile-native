@@ -23,6 +23,30 @@ class DetailOrderJobViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DetailOrderJobState())
     val uiState get() = _uiState.asStateFlow()
 
+    fun complete() = viewModelScope.launch {
+        _uiState.update {
+            it.copy(completeDetail = DetailOrderJobState.CompleteDetail.Loading)
+        }
+
+        jobRepository.complete(jobId = parameters.orderId)
+            .onLeft { left ->
+                _uiState.update {
+                    it.copy(
+                        completeDetail = DetailOrderJobState.CompleteDetail.Failure(
+                            message = left.message
+                        )
+                    )
+                }
+            }
+            .onRight {
+                _uiState.update {
+                    it.copy(
+                        completeDetail = DetailOrderJobState.CompleteDetail.Success
+                    )
+                }
+            }
+    }
+
     fun cancel() = viewModelScope.launch {
         _uiState.update {
             it.copy(cancelDetail = DetailOrderJobState.CancelDetail.Loading)

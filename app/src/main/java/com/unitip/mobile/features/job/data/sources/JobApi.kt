@@ -2,6 +2,7 @@ package com.unitip.mobile.features.job.data.sources
 
 import com.unitip.mobile.features.job.data.dtos.ApplyJobResponse
 import com.unitip.mobile.features.job.data.dtos.CancelJobApplicationResponse
+import com.unitip.mobile.features.job.data.dtos.CompleteJobResponse
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobResponse
 import com.unitip.mobile.features.job.data.dtos.GetAllJobsResponse
@@ -41,6 +42,12 @@ interface JobApi {
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String
     ): Response<ApplyJobResponse>
+
+    @PATCH("jobs/{job_id}/completion")
+    suspend fun complete(
+        @Header("Authorization") token: String,
+        @Path("job_id") jobId: String
+    ): Response<CompleteJobResponse>
 
     @DELETE("jobs/{job_id}/applications")
     suspend fun cancelApplication(

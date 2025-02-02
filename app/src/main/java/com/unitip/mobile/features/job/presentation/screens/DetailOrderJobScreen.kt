@@ -27,6 +27,23 @@ fun DetailOrderJobScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    with(uiState.completeDetail) {
+        when (this) {
+            is DetailOrderJobState.CompleteDetail.Success -> {
+                Toast.makeText(context, "berhasil menyelesaikan!", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
+
+            is DetailOrderJobState.CompleteDetail.Failure -> Toast.makeText(
+                context,
+                "gagal menyelesaikan: ${this.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            else -> Unit
+        }
+    }
+
     with(uiState.cancelDetail) {
         when (this) {
             is DetailOrderJobState.CancelDetail.Success -> {
@@ -63,8 +80,17 @@ fun DetailOrderJobScreen(
             Button(onClick = {}) {
                 Text(text = "Chat customer")
             }
-            Button(onClick = {}) {
-                Text(text = "Tandai selesai")
+            with(uiState.completeDetail) {
+                when (this) {
+                    is DetailOrderJobState.CompleteDetail.Loading -> CircularProgressIndicator()
+                    else -> Button(
+                        onClick = {
+                            viewModel.complete()
+                        }
+                    ) {
+                        Text(text = "Selesai, aku capek")
+                    }
+                }
             }
         }
     }
