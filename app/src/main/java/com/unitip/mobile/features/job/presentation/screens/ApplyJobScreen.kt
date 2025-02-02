@@ -33,6 +33,7 @@ import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
 
+@Deprecated("Sudah tidak digunakan")
 @Composable
 fun ApplyJobScreen(
     viewModel: ApplyJobViewModel = hiltViewModel()

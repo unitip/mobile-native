@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.job.presentation.states
 
+@Deprecated("Sudah tidak digunakan")
 data class ApplyJobState(
     val detail: Detail = Detail.Initial
 ) {
