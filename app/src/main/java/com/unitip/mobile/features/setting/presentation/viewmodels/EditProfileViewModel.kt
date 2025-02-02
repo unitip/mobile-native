@@ -29,7 +29,7 @@ class EditProfileViewModel @Inject constructor(
     fun edit(name: String, gender: String) =
         viewModelScope.launch {
             _uiState.update { it.copy(editDetail = EditProfileState.EditDetail.Loading) }
-            accountRepository.edit(
+            accountRepository.editProfile(
                 name = name,
                 gender = gender,
 

@@ -172,9 +172,17 @@ fun ProfileScreen(
                                 )
                                 Button(modifier = Modifier.padding(top = 16.dp),
 
-                                    onClick = { navController.navigate(SettingRoutes.Edit) }) {
+                                    onClick = { navController.navigate(SettingRoutes.EditProfile) }) {
                                     Text(
                                         text = "Edit Profil",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Button(modifier = Modifier.padding(top = 16.dp),
+
+                                    onClick = { navController.navigate(SettingRoutes.EditPassword) }) {
+                                    Text(
+                                        text = "Edit Password",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }

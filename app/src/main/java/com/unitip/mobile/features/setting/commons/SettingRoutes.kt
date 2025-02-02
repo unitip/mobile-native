@@ -6,5 +6,8 @@ import kotlinx.serialization.Serializable
 sealed class SettingRoutes {
 
     @Serializable
-    object Edit
+    object EditProfile
+
+    @Serializable
+    object EditPassword
 }
