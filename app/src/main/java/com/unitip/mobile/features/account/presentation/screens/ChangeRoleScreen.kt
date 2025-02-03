@@ -58,10 +58,10 @@ fun ChangeRoleScreen(
     val uiState by viewModel.uiState.collectAsState()
     var selectedRole by remember { mutableStateOf("") }
 
-    LaunchedEffect(uiState.detail) {
-        with(uiState.detail) {
+    LaunchedEffect(uiState.getRoleDetail) {
+        with(uiState.getRoleDetail) {
             when (this) {
-                is ChangeRoleState.Detail.Failure -> snackbarHostState.showSnackbar(
+                is ChangeRoleState.GetRoleDetail.Failure -> snackbarHostState.showSnackbar(
                     message = message
                 )
 
@@ -106,7 +106,7 @@ fun ChangeRoleScreen(
             }
 
             // loading indicator
-            AnimatedVisibility(visible = uiState.detail is ChangeRoleState.Detail.Loading) {
+            AnimatedVisibility(visible = uiState.getRoleDetail is ChangeRoleState.GetRoleDetail.Loading) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -114,9 +114,9 @@ fun ChangeRoleScreen(
                     strokeCap = StrokeCap.Round
                 )
             }
-            with(uiState.detail) {
+            with(uiState.getRoleDetail) {
                 when (this) {
-                    is ChangeRoleState.Detail.Success -> LazyColumn(
+                    is ChangeRoleState.GetRoleDetail.Success -> LazyColumn(
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 16.dp, end = 16.dp)
@@ -176,11 +176,11 @@ fun ChangeRoleScreen(
                 }
 
 
-                AnimatedVisibility(visible = uiState.detail !is ChangeRoleState.Detail.Loading) {
+                AnimatedVisibility(visible = uiState.getRoleDetail !is ChangeRoleState.GetRoleDetail.Loading) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Button(
                             onClick = {
-
+                                viewModel.changeRole(role = selectedRole)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) { Text(text = "Selesai") }

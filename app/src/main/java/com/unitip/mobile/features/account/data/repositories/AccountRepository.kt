@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
 import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
 import com.unitip.mobile.features.account.data.dtos.EditPayload
 import com.unitip.mobile.features.account.data.sources.AccountApi
@@ -101,6 +102,23 @@ class AccountRepository @Inject constructor(
                 return Either.Right(true)
             }
 
+            return Either.Left(response.mapToFailure())
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
+    suspend fun changeRole(role: String): Either<Failure, Boolean> {
+        try {
+            val token = session.token
+            val response = accountApi.changeRole(
+                token = "Bearer $token",
+                payload = ChangeRolePayload(role = role)
+            )
+            val result = response.body()
+            if (response.isSuccessful && result != null) {
+                return Either.Right(true)
+            }
             return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))

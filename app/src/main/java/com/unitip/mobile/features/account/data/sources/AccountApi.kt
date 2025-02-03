@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.account.data.sources
 
+import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
+import com.unitip.mobile.features.account.data.dtos.ChangeRoleResponse
 import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
 import com.unitip.mobile.features.account.data.dtos.EditPasswordResponse
 import com.unitip.mobile.features.account.data.dtos.EditPayload
@@ -34,4 +36,10 @@ interface AccountApi {
         @Header("Authorization") token: String,
         @Body payload: EditPasswordPayload
     ): Response<EditPasswordResponse>
+
+    @PATCH("accounts/profile/roles")
+    suspend fun changeRole(
+        @Header("Authorization") token: String,
+        @Body payload: ChangeRolePayload
+    ): Response<ChangeRoleResponse>
 }
