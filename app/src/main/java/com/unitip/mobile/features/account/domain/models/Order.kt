@@ -5,9 +5,9 @@ data class Order(
     val title: String,
     val createdAt: String,
     val updatedAt: String,
-    val customer: Customer
+    val otherUser: OtherUser
 ) {
-    data class Customer(
+    data class OtherUser(
         val name: String
     )
 }
