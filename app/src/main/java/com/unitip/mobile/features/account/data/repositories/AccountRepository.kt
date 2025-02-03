@@ -16,8 +16,6 @@ import javax.inject.Singleton
 class AccountRepository @Inject constructor(
     private val accountApi: AccountApi,
     private val sessionManager: SessionManager
-
-
 ) {
     private val session = sessionManager.read()
 
@@ -45,6 +43,23 @@ class AccountRepository @Inject constructor(
         }
     } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun getRoles(): Either<Failure, List<String>> = try {
+        val response = accountApi.getRole(
+            token = "Bearer ${sessionManager.getToken()}"
+        )
+
+        val result = response.body()
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.roles)
+            false -> Either.Left(response.mapToFailure())
+        }
+
+    } catch (e: Exception) {
+        Either.Left(
+            Failure(message = "Terjadi kesalahan tak terduga")
+        )
     }
 
     suspend fun editProfile(

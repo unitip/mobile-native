@@ -5,6 +5,7 @@ import com.unitip.mobile.features.account.data.dtos.EditPasswordResponse
 import com.unitip.mobile.features.account.data.dtos.EditPayload
 import com.unitip.mobile.features.account.data.dtos.EditResponse
 import com.unitip.mobile.features.account.data.dtos.GetOrderHistoriesResponse
+import com.unitip.mobile.features.account.data.dtos.GetRoleResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,6 +17,11 @@ interface AccountApi {
     suspend fun getOrderHistories(
         @Header("Authorization") token: String
     ): Response<GetOrderHistoriesResponse>
+
+    @GET("accounts/profile/roles")
+    suspend fun getRole(
+        @Header("Authorization") token: String
+    ): Response<GetRoleResponse>
 
     @PATCH("accounts/profile")
     suspend fun editProfile(
