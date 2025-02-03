@@ -1,5 +1,4 @@
 package com.unitip.mobile.features.offer.data.models
-
-data class CreateOfferResult(
+data class ApplyOfferResult(
     val id: String
 )

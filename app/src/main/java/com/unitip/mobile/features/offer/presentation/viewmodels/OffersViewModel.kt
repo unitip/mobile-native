@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class OffersViewModel @Inject constructor(
     private val offerRepository: OfferRepository,
@@ -92,5 +91,4 @@ class OffersViewModel @Inject constructor(
             )
         }
     }
-
 }

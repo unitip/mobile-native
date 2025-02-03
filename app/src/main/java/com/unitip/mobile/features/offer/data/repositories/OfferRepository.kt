@@ -1,8 +1,10 @@
 package com.unitip.mobile.features.offer.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
-import com.unitip.mobile.features.offer.data.models.CreateOfferResult
+import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
+import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
@@ -24,11 +26,12 @@ class OfferRepository @Inject constructor(
         price: Number,
         type: String,
         pickupArea: String,
-        deliveryArea: String,
-        availableUntil: String
-    ): Either<Failure, CreateOfferResult> {
+        destinationArea: String,
+        availableUntil: String,
+        maxParticipants: Number
+    ): Either<Failure, Unit> {
         try {
-            val token = sessionManager.read()?.token
+            val token = sessionManager.read().token
             val response = offerApi.create(
                 token = "Bearer $token",
                 payload = CreateOfferPayload(
@@ -37,15 +40,16 @@ class OfferRepository @Inject constructor(
                     price = price,
                     type = type,
                     pickupArea = pickupArea,
-                    deliveryArea = deliveryArea,
+                    destinationArea = destinationArea,
                     availableUntil = availableUntil,
+                    maxParticipants = maxParticipants
                 )
             )
 
             val result = response.body()
             // mereturn jika sukses dan jika tidak
             return when (response.isSuccessful && result != null) {
-                true -> Either.Right(CreateOfferResult(id = result.id))
+                true -> Either.Right(Unit)
                 false -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
@@ -58,8 +62,8 @@ class OfferRepository @Inject constructor(
         type: String? = null
     ): Either<Failure, GetAllOffersResult> {
         return try {
-            val session = sessionManager.read() ?: return Either.Left(Failure("Unauthorized"))
-            val response = offerApi.getOffers(
+            val session = sessionManager.read()
+            val response = offerApi.getAllOffers(
                 token = "Bearer ${session.token}",
                 page = page,
                 type = type
@@ -78,10 +82,11 @@ class OfferRepository @Inject constructor(
                                         description = apiOffer.description,
                                         price = apiOffer.price,
                                         type = apiOffer.type,
-                                        deliveryArea = apiOffer.destinationArea,
+                                        destinationArea = apiOffer.destinationArea,
                                         pickupArea = apiOffer.pickupArea,
                                         availableUntil = apiOffer.availableUntil,
                                         offerStatus = apiOffer.offerStatus,
+                                        maxParticipants = apiOffer.maxParticipants,
                                         freelancer = OfferFreelancer(name = apiOffer.freelancer.name)
                                     )
                                 },
@@ -92,6 +97,95 @@ class OfferRepository @Inject constructor(
                         Either.Left(Failure("Response body is null"))
                     }
                 }
+
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
+    }
+
+    suspend fun getOfferDetail(offerId: String): Either<Failure, Offer> {
+        return try {
+            val session = sessionManager.read()
+            val response = offerApi.getOfferDetail(
+                token = "Bearer ${session.token}",
+                offerId = offerId
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(body.offer.toDomainModel())
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
+    }
+
+    private fun GetOfferResponse.ApiOffer.toDomainModel(): Offer {
+        return Offer(
+            id = this.id,
+            title = this.title,
+            description = this.description,
+            price = this.price,
+            type = this.type,
+            pickupArea = this.pickupArea,
+            destinationArea = this.destinationArea,
+            availableUntil = this.availableUntil,
+            offerStatus = this.offerStatus,
+            freelancer = OfferFreelancer(name = this.freelancer.name),
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt,
+            applicantsCount = this.applicantsCount,
+            hasApplied = this.hasApplied,
+            maxParticipants = this.maxParticipants
+        )
+    }
+
+    suspend fun applyOffer(
+        offerId: String,
+        note: String,
+        destinationLocation: String,
+        pickupLocation: String,
+        pickupLatitude: Double,
+        pickupLongitude: Double,
+        destinationLatitude: Double,
+        destinationLongitude: Double
+    ): Either<Failure, ApplyOfferResult> {
+        return try {
+            val session = sessionManager.read()
+            val response = offerApi.applyOffer(
+                token = "Bearer ${session.token}",
+                offerId = offerId,
+                payload = ApplyOfferPayload(
+                    note = note,
+                    destinationLocation = destinationLocation,
+                    pickupLocation = pickupLocation,
+                    pickupLatitude = pickupLatitude,
+                    pickupLongitude = pickupLongitude,
+                    destinationLatitude = destinationLatitude,
+                    destinationLongitude = destinationLongitude
+                )
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(ApplyOfferResult(id = body.id))
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+
                 else -> Either.Left(response.mapToFailure())
             }
         } catch (e: Exception) {
@@ -99,46 +193,3 @@ class OfferRepository @Inject constructor(
         }
     }
 }
-
-
-//
-//    suspend fun getAll(): Either<Failure, GetAllOffersResult> {
-//        try {
-//            val token = sessionManager.read()?.token
-//            val response = offerApi.getAll(
-//                token = "Bearer $token",
-//                type = GetAllOfferResponse.PageInfo.OfferType.SINGLE.value
-//            )
-//            val result = response.body()
-//
-//            return when (response.isSuccessful && result != null) {
-//                true -> Either.Right(
-//                    GetAllOffersResult(
-//                        offers = result.offers.map {
-//                            Offer(
-//                                id = it.id,
-//                                title = it.title,
-//                                description = it.description,
-//                                price = it.price,
-//                                type = it.type,
-//                                pickupArea = it.pickupArea,
-//                                deliveryArea = it.deliveryArea,
-//                                availableUntil = it.availableUntil,
-//                                offerStatus = it.offerStatus,
-//                                freelancer = OfferFreelancer(
-//                                    name = it.freelancer.name
-//                                )
-//                            )
-//                        },
-//                        hasNext = result.pageInfo.page < result.pageInfo.totalPages
-//                    )
-//                )
-//
-//                false -> Either.Left(response.mapToFailure())
-//            }
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga !"))
-//        }
-//    }
