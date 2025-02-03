@@ -4,7 +4,8 @@ import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
 import com.unitip.mobile.features.account.data.dtos.EditPasswordResponse
 import com.unitip.mobile.features.account.data.dtos.EditPayload
 import com.unitip.mobile.features.account.data.dtos.EditResponse
-import com.unitip.mobile.features.account.data.dtos.GetOrderHistoriesResponse
+import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesResponse
+import com.unitip.mobile.features.account.data.dtos.GetDriverOrderHistoriesResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -12,10 +13,15 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 
 interface AccountApi {
-    @GET("accounts/driver/orders/histories")
-    suspend fun getOrderHistories(
+    @GET("accounts/customer/orders/histories")
+    suspend fun getCustomerOrderHistories(
         @Header("Authorization") token: String
-    ): Response<GetOrderHistoriesResponse>
+    ): Response<GetCustomerOrderHistoriesResponse>
+
+    @GET("accounts/driver/orders/histories")
+    suspend fun getDriverOrderHistories(
+        @Header("Authorization") token: String
+    ): Response<GetDriverOrderHistoriesResponse>
 
     @PATCH("accounts/profile")
     suspend fun editProfile(
