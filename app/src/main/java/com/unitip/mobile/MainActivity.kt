@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.unitip.mobile.shared.commons.Application
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.repositories.MqttRepository
+import com.unitip.mobile.shared.data.repositories.ServiceRepository
 import dagger.hilt.android.AndroidEntryPoint
 import org.osmdroid.config.Configuration
 import javax.inject.Inject
@@ -17,6 +18,9 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var mqttRepository: MqttRepository
+
+    @Inject
+    lateinit var serviceRepository: ServiceRepository
 
     @Inject
     lateinit var sessionManager: SessionManager
