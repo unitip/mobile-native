@@ -16,4 +16,9 @@ sealed class JobRoutes {
     data class DetailOrder(
         val orderId: String
     )
+
+    @Serializable
+    data class Apply(
+        val jobId: String
+    )
 }

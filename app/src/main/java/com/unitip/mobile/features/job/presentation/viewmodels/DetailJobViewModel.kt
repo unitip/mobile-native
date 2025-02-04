@@ -59,22 +59,22 @@ class DetailJobViewModel @Inject constructor(
         )
     }
 
-    fun apply() = viewModelScope.launch {
-        _uiState.update { it.copy(applyDetail = DetailJobState.ApplyDetail.Loading) }
-        jobRepository.apply(jobId = parameters.jobId)
-            .onLeft { left ->
-                _uiState.update {
-                    it.copy(
-                        applyDetail = DetailJobState.ApplyDetail.Failure(
-                            message = left.message
-                        )
-                    )
-                }
-            }
-            .onRight {
-                _uiState.update {
-                    it.copy(applyDetail = DetailJobState.ApplyDetail.Success)
-                }
-            }
-    }
+//    fun apply() = viewModelScope.launch {
+//        _uiState.update { it.copy(applyDetail = DetailJobState.ApplyDetail.Loading) }
+//        jobRepository.apply(jobId = parameters.jobId)
+//            .onLeft { left ->
+//                _uiState.update {
+//                    it.copy(
+//                        applyDetail = DetailJobState.ApplyDetail.Failure(
+//                            message = left.message
+//                        )
+//                    )
+//                }
+//            }
+//            .onRight {
+//                _uiState.update {
+//                    it.copy(applyDetail = DetailJobState.ApplyDetail.Success)
+//                }
+//            }
+//    }
 }

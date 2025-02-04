@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.features.job.domain.models.JobModel
@@ -121,10 +122,18 @@ class JobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun apply(jobId: String): Either<Failure, String> = try {
+    suspend fun apply(
+        jobId: String,
+        price: Int,
+        bidNote: String
+    ): Either<Failure, String> = try {
         val response = jobApi.apply(
             token = "Bearer ${sessionManager.getToken()}",
-            jobId = jobId
+            jobId = jobId,
+            payload = ApplyJobPayload(
+                price = price,
+                bidNote = bidNote
+            )
         )
         val result = response.body()
 

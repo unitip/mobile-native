@@ -3,6 +3,7 @@ package com.unitip.mobile.shared.commons.extensions
 import com.google.gson.Gson
 import com.unitip.mobile.shared.data.dto.BadRequestError
 import com.unitip.mobile.shared.data.dto.ConflictError
+import com.unitip.mobile.shared.data.dto.ForbiddenError
 import com.unitip.mobile.shared.data.dto.InternalServerError
 import com.unitip.mobile.shared.data.dto.NotFoundError
 import com.unitip.mobile.shared.data.dto.UnauthorizedError
@@ -27,6 +28,14 @@ fun <T> Response<T>.mapToFailure(): Failure {
             Failure(
                 message = unauthorizedError.message,
                 code = 401
+            )
+        }
+
+        403 -> {
+            val forbiddenError = gson.fromJson(errorBodyStr, ForbiddenError::class.java)
+            Failure(
+                message = forbiddenError.message,
+                code = 403
             )
         }
 

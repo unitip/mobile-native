@@ -7,7 +7,7 @@ data class DetailJobState(
     val session: Session = Session(),
     val jobModel: JobModel.Detail = JobModel.Detail(),
     val detail: Detail = Detail.Initial,
-    val applyDetail: ApplyDetail = ApplyDetail.Initial
+//    val applyDetail: ApplyDetail = ApplyDetail.Initial
 ) {
     sealed interface Detail {
         data object Initial : Detail
@@ -16,10 +16,10 @@ data class DetailJobState(
         data class Failure(val message: String) : Detail
     }
 
-    sealed interface ApplyDetail {
-        data object Initial : ApplyDetail
-        data object Loading : ApplyDetail
-        data object Success : ApplyDetail
-        data class Failure(val message: String) : ApplyDetail
-    }
+//    sealed interface ApplyDetail {
+//        data object Initial : ApplyDetail
+//        data object Loading : ApplyDetail
+//        data object Success : ApplyDetail
+//        data class Failure(val message: String) : ApplyDetail
+//    }
 }
