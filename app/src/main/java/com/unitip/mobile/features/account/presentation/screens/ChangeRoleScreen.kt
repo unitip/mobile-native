@@ -42,6 +42,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.account.presentation.states.ChangeRoleState
 import com.unitip.mobile.features.account.presentation.viewmodels.ChangeRoleViewModel
+import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.RoleConstants
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomCard
@@ -58,12 +59,32 @@ fun ChangeRoleScreen(
     val uiState by viewModel.uiState.collectAsState()
     var selectedRole by remember { mutableStateOf("") }
 
+    LaunchedEffect(uiState.changeRoleDetail) {
+        with(uiState.changeRoleDetail) {
+            if (this is ChangeRoleState.ChangeRoleDetail.Success)
+                navController.navigate(HomeRoutes.Index) {
+                    popUpTo<HomeRoutes.Index> { inclusive = true }
+                }
+        }
+    }
+
     LaunchedEffect(uiState.getRoleDetail) {
         with(uiState.getRoleDetail) {
             when (this) {
                 is ChangeRoleState.GetRoleDetail.Failure -> snackbarHostState.showSnackbar(
                     message = message
                 )
+
+                else -> Unit
+            }
+        }
+        with(uiState.changeRoleDetail) {
+            when (this) {
+                is ChangeRoleState.ChangeRoleDetail.Failure -> snackbarHostState.showSnackbar(
+                    message = message
+                )
+
+                is ChangeRoleState.ChangeRoleDetail.Success -> navController.popBackStack()
 
                 else -> Unit
             }

@@ -61,6 +61,7 @@ class ChangeRoleViewModel @Inject constructor(
                     it.copy(
                         changeRoleDetail = ChangeRoleState.ChangeRoleDetail.Success
                     )
+
                 }
             })
 
