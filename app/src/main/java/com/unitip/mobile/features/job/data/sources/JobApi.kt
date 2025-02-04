@@ -6,6 +6,7 @@ import com.unitip.mobile.features.job.data.dtos.CancelJobApplicationResponse
 import com.unitip.mobile.features.job.data.dtos.CompleteJobResponse
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobResponse
+import com.unitip.mobile.features.job.data.dtos.GetAllJobApplicationsResponse
 import com.unitip.mobile.features.job.data.dtos.GetAllJobsResponse
 import com.unitip.mobile.features.job.data.dtos.GetJobResponse
 import retrofit2.Response
@@ -39,11 +40,17 @@ interface JobApi {
     ): Response<GetJobResponse>
 
     @POST("jobs/{job_id}/applications")
-    suspend fun apply(
+    suspend fun createApplication(
         @Header("Authorization") token: String,
         @Path("job_id") jobId: String,
         @Body payload: ApplyJobPayload
     ): Response<ApplyJobResponse>
+
+    @GET("jobs/{job_id}/applications")
+    suspend fun getAllApplications(
+        @Header("Authorization") token: String,
+        @Path("job_id") jobId: String
+    ): Response<GetAllJobApplicationsResponse>
 
     @PATCH("jobs/{job_id}/completion")
     suspend fun complete(

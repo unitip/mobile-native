@@ -4,6 +4,7 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.data.dtos.ApplyJobPayload
 import com.unitip.mobile.features.job.data.dtos.CreateJobPayload
 import com.unitip.mobile.features.job.data.sources.JobApi
+import com.unitip.mobile.features.job.domain.models.JobApplicationModel
 import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -122,12 +123,12 @@ class JobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun apply(
+    suspend fun createApplication(
         jobId: String,
         price: Int,
         bidNote: String
     ): Either<Failure, String> = try {
-        val response = jobApi.apply(
+        val response = jobApi.createApplication(
             token = "Bearer ${sessionManager.getToken()}",
             jobId = jobId,
             payload = ApplyJobPayload(
@@ -139,6 +140,33 @@ class JobRepository @Inject constructor(
 
         when (response.isSuccessful && result != null) {
             true -> Either.Right(result.id)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
+
+    suspend fun getAllApplications(
+        jobId: String
+    ): Either<Failure, List<JobApplicationModel>> = try {
+        val response = jobApi.getAllApplications(
+            token = "Bearer ${sessionManager.getToken()}",
+            jobId = jobId
+        )
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.applications.map { application ->
+                JobApplicationModel(
+                    id = application.id,
+                    price = application.price,
+                    bidNote = application.bidNote,
+                    driver = JobApplicationModel.Driver(
+                        name = application.driver.name
+                    )
+                )
+            })
+
             else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {

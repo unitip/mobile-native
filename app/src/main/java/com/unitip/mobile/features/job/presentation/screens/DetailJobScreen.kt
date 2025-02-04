@@ -22,7 +22,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.Bike
+import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
@@ -50,8 +53,6 @@ import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
-import com.unitip.mobile.shared.presentation.components.StaticMapPreview
-import org.osmdroid.util.GeoPoint
 
 @Composable
 fun DetailJobScreen(
@@ -63,29 +64,6 @@ fun DetailJobScreen(
 
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
-
-//    LaunchedEffect(uiState.applyDetail) {
-//        with(uiState.applyDetail) {
-//            when (this) {
-//                is DetailJobState.ApplyDetail.Success -> {
-//                    Toast.makeText(
-//                        context,
-//                        "berhasil!",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                    navController.popBackStack()
-//                }
-//
-//                is DetailJobState.ApplyDetail.Failure -> Toast.makeText(
-//                    context,
-//                    message,
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//
-//                else -> Unit
-//            }
-//        }
-//    }
 
     Scaffold {
         Column(
@@ -137,6 +115,9 @@ fun DetailJobScreen(
                 }
 
                 LazyColumn(modifier = Modifier.weight(1f), state = listState) {
+                    /**
+                     * component untuk menampilkan catatan pekerjaan
+                     */
                     item {
                         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
                             Text(
@@ -151,7 +132,10 @@ fun DetailJobScreen(
                         }
                     }
 
-                    // details job
+                    /**
+                     * component untuk menampilkan details job
+                     * seperti jenis layanan, titik jemput, destinasi
+                     */
                     itemsIndexed(
                         listOf(
                             mapOf(
@@ -233,52 +217,51 @@ fun DetailJobScreen(
                         }
                     }
 
-                    if (uiState.jobModel.pickupLatitude != null && uiState.jobModel.pickupLongitude != null)
-                        item {
-                            Column(
-                                modifier = Modifier.padding(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 16.dp
-                                )
-                            ) {
-                                Text(
-                                    text = "Lokasi Jemput",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                StaticMapPreview(
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    geoPoint = GeoPoint(
-                                        uiState.jobModel.pickupLatitude!!,
-                                        uiState.jobModel.pickupLongitude!!
-                                    )
-                                )
-                            }
-                        }
+                    /**
+                     * menampilkan daftar applications yang melamar job berikut dengan syarat
+                     * yang membuat job adalah user saat ini dan user saat ini login sebagai
+                     * role customer
+                     */
+                    item {
+                        Text(text = "Daftar pelamar")
+                        Text(text = "Silahkan pilih pelamar yang sesuai dengan kebutuhan anda")
+                    }
 
-                    if (uiState.jobModel.destinationLatitude != null && uiState.jobModel.destinationLongitude != null)
-                        item {
-                            Column(
-                                modifier = Modifier.padding(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 16.dp
-                                )
-                            ) {
-                                Text(
-                                    text = "Lokasi Pengantaran",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                StaticMapPreview(
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    geoPoint = GeoPoint(
-                                        uiState.jobModel.destinationLatitude!!,
-                                        uiState.jobModel.destinationLongitude!!
-                                    )
-                                )
+                    with(uiState.getAllApplicationsDetail) {
+                        when (this) {
+                            is DetailJobState.GetAllApplicationsDetail.Loading -> item {
+                                CircularProgressIndicator()
                             }
-                        }
 
+                            is DetailJobState.GetAllApplicationsDetail.Success ->
+                                itemsIndexed(applications) { index, application ->
+                                    ListItem(
+                                        overlineContent = {
+                                            Text(text = application.price.toString())
+                                        },
+                                        headlineContent = {
+                                            Text(text = application.driver.name)
+                                        },
+                                        supportingContent = {
+                                            Text(text = application.bidNote)
+                                        },
+                                        trailingContent = {
+                                            OutlinedIconButton(
+                                                onClick = {}
+                                            ) {
+                                                Icon(Lucide.Check, contentDescription = null)
+                                            }
+                                        }
+                                    )
+                                }
+
+                            else -> Unit
+                        }
+                    }
+
+                    /**
+                     * spacer untuk memberikan jarak bawah pada lazy column
+                     */
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
                     }
