@@ -38,43 +38,96 @@ class DetailJobViewModel @Inject constructor(
             fetchData()
     }
 
-    fun fetchData() = viewModelScope.launch {
-        _uiState.update { it.copy(detail = DetailJobState.Detail.Loading) }
-        jobRepository.get(jobId = parameters.jobId).fold(
-            ifLeft = { left ->
-                _uiState.update {
-                    it.copy(
-                        detail = DetailJobState.Detail.Failure(message = left.message)
-                    )
+    fun fetchData() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    detail = DetailJobState.Detail.Loading
+                )
+            }
+
+            jobRepository
+                .get(jobId = parameters.jobId)
+                .onLeft { left ->
+                    _uiState.update {
+                        it.copy(
+                            detail = DetailJobState.Detail.Failure(message = left.message)
+                        )
+                    }
                 }
-            },
-            ifRight = { right ->
+                .onRight { right ->
+                    _uiState.update {
+                        it.copy(
+                            detail = DetailJobState.Detail.Success,
+                            jobModel = right
+                        )
+                    }
+                }
+
+
+        }
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    getAllApplicationsDetail = DetailJobState.GetAllApplicationsDetail.Loading
+                )
+            }
+
+            jobRepository
+                .getAllApplications(jobId = parameters.jobId)
+                .onLeft { left ->
+                    _uiState.update {
+                        it.copy(
+                            getAllApplicationsDetail = DetailJobState.GetAllApplicationsDetail.Failure(
+                                message = left.message
+                            )
+                        )
+                    }
+                }
+                .onRight { right ->
+                    _uiState.update {
+                        it.copy(
+                            getAllApplicationsDetail = DetailJobState.GetAllApplicationsDetail.Success(
+                                applications = right
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    fun approveApplication(
+        applicationId: String
+    ) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Loading(
+                    applicationId = applicationId
+                )
+            )
+        }
+
+        jobRepository
+            .approveApplication(
+                jobId = parameters.jobId,
+                applicationId = applicationId
+            )
+            .onLeft { left ->
                 _uiState.update {
                     it.copy(
-                        detail = DetailJobState.Detail.Success,
-                        jobModel = right
+                        approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Failure(
+                            message = left.message
+                        )
                     )
                 }
             }
-        )
+            .onRight {
+                _uiState.update {
+                    it.copy(
+                        approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Success
+                    )
+                }
+            }
     }
-
-//    fun apply() = viewModelScope.launch {
-//        _uiState.update { it.copy(applyDetail = DetailJobState.ApplyDetail.Loading) }
-//        jobRepository.apply(jobId = parameters.jobId)
-//            .onLeft { left ->
-//                _uiState.update {
-//                    it.copy(
-//                        applyDetail = DetailJobState.ApplyDetail.Failure(
-//                            message = left.message
-//                        )
-//                    )
-//                }
-//            }
-//            .onRight {
-//                _uiState.update {
-//                    it.copy(applyDetail = DetailJobState.ApplyDetail.Success)
-//                }
-//            }
-//    }
 }

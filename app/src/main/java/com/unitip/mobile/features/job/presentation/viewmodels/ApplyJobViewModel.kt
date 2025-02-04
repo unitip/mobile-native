@@ -32,7 +32,7 @@ class ApplyJobViewModel @Inject constructor(
         }
 
         jobRepository
-            .apply(
+            .createApplication(
                 jobId = parameters.jobId,
                 price = price,
                 bidNote = bidNote

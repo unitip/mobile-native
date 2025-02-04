@@ -228,7 +228,13 @@ fun DashboardCustomerScreen(
                         is DashboardCustomerState.Detail.Success -> {
                             items(orders) { order ->
                                 ListItem(
-                                    modifier = Modifier.clickable { },
+                                    modifier = Modifier.clickable {
+                                        navController.navigate(
+                                            JobRoutes.DetailOrderCustomer(
+                                                orderId = order.id
+                                            )
+                                        )
+                                    },
                                     overlineContent = { Text(text = order.id) },
                                     headlineContent = { Text(text = order.title) },
                                     supportingContent = { Text(text = order.note) }

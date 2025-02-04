@@ -59,7 +59,7 @@ fun DashboardDriverScreen(
                                     ListItem(
                                         modifier = Modifier.clickable {
                                             navController.navigate(
-                                                JobRoutes.DetailOrder(
+                                                JobRoutes.DetailOrderDriver(
                                                     orderId = order.id
                                                 )
                                             )

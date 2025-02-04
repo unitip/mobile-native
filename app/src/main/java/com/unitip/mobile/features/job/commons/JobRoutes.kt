@@ -13,7 +13,12 @@ sealed class JobRoutes {
     )
 
     @Serializable
-    data class DetailOrder(
+    data class DetailOrderDriver(
+        val orderId: String
+    )
+
+    @Serializable
+    data class DetailOrderCustomer(
         val orderId: String
     )
 
