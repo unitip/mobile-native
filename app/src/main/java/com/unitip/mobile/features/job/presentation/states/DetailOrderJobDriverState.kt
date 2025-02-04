@@ -1,6 +1,6 @@
 package com.unitip.mobile.features.job.presentation.states
 
-data class DetailOrderJobState(
+data class DetailOrderJobDriverState(
     val completeDetail: CompleteDetail = CompleteDetail.Initial,
     val cancelDetail: CancelDetail = CancelDetail.Initial
 ) {

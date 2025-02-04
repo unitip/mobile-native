@@ -6,7 +6,7 @@ import androidx.navigation.toRoute
 import com.unitip.mobile.features.job.presentation.screens.ApplyJobScreen
 import com.unitip.mobile.features.job.presentation.screens.CreateJobScreen
 import com.unitip.mobile.features.job.presentation.screens.DetailJobScreen
-import com.unitip.mobile.features.job.presentation.screens.DetailOrderJobScreen
+import com.unitip.mobile.features.job.presentation.screens.DetailOrderJobDriverScreen
 
 fun NavGraphBuilder.jobNavigation() {
     composable<JobRoutes.Create> {
@@ -20,7 +20,7 @@ fun NavGraphBuilder.jobNavigation() {
 
     composable<JobRoutes.DetailOrder> {
         val data = it.toRoute<JobRoutes.DetailOrder>()
-        DetailOrderJobScreen(
+        DetailOrderJobDriverScreen(
             orderId = data.orderId
         )
     }

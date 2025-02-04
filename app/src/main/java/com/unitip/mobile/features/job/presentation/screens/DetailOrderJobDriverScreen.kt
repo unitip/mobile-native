@@ -13,14 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.unitip.mobile.features.job.presentation.states.DetailOrderJobState
-import com.unitip.mobile.features.job.presentation.viewmodels.DetailOrderJobViewModel
+import com.unitip.mobile.features.job.presentation.states.DetailOrderJobDriverState
+import com.unitip.mobile.features.job.presentation.viewmodels.DetailOrderJobDriverViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @Composable
-fun DetailOrderJobScreen(
+fun DetailOrderJobDriverScreen(
     orderId: String,
-    viewModel: DetailOrderJobViewModel = hiltViewModel()
+    viewModel: DetailOrderJobDriverViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -29,12 +29,12 @@ fun DetailOrderJobScreen(
 
     with(uiState.completeDetail) {
         when (this) {
-            is DetailOrderJobState.CompleteDetail.Success -> {
+            is DetailOrderJobDriverState.CompleteDetail.Success -> {
                 Toast.makeText(context, "berhasil menyelesaikan!", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
             }
 
-            is DetailOrderJobState.CompleteDetail.Failure -> Toast.makeText(
+            is DetailOrderJobDriverState.CompleteDetail.Failure -> Toast.makeText(
                 context,
                 "gagal menyelesaikan: ${this.message}",
                 Toast.LENGTH_SHORT
@@ -46,12 +46,12 @@ fun DetailOrderJobScreen(
 
     with(uiState.cancelDetail) {
         when (this) {
-            is DetailOrderJobState.CancelDetail.Success -> {
+            is DetailOrderJobDriverState.CancelDetail.Success -> {
                 Toast.makeText(context, "berhasil batal!", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
             }
 
-            is DetailOrderJobState.CancelDetail.Failure -> Toast.makeText(
+            is DetailOrderJobDriverState.CancelDetail.Failure -> Toast.makeText(
                 context,
                 "gagal batal: ${this.message}",
                 Toast.LENGTH_SHORT
@@ -67,7 +67,7 @@ fun DetailOrderJobScreen(
             Text(text = "id ordernya: $orderId")
             with(uiState.cancelDetail) {
                 when (this) {
-                    is DetailOrderJobState.CancelDetail.Loading -> CircularProgressIndicator()
+                    is DetailOrderJobDriverState.CancelDetail.Loading -> CircularProgressIndicator()
                     else -> Button(
                         onClick = {
                             viewModel.cancel()
@@ -82,7 +82,7 @@ fun DetailOrderJobScreen(
             }
             with(uiState.completeDetail) {
                 when (this) {
-                    is DetailOrderJobState.CompleteDetail.Loading -> CircularProgressIndicator()
+                    is DetailOrderJobDriverState.CompleteDetail.Loading -> CircularProgressIndicator()
                     else -> Button(
                         onClick = {
                             viewModel.complete()
