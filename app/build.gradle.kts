@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 plugins {
@@ -10,6 +11,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 
+    id("org.openapi.generator") version "7.10.0"
 }
 
 android {
@@ -127,6 +129,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+
 
     // functional programming
     implementation(libs.arrow.core.jvm)
@@ -149,3 +153,49 @@ dependencies {
 //kapt {
 //    correctErrorTypes = true
 //}
+
+tasks.register("downloadSwagger") {
+    doLast {
+        val swaggerUrl = "http://localhost:3000/api/v1/docs/swagger.json"
+        val outputDir = "$rootDir/swagger.json"
+
+        ant.withGroovyBuilder {
+            "get"(
+                "src" to swaggerUrl,
+                "dest" to outputDir,
+                "verbose" to "true"
+            )
+        }
+    }
+}
+
+openApiGenerate {
+    generatorName.set("kotlin")
+    skipValidateSpec.set(true)
+    library.set("jvm-retrofit2")
+    packageName.set("com.unitip.mobile.data.openapi")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    inputSpec.set("$rootDir/swagger.json")
+    configOptions.set(
+        mapOf(
+            "serializationLibrary" to "gson",
+            "useCoroutines" to "true",
+        )
+    )
+}
+
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("${layout.buildDirectory.get()}/generate-resources/main/src")
+        }
+    }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
+}
