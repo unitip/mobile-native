@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -58,14 +59,10 @@ import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.job.commons.JobConstants
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
-import com.unitip.mobile.features.location.commons.LocationRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
-import com.unitip.mobile.shared.presentation.components.StaticMapPreview
-import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -81,21 +78,26 @@ fun CreateJobScreen(
     var title by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
     var pickupLocation by rememberSaveable { mutableStateOf("") }
-    var pickupLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
+//    var pickupLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
     var destinationLocation by rememberSaveable { mutableStateOf("") }
-    var destinationLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
+//    var destinationLocationGeoPoint by rememberSaveable { mutableStateOf<GeoPoint?>(null) }
+    /**
+     * expected price merupakan harga standar yang akan diisi
+     * berdasarkan pilihan kategori lokasi user
+     */
+    var expectedPrice by rememberSaveable { mutableIntStateOf(0) }
     var isSelectServiceVisible by rememberSaveable { mutableStateOf(false) }
     var selectedService by rememberSaveable { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
-    navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
-        if (it != null)
-            pickupLocationGeoPoint = it
-    }
-    navController.GetPopResult<GeoPoint>(key = "destinationLocationGeoPoint") {
-        if (it != null)
-            destinationLocationGeoPoint = it
-    }
+//    navController.GetPopResult<GeoPoint>(key = "pickupLocationGeoPoint") {
+//        if (it != null)
+//            pickupLocationGeoPoint = it
+//    }
+//    navController.GetPopResult<GeoPoint>(key = "destinationLocationGeoPoint") {
+//        if (it != null)
+//            destinationLocationGeoPoint = it
+//    }
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -108,6 +110,8 @@ fun CreateJobScreen(
                     )
                     viewModel.resetState()
                 }
+
+                is CreateJobState.Detail.Success -> navController.popBackStack()
 
                 else -> {}
             }
@@ -315,30 +319,30 @@ fun CreateJobScreen(
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
-                        when (pickupLocationGeoPoint) {
-                            null -> Button(onClick = {
-                                navController.navigate(
-                                    LocationRoutes.PickLocation(
-                                        resultKey = "pickupLocationGeoPoint"
-                                    )
-                                )
-                            }) {
-                                Text(text = "Ganti lokasi")
-                            }
-
-                            else -> StaticMapPreview(
-                                modifier = Modifier.padding(top = 8.dp),
-                                geoPoint = pickupLocationGeoPoint!!,
-                                onClick = {
-                                    navController.navigate(
-                                        LocationRoutes.PickLocation(
-                                            resultKey = "pickupLocationGeoPoint",
-                                            initialLatitude = pickupLocationGeoPoint!!.latitude,
-                                            initialLongitude = pickupLocationGeoPoint!!.longitude
-                                        )
-                                    )
-                                })
-                        }
+//                        when (pickupLocationGeoPoint) {
+//                            null -> Button(onClick = {
+//                                navController.navigate(
+//                                    LocationRoutes.PickLocation(
+//                                        resultKey = "pickupLocationGeoPoint"
+//                                    )
+//                                )
+//                            }) {
+//                                Text(text = "Ganti lokasi")
+//                            }
+//
+//                            else -> StaticMapPreview(
+//                                modifier = Modifier.padding(top = 8.dp),
+//                                geoPoint = pickupLocationGeoPoint!!,
+//                                onClick = {
+//                                    navController.navigate(
+//                                        LocationRoutes.PickLocation(
+//                                            resultKey = "pickupLocationGeoPoint",
+//                                            initialLatitude = pickupLocationGeoPoint!!.latitude,
+//                                            initialLongitude = pickupLocationGeoPoint!!.longitude
+//                                        )
+//                                    )
+//                                })
+//                        }
 
                         CustomTextField(
                             label = "Lokasi tujuan",
@@ -349,30 +353,38 @@ fun CreateJobScreen(
                             enabled = uiState.detail !is CreateJobState.Detail.Loading
                         )
 
-                        when (destinationLocationGeoPoint) {
-                            null -> Button(onClick = {
-                                navController.navigate(
-                                    LocationRoutes.PickLocation(
-                                        resultKey = "destinationLocationGeoPoint"
-                                    )
-                                )
-                            }) {
-                                Text(text = "Ganti lokasi")
-                            }
+//                        when (destinationLocationGeoPoint) {
+//                            null -> Button(onClick = {
+//                                navController.navigate(
+//                                    LocationRoutes.PickLocation(
+//                                        resultKey = "destinationLocationGeoPoint"
+//                                    )
+//                                )
+//                            }) {
+//                                Text(text = "Ganti lokasi")
+//                            }
+//
+//                            else -> StaticMapPreview(
+//                                modifier = Modifier.padding(top = 8.dp),
+//                                geoPoint = destinationLocationGeoPoint!!,
+//                                onClick = {
+//                                    navController.navigate(
+//                                        LocationRoutes.PickLocation(
+//                                            resultKey = "destinationLocationGeoPoint",
+//                                            initialLatitude = destinationLocationGeoPoint!!.latitude,
+//                                            initialLongitude = destinationLocationGeoPoint!!.longitude
+//                                        )
+//                                    )
+//                                })
+//                        }
 
-                            else -> StaticMapPreview(
-                                modifier = Modifier.padding(top = 8.dp),
-                                geoPoint = destinationLocationGeoPoint!!,
-                                onClick = {
-                                    navController.navigate(
-                                        LocationRoutes.PickLocation(
-                                            resultKey = "destinationLocationGeoPoint",
-                                            initialLatitude = destinationLocationGeoPoint!!.latitude,
-                                            initialLongitude = destinationLocationGeoPoint!!.longitude
-                                        )
-                                    )
-                                })
-                        }
+                        CustomTextField(
+                            label = "Expected price",
+                            value = expectedPrice.toString(),
+                            onValueChange = { value ->
+                                expectedPrice = value.toIntOrNull() ?: 0
+                            }
+                        )
 
                         CustomTextField(
                             label = "Catatan tambahan",
@@ -399,13 +411,14 @@ fun CreateJobScreen(
                                 viewModel.create(
                                     title = title,
                                     destinationLocation = destinationLocation,
-                                    destinationLatitude = destinationLocationGeoPoint?.latitude,
-                                    destinationLongitude = destinationLocationGeoPoint?.longitude,
+//                                    destinationLatitude = destinationLocationGeoPoint?.latitude,
+//                                    destinationLongitude = destinationLocationGeoPoint?.longitude,
                                     note = note,
                                     service = selectedService,
                                     pickupLocation = pickupLocation,
-                                    pickupLatitude = pickupLocationGeoPoint?.latitude,
-                                    pickupLongitude = pickupLocationGeoPoint?.longitude
+//                                    pickupLatitude = pickupLocationGeoPoint?.latitude,
+//                                    pickupLongitude = pickupLocationGeoPoint?.longitude
+                                    expectedPrice = expectedPrice
                                 )
                         },
                         modifier = Modifier

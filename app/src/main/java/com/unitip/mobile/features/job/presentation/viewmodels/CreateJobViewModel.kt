@@ -26,13 +26,14 @@ class CreateJobViewModel @Inject constructor(
     fun create(
         title: String,
         destinationLocation: String,
-        destinationLatitude: Double?,
-        destinationLongitude: Double?,
+        destinationLatitude: Double? = null,
+        destinationLongitude: Double? = null,
         note: String,
         service: String,
         pickupLocation: String,
-        pickupLatitude: Double?,
-        pickupLongitude: Double?
+        pickupLatitude: Double? = null,
+        pickupLongitude: Double? = null,
+        expectedPrice: Int
     ) = viewModelScope.launch {
         _uiState.update { it.copy(detail = CreateJobState.Detail.Loading) }
         jobRepository.create(
@@ -44,9 +45,10 @@ class CreateJobViewModel @Inject constructor(
             service = service,
             pickupLocation = pickupLocation,
             pickupLatitude = pickupLatitude,
-            pickupLongitude = pickupLongitude
-        ).fold(
-            ifLeft = { left ->
+            pickupLongitude = pickupLongitude,
+            expectedPrice = expectedPrice
+        )
+            .onLeft { left ->
                 _uiState.update {
                     it.copy(
                         detail = CreateJobState.Detail.Failure(
@@ -54,82 +56,11 @@ class CreateJobViewModel @Inject constructor(
                         )
                     )
                 }
-            },
-            ifRight = {
+            }
+            .onRight {
                 _uiState.update {
                     it.copy(detail = CreateJobState.Detail.Success)
                 }
             }
-        )
     }
-
-//    fun createSingleJob(
-//        title: String,
-//        note: String,
-//        pickupLocation: String,
-//        destination: String,
-//        service: String
-//    ) = viewModelScope.launch {
-//        _uiState.value = with(uiState.value) {
-//            copy(detail = CreateJobState.Detail.Loading)
-//        }
-//
-//        when (service) {
-//            "antar-jemput" -> {
-//                singleJobRepository.create(
-//                    title = title,
-//                    note = note,
-//                    pickupLocation = pickupLocation,
-//                    destination = destination,
-//                    service = service
-//                ).fold(
-//                    ifLeft = {
-//                        _uiState.value = with(uiState.value) {
-//                            copy(detail = CreateJobState.Detail.Failure(message = it.message))
-//                        }
-//                    },
-//                    ifRight = {
-//                        _uiState.value = with(uiState.value) {
-//                            copy(detail = CreateJobState.Detail.Success)
-//                        }
-//                    }
-//                )
-//            }
-//
-//            else -> {
-//                _uiState.update {
-//                    it.copy(
-//                        detail = CreateJobState.Detail.Failure(message = "Not implemented yet!")
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    fun createMultiJob(
-//        title: String,
-//        note: String,
-//        pickupLocation: String,
-//        service: String
-//    ) = viewModelScope.launch {
-//        _uiState.value = with(uiState.value) {
-//            copy(detail = CreateJobState.Detail.Loading)
-//        }
-//        multiJobRepository.create(
-//            title = title,
-//            note = note,
-//            pickupLocation = pickupLocation,
-//            service = service
-//        ).fold(
-//            ifLeft = {
-//                _uiState.value = with(uiState.value) {
-//                    copy(detail = CreateJobState.Detail.Failure(message = it.message))
-//                }
-//            },
-//            ifRight = {
-//                _uiState.value = with(uiState.value) {
-//                    copy(detail = CreateJobState.Detail.Success)
-//                }
-//            })
-//    }
 }

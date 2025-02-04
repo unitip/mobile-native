@@ -24,7 +24,8 @@ class JobRepository @Inject constructor(
         service: String,
         pickupLocation: String,
         pickupLatitude: Double?,
-        pickupLongitude: Double?
+        pickupLongitude: Double?,
+        expectedPrice: Int
     ): Either<Failure, Unit> = try {
         val response = jobApi.create(
             token = "Bearer ${sessionManager.getToken()}",
@@ -37,7 +38,8 @@ class JobRepository @Inject constructor(
                 service = service,
                 pickupLocation = pickupLocation,
                 pickupLatitude = pickupLatitude,
-                pickupLongitude = pickupLongitude
+                pickupLongitude = pickupLongitude,
+                expectedPrice = expectedPrice
             )
         )
         val result = response.body()

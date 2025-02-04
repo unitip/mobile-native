@@ -11,5 +11,6 @@ data class CreateJobPayload(
     val service: String,
     @SerializedName("pickup_location") val pickupLocation: String,
     @SerializedName("pickup_latitude") val pickupLatitude: Double?,
-    @SerializedName("pickup_longitude") val pickupLongitude: Double?
+    @SerializedName("pickup_longitude") val pickupLongitude: Double?,
+    @SerializedName("expected_price") val expectedPrice: Int
 )
