@@ -19,7 +19,7 @@ class DetailOrderJobDriverViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val jobRepository: JobRepository
 ) : ViewModel() {
-    private val parameters = savedStateHandle.toRoute<JobRoutes.DetailOrder>()
+    private val parameters = savedStateHandle.toRoute<JobRoutes.DetailOrderDriver>()
     private val _uiState = MutableStateFlow(DetailOrderJobDriverState())
     val uiState get() = _uiState.asStateFlow()
 
