@@ -8,6 +8,7 @@ data class DetailJobState(
     val session: Session = Session(),
     val jobModel: JobModel.Detail = JobModel.Detail(),
     val detail: Detail = Detail.Initial,
+    val approveApplicationDetail: ApproveApplicationDetail = ApproveApplicationDetail.Initial,
     val getAllApplicationsDetail: GetAllApplicationsDetail = GetAllApplicationsDetail.Initial
 ) {
     sealed interface Detail {
@@ -29,5 +30,17 @@ data class DetailJobState(
         data class Failure(
             val message: String
         ) : GetAllApplicationsDetail
+    }
+
+    sealed interface ApproveApplicationDetail {
+        data object Initial : ApproveApplicationDetail
+        data class Loading(
+            val applicationId: String
+        ) : ApproveApplicationDetail
+
+        data object Success : ApproveApplicationDetail
+        data class Failure(
+            val message: String
+        ) : ApproveApplicationDetail
     }
 }

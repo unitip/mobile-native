@@ -96,4 +96,38 @@ class DetailJobViewModel @Inject constructor(
                 }
         }
     }
+
+    fun approveApplication(
+        applicationId: String
+    ) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Loading(
+                    applicationId = applicationId
+                )
+            )
+        }
+
+        jobRepository
+            .approveApplication(
+                jobId = parameters.jobId,
+                applicationId = applicationId
+            )
+            .onLeft { left ->
+                _uiState.update {
+                    it.copy(
+                        approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Failure(
+                            message = left.message
+                        )
+                    )
+                }
+            }
+            .onRight {
+                _uiState.update {
+                    it.copy(
+                        approveApplicationDetail = DetailJobState.ApproveApplicationDetail.Success
+                    )
+                }
+            }
+    }
 }

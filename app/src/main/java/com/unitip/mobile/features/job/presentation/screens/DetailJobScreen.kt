@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.job.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +65,11 @@ fun DetailJobScreen(
 
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
+
+    with(uiState.approveApplicationDetail) {
+        if (this is DetailJobState.ApproveApplicationDetail.Failure)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     Scaffold {
         Column(
@@ -246,10 +252,23 @@ fun DetailJobScreen(
                                             Text(text = application.bidNote)
                                         },
                                         trailingContent = {
-                                            OutlinedIconButton(
-                                                onClick = {}
-                                            ) {
-                                                Icon(Lucide.Check, contentDescription = null)
+                                            with(uiState.approveApplicationDetail) {
+                                                if (this is DetailJobState.ApproveApplicationDetail.Loading && applicationId == application.id) {
+                                                    CircularProgressIndicator()
+                                                } else {
+                                                    OutlinedIconButton(
+                                                        onClick = {
+                                                            viewModel.approveApplication(
+                                                                applicationId = application.id
+                                                            )
+                                                        }
+                                                    ) {
+                                                        Icon(
+                                                            Lucide.Check,
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                }
                                             }
                                         }
                                     )
