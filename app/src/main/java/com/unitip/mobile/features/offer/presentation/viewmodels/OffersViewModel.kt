@@ -30,12 +30,6 @@ class OffersViewModel @Inject constructor(
         fetchOffers()
     }
 
-    fun setTypeFilter(type: String?) {
-        currentType = type
-        fetchOffers()
-    }
-
-
     fun expandOffer(offerId : String) = _uiState.update {
         it.copy(expandOfferId =if(it.expandOfferId == offerId) "" else offerId)
     }
@@ -63,32 +57,32 @@ class OffersViewModel @Inject constructor(
         )
     }
 
-    fun loadMore() = viewModelScope.launch {
-        if (_uiState.value.detail !is OfferState.Detail.Loading) {
-            val currentPage = _uiState.value.currentPage
-            val nextPage = currentPage + 1
-
-            offerRepository.getOffers(page = nextPage, type = currentType).fold(
-                ifLeft = { left ->
-                    _uiState.update {
-                        it.copy(
-                            detail = OfferState.Detail.Failure(message = left.message)
-                        )
-                    }
-                },
-                ifRight = { right ->
-                    _uiState.update {
-                        it.copy(
-                            detail = OfferState.Detail.Success,
-                            result = it.result.copy(
-                                offers = it.result.offers + right.offers,
-                                hasNext = right.hasNext
-                            ),
-                            currentPage = nextPage
-                        )
-                    }
-                }
-            )
-        }
-    }
+//    fun loadMore() = viewModelScope.launch {
+//        if (_uiState.value.detail !is OfferState.Detail.Loading) {
+//            val currentPage = _uiState.value.currentPage
+//            val nextPage = currentPage + 1
+//
+//            offerRepository.getOffers(page = nextPage, type = currentType).fold(
+//                ifLeft = { left ->
+//                    _uiState.update {
+//                        it.copy(
+//                            detail = OfferState.Detail.Failure(message = left.message)
+//                        )
+//                    }
+//                },
+//                ifRight = { right ->
+//                    _uiState.update {
+//                        it.copy(
+//                            detail = OfferState.Detail.Success,
+//                            result = it.result.copy(
+//                                offers = it.result.offers + right.offers,
+//                                hasNext = right.hasNext
+//                            ),
+//                            currentPage = nextPage
+//                        )
+//                    }
+//                }
+//            )
+//        }
+//    }
 }
