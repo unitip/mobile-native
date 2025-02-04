@@ -291,9 +291,7 @@ fun ProfileScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .08f))
-                            .clickable {
-
-
+                            .clickable { navController.navigate(AccountRoutes.ChangeRole)
                             }
                     ) {
                         Row(

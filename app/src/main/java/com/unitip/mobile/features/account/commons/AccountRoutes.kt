@@ -12,4 +12,7 @@ sealed class AccountRoutes {
 
     @Serializable
     object OrderHistory
+
+    @Serializable
+    object ChangeRole
 }

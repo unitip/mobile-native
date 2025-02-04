@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
 import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
 import com.unitip.mobile.features.account.data.dtos.EditPayload
 import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesResponse
@@ -18,8 +19,6 @@ import javax.inject.Singleton
 class AccountRepository @Inject constructor(
     private val accountApi: AccountApi,
     private val sessionManager: SessionManager
-
-
 ) {
     @Deprecated("use sessionManager.getToken() instead")
     private val session = sessionManager.read()
@@ -70,6 +69,23 @@ class AccountRepository @Inject constructor(
             Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
 
+    suspend fun getRoles(): Either<Failure, List<String>> = try {
+        val response = accountApi.getRole(
+            token = "Bearer ${sessionManager.getToken()}"
+        )
+
+        val result = response.body()
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(result.roles)
+            false -> Either.Left(response.mapToFailure())
+        }
+
+    } catch (e: Exception) {
+        Either.Left(
+            Failure(message = "Terjadi kesalahan tak terduga")
+        )
+    }
+
     suspend fun editProfile(
         name: String,
         gender: String,
@@ -109,6 +125,23 @@ class AccountRepository @Inject constructor(
                 return Either.Right(true)
             }
 
+            return Either.Left(response.mapToFailure())
+        } catch (e: Exception) {
+            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        }
+    }
+
+    suspend fun changeRole(role: String): Either<Failure, Boolean> {
+        try {
+            val token = session.token
+            val response = accountApi.changeRole(
+                token = "Bearer $token",
+                payload = ChangeRolePayload(role = role)
+            )
+            val result = response.body()
+            if (response.isSuccessful && result != null) {
+                return Either.Right(true)
+            }
             return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
