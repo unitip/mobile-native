@@ -9,7 +9,7 @@ import com.unitip.mobile.features.account.commons.settingNavigation
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.commons.authNavigation
 import com.unitip.mobile.features.chat.commons.chatNavigation
-import com.unitip.mobile.features.example.utils.exampleNavigation
+//import com.unitip.mobile.features.example.utils.exampleNavigation
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
@@ -42,7 +42,7 @@ fun ApplicationNavigationGraph(
         jobNavigation()
         offerNavigation(navController)
         chatNavigation()
-        exampleNavigation()
+//        exampleNavigation()
         locationNavigation()
         settingNavigation()
 

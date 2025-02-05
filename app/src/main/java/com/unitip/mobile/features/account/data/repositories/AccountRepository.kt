@@ -12,6 +12,7 @@ import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
+import com.unitip.mobile.shared.domain.models.Session
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -91,7 +92,7 @@ class AccountRepository @Inject constructor(
         gender: String,
     ): Either<Failure, Boolean> {
         try {
-            val token = session.token
+            val token = sessionManager.getToken()
 
             val response = accountApi.editProfile(
                 token = "Bearer $token",
@@ -133,16 +134,29 @@ class AccountRepository @Inject constructor(
 
     suspend fun changeRole(role: String): Either<Failure, Boolean> {
         try {
-            val token = session.token
             val response = accountApi.changeRole(
-                token = "Bearer $token",
+                token = "Bearer ${sessionManager.getToken()}",
                 payload = ChangeRolePayload(role = role)
             )
             val result = response.body()
-            if (response.isSuccessful && result != null) {
-                return Either.Right(true)
+
+            return when (response.isSuccessful && result != null) {
+                true -> {
+                    val currentSession = sessionManager.read()
+                    sessionManager.create(
+                        Session(
+                            id = currentSession.id,
+                            name = currentSession.name,
+                            email = currentSession.email,
+                            token = currentSession.token,
+                            role = role
+                        )
+                    )
+                    Either.Right(true)
+                }
+
+                else -> Either.Left(response.mapToFailure())
             }
-            return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
