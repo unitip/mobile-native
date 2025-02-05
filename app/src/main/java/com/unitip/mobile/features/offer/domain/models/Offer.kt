@@ -15,5 +15,6 @@ data class Offer(
     val updatedAt: String = "",
     val applicantsCount: Int = 0,
     val hasApplied: Boolean = false,
-    val maxParticipants: Int = 1
+    val maxParticipants: Int = 1,
+    val applicants: List<Applicant> = emptyList()
 )

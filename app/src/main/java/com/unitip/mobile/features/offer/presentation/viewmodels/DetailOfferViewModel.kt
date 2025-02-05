@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.offer.presentation.viewmodels
 
-import androidx.core.provider.FontsContractCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
