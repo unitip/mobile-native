@@ -1,10 +1,10 @@
 package com.unitip.mobile.features.auth.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.auth.data.dtos.LoginPayload
-import com.unitip.mobile.features.auth.data.dtos.RegisterPayload
-import com.unitip.mobile.features.auth.data.sources.AuthApi
 import com.unitip.mobile.features.auth.domain.models.LoginResult
+import com.unitip.mobile.network.openapi.apis.AuthApi
+import com.unitip.mobile.network.openapi.models.LoginRequest
+import com.unitip.mobile.network.openapi.models.RegisterRequest
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -22,14 +22,13 @@ class AuthRepository @Inject constructor(
         password: String,
         role: String? = null
     ): Either<Failure, LoginResult> = try {
-        val response =
-            authApi.login(
-                LoginPayload(
-                    email = email,
-                    password = password,
-                    role = role
-                )
+        val response = authApi.login(
+            LoginRequest(
+                email = email,
+                password = password,
+                role = role
             )
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
@@ -66,7 +65,7 @@ class AuthRepository @Inject constructor(
     ): Either<Failure, Unit> = try {
         // melakukan pengiriman registrasi ke server
         val response = authApi.register(
-            payload = RegisterPayload(
+            RegisterRequest(
                 name = name,
                 email = email,
                 password = password
