@@ -38,6 +38,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.account.presentation.states.EditProfileState
 import com.unitip.mobile.features.account.presentation.viewmodels.EditProfileViewModel
+import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
@@ -64,6 +65,14 @@ fun EditProfileScreen(
 
                 else -> {}
             }
+        }
+    }
+    LaunchedEffect(uiState.editDetail) {
+        with(uiState.editDetail) {
+            if (this is EditProfileState.EditDetail.Success)
+                navController.navigate(HomeRoutes.Index) {
+                    popUpTo<HomeRoutes.Index> { inclusive = true }1
+                }
         }
     }
 

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.data.repositories.JobRepository
-import com.unitip.mobile.features.job.presentation.states.DetailOrderJobState
+import com.unitip.mobile.features.job.presentation.states.DetailOrderJobDriverState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,24 +15,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailOrderJobViewModel @Inject constructor(
+class DetailOrderJobDriverViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val jobRepository: JobRepository
 ) : ViewModel() {
-    private val parameters = savedStateHandle.toRoute<JobRoutes.DetailOrder>()
-    private val _uiState = MutableStateFlow(DetailOrderJobState())
+    private val parameters = savedStateHandle.toRoute<JobRoutes.DetailOrderDriver>()
+    private val _uiState = MutableStateFlow(DetailOrderJobDriverState())
     val uiState get() = _uiState.asStateFlow()
 
     fun complete() = viewModelScope.launch {
         _uiState.update {
-            it.copy(completeDetail = DetailOrderJobState.CompleteDetail.Loading)
+            it.copy(completeDetail = DetailOrderJobDriverState.CompleteDetail.Loading)
         }
 
         jobRepository.complete(jobId = parameters.orderId)
             .onLeft { left ->
                 _uiState.update {
                     it.copy(
-                        completeDetail = DetailOrderJobState.CompleteDetail.Failure(
+                        completeDetail = DetailOrderJobDriverState.CompleteDetail.Failure(
                             message = left.message
                         )
                     )
@@ -41,7 +41,7 @@ class DetailOrderJobViewModel @Inject constructor(
             .onRight {
                 _uiState.update {
                     it.copy(
-                        completeDetail = DetailOrderJobState.CompleteDetail.Success
+                        completeDetail = DetailOrderJobDriverState.CompleteDetail.Success
                     )
                 }
             }
@@ -49,14 +49,14 @@ class DetailOrderJobViewModel @Inject constructor(
 
     fun cancel() = viewModelScope.launch {
         _uiState.update {
-            it.copy(cancelDetail = DetailOrderJobState.CancelDetail.Loading)
+            it.copy(cancelDetail = DetailOrderJobDriverState.CancelDetail.Loading)
         }
 
         jobRepository.cancelApplication(jobId = parameters.orderId)
             .onLeft { left ->
                 _uiState.update {
                     it.copy(
-                        cancelDetail = DetailOrderJobState.CancelDetail.Failure(
+                        cancelDetail = DetailOrderJobDriverState.CancelDetail.Failure(
                             message = left.message
                         )
                     )
@@ -65,7 +65,7 @@ class DetailOrderJobViewModel @Inject constructor(
             .onRight {
                 _uiState.update {
                     it.copy(
-                        cancelDetail = DetailOrderJobState.CancelDetail.Success
+                        cancelDetail = DetailOrderJobDriverState.CancelDetail.Success
                     )
                 }
             }

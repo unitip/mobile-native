@@ -6,6 +6,7 @@ import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
+import com.unitip.mobile.features.offer.domain.models.Applicant
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -146,7 +147,21 @@ class OfferRepository @Inject constructor(
             updatedAt = this.updatedAt,
             applicantsCount = this.applicantsCount,
             hasApplied = this.hasApplied,
-            maxParticipants = this.maxParticipants
+            maxParticipants = this.maxParticipants,
+            applicants = this.applicants.map { it.toDomainModel() }
+        )
+    }
+
+    private fun GetOfferResponse.ApiApplicant.toDomainModel(): Applicant {
+        return Applicant(
+            id = this.id,
+            customerId = this.customerId,
+            customerName = this.customerName,
+            pickupLocation = this.pickupLocation,
+            destinationLocation = this.destinationLocation,
+            note = this.note,
+            status = this.applicantStatus,
+            finalPrice = this.finalPrice
         )
     }
 

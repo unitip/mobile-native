@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 plugins {
@@ -10,6 +11,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 
+    id("org.openapi.generator") version "7.10.0"
 }
 
 android {
@@ -33,10 +35,14 @@ android {
 
             buildConfigField(
                 "String",
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
                 "API_BASE_URL",
                 "\"${properties.getProperty("API_BASE_URL")}\""
             )
-
             buildConfigField(
                 "String",
                 "MQTT_SECRET",
@@ -62,10 +68,14 @@ android {
 
             buildConfigField(
                 "String",
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
                 "API_BASE_URL",
                 "\"${properties.getProperty("API_BASE_URL")}\""
             )
-
             buildConfigField(
                 "String",
                 "MQTT_SECRET",
@@ -127,6 +137,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation(libs.converter.scalars)
+
 
     // functional programming
     implementation(libs.arrow.core.jvm)
@@ -149,3 +161,60 @@ dependencies {
 //kapt {
 //    correctErrorTypes = true
 //}
+
+tasks.register("downloadSwagger") {
+    doLast {
+        val properties = Properties()
+        properties.load(rootProject.file(".env.local").inputStream())
+        val localBaseUrl = properties.getProperty("BASE_URL")
+
+        val swaggerUrl = "${localBaseUrl}api/v1/docs/swagger.json"
+        val outputDir = "$rootDir/swagger.json"
+
+        ant.withGroovyBuilder {
+            "get"(
+                "src" to swaggerUrl,
+                "dest" to outputDir,
+                "verbose" to "true"
+            )
+        }
+    }
+}
+
+openApiGenerate {
+    generatorName.set("kotlin")
+    skipValidateSpec.set(true)
+    library.set("jvm-retrofit2")
+    packageName.set("com.unitip.mobile.network.openapi")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    inputSpec.set("$rootDir/swagger.json")
+    configOptions.set(
+        mapOf(
+            "serializationLibrary" to "gson",
+            "useCoroutines" to "true",
+        )
+    )
+}
+
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("${layout.buildDirectory.get()}/generate-resources/main/src")
+        }
+    }
+}
+
+tasks.register("codegen") {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
+}

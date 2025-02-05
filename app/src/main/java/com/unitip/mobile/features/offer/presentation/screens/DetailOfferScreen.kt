@@ -18,7 +18,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,11 +47,13 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Wallet
 import com.unitip.mobile.features.offer.commons.OfferRoutes
+import com.unitip.mobile.features.offer.domain.models.Applicant
 import com.unitip.mobile.features.offer.presentation.components.ErrorState
 import com.unitip.mobile.features.offer.presentation.states.DetailOfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.DetailOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.isCustomer
+import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
 @Composable
@@ -152,16 +157,43 @@ fun DetailOfferScreen(
                                     "value" to offer.destinationArea
                                 )
                             )
-                        ) { index, item ->
-                            DetailItem(index, item)
+                        ) { _, item ->
+                            DetailItem(item)
                         }
 
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+
+                        item {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
+                        }
+
+                        // List of Applicants
+                        item {
+                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
+                                uiState.session.isCustomer() && offer.applicants.any { applicant -> applicant.customerId == uiState.session.id }
+                            ) {
+                                Text(
+                                    text = "Daftar Pelamar (${offer.applicantsCount})",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+
+                                offer.applicants.forEach { applicant ->
+                                    ApplicantItem(
+                                        applicant = applicant,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    )
+                                }
+                            }
+                        }
+
                     }
 
-//                    detail offer screen
                     if (uiState.session.isCustomer()) {
                         when {
                             offer.hasApplied -> {
@@ -209,7 +241,7 @@ fun DetailOfferScreen(
 }
 
 @Composable
-fun DetailItem(index: Int, item: Map<String, Any>) {
+fun DetailItem(item: Map<String, Any>) {
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -246,6 +278,77 @@ fun DetailItem(index: Int, item: Map<String, Any>) {
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ApplicantItem(
+    applicant: Applicant,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = applicant.customerName,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(
+                    text = when (applicant.status) {
+                        "pending" -> "Pending"
+                        "accepted" -> "Diterima"
+                        "on_the_way" -> "On The Way"
+                        "rejected" -> "Ditolak"
+                        "done" -> "Selesai"
+                        else -> applicant.status
+                    },
+                    style = MaterialTheme.typography.labelMedium,
+                    color = when (applicant.status) {
+                        "pending" -> MaterialTheme.colorScheme.primary
+                        "accepted" -> MaterialTheme.colorScheme.tertiary
+                        "rejected" -> MaterialTheme.colorScheme.error
+                        "done" -> MaterialTheme.colorScheme.primary
+                        "on_the_way" -> MaterialTheme.colorScheme.secondary
+                        else -> MaterialTheme.colorScheme.onSurface
+                    }
+                )
+            }
+
+            Text(
+                text = "Lokasi Jemput: ${applicant.pickupLocation}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Lokasi Antar: ${applicant.destinationLocation}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            if (applicant.note.isNotEmpty()) {
+                Text(
+                    text = "Catatan: ${applicant.note}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            Text(
+                text = "Harga Final: Rp${applicant.finalPrice}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
