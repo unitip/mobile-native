@@ -71,7 +71,7 @@ fun EditProfileScreen(
         with(uiState.editDetail) {
             if (this is EditProfileState.EditDetail.Success)
                 navController.navigate(HomeRoutes.Index) {
-                    popUpTo<HomeRoutes.Index> { inclusive = true }1
+                    popUpTo<HomeRoutes.Index> { inclusive = true }
                 }
         }
     }
