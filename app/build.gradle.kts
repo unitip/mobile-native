@@ -38,7 +38,11 @@ android {
                 "BASE_URL",
                 "\"${properties.getProperty("BASE_URL")}\""
             )
-
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
             buildConfigField(
                 "String",
                 "MQTT_SECRET",
@@ -67,7 +71,11 @@ android {
                 "BASE_URL",
                 "\"${properties.getProperty("BASE_URL")}\""
             )
-
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
             buildConfigField(
                 "String",
                 "MQTT_SECRET",
