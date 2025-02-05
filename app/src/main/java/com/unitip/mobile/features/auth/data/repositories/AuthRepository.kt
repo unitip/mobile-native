@@ -5,6 +5,7 @@ import com.unitip.mobile.features.auth.domain.models.LoginResult
 import com.unitip.mobile.network.openapi.apis.AuthApi
 import com.unitip.mobile.network.openapi.models.LoginRequest
 import com.unitip.mobile.network.openapi.models.RegisterRequest
+import com.unitip.mobile.shared.commons.configs.ApiConfig
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -43,6 +44,12 @@ class AuthRepository @Inject constructor(
                             role = result.role,
                         )
                     )
+
+                /**
+                 * ketika berhasil login, maka refresh token yang akan dikirimkan ke server
+                 * melalui http interceptor
+                 */
+                ApiConfig.refreshToken(token = result.token)
 
                 Either.Right(
                     LoginResult(
@@ -84,6 +91,13 @@ class AuthRepository @Inject constructor(
                         role = result.role,
                     )
                 )
+
+                /**
+                 * ketika berhasil register, maka refresh token yang akan dikirimkan ke server
+                 * melalui http interceptor
+                 */
+                ApiConfig.refreshToken(token = result.token)
+
                 Either.Right(Unit)
             }
 
