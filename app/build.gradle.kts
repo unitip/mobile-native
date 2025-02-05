@@ -35,8 +35,8 @@ android {
 
             buildConfigField(
                 "String",
-                "API_BASE_URL",
-                "\"${properties.getProperty("API_BASE_URL")}\""
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
             )
 
             buildConfigField(
@@ -64,8 +64,8 @@ android {
 
             buildConfigField(
                 "String",
-                "API_BASE_URL",
-                "\"${properties.getProperty("API_BASE_URL")}\""
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
             )
 
             buildConfigField(
@@ -129,7 +129,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation(libs.converter.scalars)
 
 
     // functional programming
@@ -156,7 +156,11 @@ dependencies {
 
 tasks.register("downloadSwagger") {
     doLast {
-        val swaggerUrl = "http://localhost:3000/api/v1/docs/swagger.json"
+        val properties = Properties()
+        properties.load(rootProject.file(".env.local").inputStream())
+        val localBaseUrl = properties.getProperty("BASE_URL")
+
+        val swaggerUrl = "${localBaseUrl}api/v1/docs/swagger.json"
         val outputDir = "$rootDir/swagger.json"
 
         ant.withGroovyBuilder {
@@ -173,7 +177,7 @@ openApiGenerate {
     generatorName.set("kotlin")
     skipValidateSpec.set(true)
     library.set("jvm-retrofit2")
-    packageName.set("com.unitip.mobile.data.openapi")
+    packageName.set("com.unitip.mobile.network.openapi")
     generateApiTests.set(false)
     generateModelTests.set(false)
     inputSpec.set("$rootDir/swagger.json")
@@ -191,6 +195,13 @@ kotlin {
             kotlin.srcDir("${layout.buildDirectory.get()}/generate-resources/main/src")
         }
     }
+}
+
+tasks.register("codegen") {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
 }
 
 tasks.withType<KotlinCompile>().configureEach {
