@@ -4,9 +4,11 @@ import arrow.core.Either
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
+import com.unitip.mobile.features.offer.data.dtos.DetailApplicantOfferResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
 import com.unitip.mobile.features.offer.domain.models.Applicant
+import com.unitip.mobile.features.offer.domain.models.DetailApplicantOffer
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
@@ -207,4 +209,56 @@ class OfferRepository @Inject constructor(
             Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
         }
     }
+
+    suspend fun getApplicantDetail(
+        offerId: String,
+        applicantId: String
+    ): Either<Failure, DetailApplicantOffer> {
+        return try {
+            val session = sessionManager.read()
+            val response = offerApi.getApplicantDetail(
+                token = "Bearer ${session.token}",
+                offerId = offerId,
+                applicantId = applicantId
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(body.applicant.toDomainModel())
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
+    }
+
+    private fun DetailApplicantOfferResponse.ApiApplicant.toDomainModel(): DetailApplicantOffer {
+        return DetailApplicantOffer(
+            id = this.id,
+            customer = DetailApplicantOffer.Customer(
+                id = this.customer.id,
+                name = this.customer.name
+            ),
+            pickupLocation = this.pickupLocation,
+            destinationLocation = this.destinationLocation,
+            pickupCoordinates = DetailApplicantOffer.Coordinates(
+                latitude = this.pickupCoordinates.latitude,
+                longitude = this.pickupCoordinates.longitude
+            ),
+            destinationCoordinates = DetailApplicantOffer.Coordinates(
+                latitude = this.destinationCoordinates.latitude,
+                longitude = this.destinationCoordinates.longitude
+            ),
+            note = this.note,
+            applicantStatus = this.applicantStatus,
+            finalPrice = this.finalPrice
+        )
+    }
+
 }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailApplicantViewModel @Inject constructor(
+class DetailApplicantOfferViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
     private val offerRepository: OfferRepository
@@ -24,33 +24,26 @@ class DetailApplicantViewModel @Inject constructor(
     private val offerId = savedStateHandle.get<String>("offerId") ?: ""
     private val applicantId = savedStateHandle.get<String>("applicantId") ?: ""
 
-    private val _uiState = MutableStateFlow(DetailApplicantOfferState())
+    private val _uiState = MutableStateFlow(DetailApplicantOfferState(session = session))
     val uiState = _uiState.asStateFlow()
-
-    private val _applicant = MutableStateFlow(DetailApplicantOffer())
-    val applicant = _applicant.asStateFlow()
 
     init {
         fetchData()
     }
 
     fun fetchData() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
+        _uiState.update { it.copy(detail = DetailApplicantOfferState.Detail.Loading) }
         offerRepository.getApplicantDetail(offerId, applicantId).fold(
             ifLeft = { failure ->
                 _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = failure.message
-                    )
+                    it.copy(detail = DetailApplicantOfferState.Detail.Failure(failure.message))
                 }
             },
             ifRight = { applicant ->
-                _applicant.value = applicant
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
-                        error = null
+                        detail = DetailApplicantOfferState.Detail.Success,
+                        applicant = applicant
                     )
                 }
             }

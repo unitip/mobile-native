@@ -2,7 +2,7 @@ package com.unitip.mobile.features.offer.data.dtos
 
 import com.google.gson.annotations.SerializedName
 
-data class DetailApplicantResponse(
+data class DetailApplicantOfferResponse(
     @SerializedName("applicant") val applicant: ApiApplicant
 ) {
     data class ApiApplicant(
