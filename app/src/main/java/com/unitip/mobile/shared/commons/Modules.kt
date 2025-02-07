@@ -2,6 +2,7 @@ package com.unitip.mobile.shared.commons
 
 import com.unitip.mobile.network.openapi.apis.AccountApi
 import com.unitip.mobile.network.openapi.apis.AuthApi
+import com.unitip.mobile.network.openapi.apis.JobApi
 import com.unitip.mobile.shared.commons.configs.ApiConfig
 import com.unitip.mobile.shared.data.sources.ServiceApi
 import dagger.Module
@@ -27,5 +28,10 @@ object Modules {
         ApiConfig.newRetrofit.create(AuthApi::class.java)
 
     @Provides
-    fun provideAccountApi(): AccountApi = ApiConfig.newRetrofit.create(AccountApi::class.java)
+    fun provideAccountApi(): AccountApi =
+        ApiConfig.newRetrofit.create(AccountApi::class.java)
+
+    @Provides
+    fun provideJobApi(): JobApi =
+        ApiConfig.newRetrofit.create(JobApi::class.java)
 }

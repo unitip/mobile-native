@@ -1,10 +1,7 @@
 package com.unitip.mobile.features.auth.presentation.viewmodels
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import arrow.core.left
-import arrow.core.right
 import com.unitip.mobile.features.auth.data.repositories.AuthRepository
 import com.unitip.mobile.features.auth.presentation.states.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,10 +57,10 @@ class AuthViewModel @Inject constructor(
         name: String,
         email: String,
         password: String
-    ) = viewModelScope.launch{
+    ) = viewModelScope.launch {
         _uiState.update { it.copy(detail = AuthState.Detail.Loading) }
         authRepository.register(name = name, email = email, password = password).fold(
-            ifLeft = { left->
+            ifLeft = { left ->
                 _uiState.update {
                     it.copy(detail = AuthState.Detail.Failure(message = left.message))
                 }
