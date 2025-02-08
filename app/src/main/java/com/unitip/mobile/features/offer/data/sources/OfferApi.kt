@@ -4,6 +4,7 @@ import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferResponse
+import com.unitip.mobile.features.offer.data.dtos.DetailApplicantOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.GetAllOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import retrofit2.Response
@@ -42,4 +43,12 @@ interface OfferApi {
         @Path("id") offerId: String,
         @Body payload: ApplyOfferPayload
     ): Response<ApplyOfferResponse>
+
+    @GET("offers/{offer_id}/applicants/{applicant_id}")
+    suspend fun getApplicantDetail(
+        @Header("Authorization") token: String,
+        @Path("offer_id") offerId: String,
+        @Path("applicant_id") applicantId: String
+    ): Response<DetailApplicantOfferResponse>
+
 }

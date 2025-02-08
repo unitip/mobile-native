@@ -1,6 +1,8 @@
 package com.unitip.mobile.features.offer.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,12 +31,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +71,16 @@ fun DetailOfferScreen(
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
     val offer by viewModel.offer.collectAsState()
+    var showToastForbidden by remember {mutableStateOf(false)}
+
+    if(showToastForbidden){
+        Toast.makeText(
+            LocalContext.current,
+            "Anda tidak memiliki akses untuk melihat detail pelamar ini",
+            Toast.LENGTH_SHORT
+        ).show()
+        showToastForbidden = false
+    }
 
     Scaffold {
         Column(
@@ -158,7 +174,7 @@ fun DetailOfferScreen(
                                 )
                             )
                         ) { _, item ->
-                            DetailItem(item)
+                            DetailItemOffer(item)
                         }
 
                         item {
@@ -186,12 +202,29 @@ fun DetailOfferScreen(
                                 offer.applicants.forEach { applicant ->
                                     ApplicantItem(
                                         applicant = applicant,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp
+                                        ),
+                                        onItemClick = {
+                                            // Cek apakah user adalah driver pemilik offer atau customer yang mengajukan
+                                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
+                                                uiState.session.isCustomer() && applicant.customerId == uiState.session.id
+                                            ) {
+                                                navController.navigate(
+                                                    OfferRoutes.DetailApplicant(
+                                                        offerId = offerId,
+                                                        applicantId = applicant.id
+                                                    )
+                                                )
+                                            } else {
+                                                showToastForbidden = true
+                                            }
+                                        }
                                     )
                                 }
                             }
                         }
-
                     }
 
                     if (uiState.session.isCustomer()) {
@@ -217,7 +250,6 @@ fun DetailOfferScreen(
                                     color = MaterialTheme.colorScheme.outline
                                 )
                             }
-
                             else -> {
                                 Button(
                                     onClick = {
@@ -241,7 +273,7 @@ fun DetailOfferScreen(
 }
 
 @Composable
-fun DetailItem(item: Map<String, Any>) {
+private fun DetailItemOffer(item: Map<String, Any>) {
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -285,12 +317,14 @@ fun DetailItem(item: Map<String, Any>) {
 @Composable
 private fun ApplicantItem(
     applicant: Applicant,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onItemClick: () -> Unit,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .clickable { onItemClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(

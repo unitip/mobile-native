@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.unitip.mobile.features.offer.presentation.screens.ApplyOfferScreen
 import com.unitip.mobile.features.offer.presentation.screens.CreateOfferScreen
+import com.unitip.mobile.features.offer.presentation.screens.DetailApplicantOfferScreen
 import com.unitip.mobile.features.offer.presentation.screens.DetailOfferScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -24,6 +25,14 @@ fun NavGraphBuilder.offerNavigation(navController: NavController) {
         ApplyOfferScreen(
             offerId = data.offerId,
             onNavigateBack = { navController.popBackStack() }
+        )
+    }
+
+    composable<OfferRoutes.DetailApplicant> {
+        val data = it.toRoute<OfferRoutes.DetailApplicant>()
+        DetailApplicantOfferScreen(
+            offerId = data.offerId,
+            applicantId = data.applicantId
         )
     }
 }
