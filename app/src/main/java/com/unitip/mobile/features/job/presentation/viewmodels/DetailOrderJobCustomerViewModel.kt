@@ -39,10 +39,10 @@ class DetailOrderJobCustomerViewModel @Inject constructor(
                     )
                 }
             }
-            .onRight {
+            .onRight { right ->
                 _uiState.update {
                     it.copy(
-                        detail = State.Detail.Success
+                        detail = State.Detail.Success(data = right)
                     )
                 }
             }

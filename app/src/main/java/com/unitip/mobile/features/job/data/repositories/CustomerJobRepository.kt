@@ -7,6 +7,7 @@ import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.unitip.mobile.features.job.domain.models.DetailJobModel.ForCustomer as GetResult
 
 @Singleton
 class CustomerJobRepository @Inject constructor(
@@ -45,12 +46,31 @@ class CustomerJobRepository @Inject constructor(
 
     suspend fun get(
         jobId: String
-    ): Either<Failure, Unit> = try {
-        val response = jobApi.getJobForCustomer()
+    ): Either<Failure, GetResult> = try {
+        val response = jobApi.getJobForCustomer(
+            jobId = jobId
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
-            true -> Either.Right(Unit)
+            true -> Either.Right(
+                GetResult(
+                    id = result.id,
+                    title = result.title,
+                    note = result.note,
+                    applications = result.applications.map { application ->
+                        GetResult.Application(
+                            id = application.id,
+                            bidPrice = application.bidPrice,
+                            bidNote = application.bidNote,
+                            driver = GetResult.Application.Driver(
+                                name = application.driver.name
+                            )
+                        )
+                    }
+                )
+            )
+
             else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {
