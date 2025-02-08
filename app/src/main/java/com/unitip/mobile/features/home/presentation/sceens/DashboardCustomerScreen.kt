@@ -231,7 +231,7 @@ fun DashboardCustomerScreen(
                                     modifier = Modifier.clickable {
                                         navController.navigate(
                                             JobRoutes.DetailOrderCustomer(
-                                                orderId = order.id
+                                                jobId = order.id
                                             )
                                         )
                                     },
