@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.network.openapi.apis.JobApi
 import com.unitip.mobile.network.openapi.models.CreateJobRequest
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
@@ -58,6 +59,8 @@ class CustomerJobRepository @Inject constructor(
                     id = result.id,
                     title = result.title,
                     note = result.note,
+                    price = result.price,
+                    status = JobConstant.Status.entries[result.status.ordinal],
                     applications = result.applications.map { application ->
                         GetResult.Application(
                             id = application.id,
@@ -67,6 +70,14 @@ class CustomerJobRepository @Inject constructor(
                                 name = application.driver.name
                             )
                         )
+                    },
+                    driver = when (result.driver != null) {
+                        true -> GetResult.Driver(
+                            id = result.driver.id,
+                            name = result.driver.name
+                        )
+
+                        else -> null
                     }
                 )
             )

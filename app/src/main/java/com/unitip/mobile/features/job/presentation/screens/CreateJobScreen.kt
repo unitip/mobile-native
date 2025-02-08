@@ -56,7 +56,7 @@ import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Circle
 import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.job.commons.JobConstants
+import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -232,7 +232,7 @@ fun CreateJobScreen(
                                     Text(
                                         text = when (selectedService.isBlank()) {
                                             true -> "Pilih jenis layanan"
-                                            else -> JobConstants.services.find { service ->
+                                            else -> JobConstant.services.find { service ->
                                                 service.value == selectedService
                                             }!!.title
                                         },
@@ -254,7 +254,7 @@ fun CreateJobScreen(
                                 Column {
                                     HorizontalDivider()
 
-                                    JobConstants.services.map { item ->
+                                    JobConstant.services.map { item ->
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()

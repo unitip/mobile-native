@@ -1,5 +1,7 @@
 package com.unitip.mobile.features.job.domain.models
 
+import com.unitip.mobile.features.job.commons.JobConstant
+
 sealed class DetailJobModel {
     data object General
 
@@ -7,7 +9,10 @@ sealed class DetailJobModel {
         val id: String,
         val title: String,
         val note: String,
-        val applications: List<Application>
+        val price: Int,
+        val status: JobConstant.Status,
+        val applications: List<Application>,
+        val driver: Driver?
     ) {
         data class Application(
             val id: String,
@@ -19,6 +24,11 @@ sealed class DetailJobModel {
                 val name: String
             )
         }
+
+        data class Driver(
+            val id: String,
+            val name: String
+        )
     }
 
     data object ForDriver

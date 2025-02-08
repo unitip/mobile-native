@@ -2,7 +2,11 @@ package com.unitip.mobile.features.job.commons
 
 import com.unitip.mobile.features.job.domain.models.JobService
 
-object JobConstants {
+object JobConstant {
+    enum class Status {
+        Initial, Ongoing, Done
+    }
+
     enum class Type {
         SINGLE {
             override fun toString(): String = "single"
