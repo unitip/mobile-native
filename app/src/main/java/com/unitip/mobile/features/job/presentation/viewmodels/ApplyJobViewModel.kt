@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.unitip.mobile.features.job.commons.JobRoutes
-import com.unitip.mobile.features.job.data.repositories.JobRepository
+import com.unitip.mobile.features.job.data.repositories.DriverJobRepository
 import com.unitip.mobile.features.job.presentation.states.ApplyJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ApplyJobViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val jobRepository: JobRepository
+    private val driverJobRepository: DriverJobRepository
 ) : ViewModel() {
     private val parameters = savedStateHandle.toRoute<JobRoutes.Apply>()
     private val _uiState = MutableStateFlow(ApplyJobState())
@@ -31,10 +31,10 @@ class ApplyJobViewModel @Inject constructor(
             it.copy(detail = ApplyJobState.Detail.Loading)
         }
 
-        jobRepository
+        driverJobRepository
             .createApplication(
                 jobId = parameters.jobId,
-                price = price,
+                bidPrice = price,
                 bidNote = bidNote
             )
             .onLeft { left ->

@@ -12,8 +12,18 @@ import javax.inject.Singleton
 class DriverJobRepository @Inject constructor(
     private val jobApi: JobApi
 ) {
-    suspend fun createApplication(): Either<Failure, Unit> = try {
-        val response = jobApi.createJobApplication(CreateJobApplicationRequest())
+    suspend fun createApplication(
+        jobId: String,
+        bidPrice: Int,
+        bidNote: String
+    ): Either<Failure, Unit> = try {
+        val response = jobApi.createJobApplication(
+            jobId = jobId,
+            CreateJobApplicationRequest(
+                price = bidPrice,
+                bidNote = bidNote
+            )
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
