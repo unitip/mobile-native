@@ -43,7 +43,9 @@ class CustomerJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun get(): Either<Failure, Unit> = try {
+    suspend fun get(
+        jobId: String
+    ): Either<Failure, Unit> = try {
         val response = jobApi.getJobForCustomer()
         val result = response.body()
 

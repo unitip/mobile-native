@@ -46,8 +46,12 @@ class DriverJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun get(): Either<Failure, Unit> = try {
-        val response = jobApi.getJob()
+    suspend fun get(
+        jobId: String
+    ): Either<Failure, Unit> = try {
+        val response = jobApi.getJobForDriver(
+            jobId = jobId
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
