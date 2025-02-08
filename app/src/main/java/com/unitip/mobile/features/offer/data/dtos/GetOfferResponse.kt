@@ -25,7 +25,8 @@ data class GetOfferResponse(
     )
 
     data class ApiFreelancer(
-        @SerializedName("name") val name: String
+        @SerializedName("id") val id: String = "",
+        @SerializedName("name") val name: String = ""
     )
 
     data class ApiApplicant(

@@ -12,7 +12,7 @@ import com.unitip.mobile.features.offer.presentation.screens.DetailApplicantOffe
 import com.unitip.mobile.features.offer.presentation.screens.DetailOfferScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.offerNavigation(navController: NavController) {
+fun NavGraphBuilder.offerNavigation() {
     composable<OfferRoutes.Create> { CreateOfferScreen() }
 
     composable<OfferRoutes.Detail> {
@@ -22,10 +22,7 @@ fun NavGraphBuilder.offerNavigation(navController: NavController) {
 
     composable<OfferRoutes.ApplyOffer> {
         val data = it.toRoute<OfferRoutes.ApplyOffer>()
-        ApplyOfferScreen(
-            offerId = data.offerId,
-            onNavigateBack = { navController.popBackStack() }
-        )
+        ApplyOfferScreen(offerId = data.offerId)
     }
 
     composable<OfferRoutes.DetailApplicant> {
