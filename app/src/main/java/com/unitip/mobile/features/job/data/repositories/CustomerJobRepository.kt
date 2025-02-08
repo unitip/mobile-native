@@ -12,8 +12,27 @@ import javax.inject.Singleton
 class CustomerJobRepository @Inject constructor(
     private val jobApi: JobApi
 ) {
-    suspend fun create(): Either<Failure, Unit> = try {
-        val response = jobApi.createJob(CreateJobRequest())
+    suspend fun create(
+        title: String,
+        destinationLocation: String,
+        note: String,
+        service: String,
+        pickupLocation: String,
+        expectedPrice: Int
+    ): Either<Failure, Unit> = try {
+        val response = jobApi.createJob(
+            CreateJobRequest(
+                title = title,
+                destinationLocation = destinationLocation,
+                note = note,
+                service = when (service) {
+                    "antar-jemput" -> CreateJobRequest.Service.AntarJemput
+                    else -> CreateJobRequest.Service.JasaTitip
+                },
+                pickupLocation = pickupLocation,
+                expectedPrice = expectedPrice
+            )
+        )
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
