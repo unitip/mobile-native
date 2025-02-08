@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.BuildConfig
-import com.unitip.mobile.features.home.data.repositories.CustomerOrderRepository
+import com.unitip.mobile.features.home.data.repositories.CustomerDashboardRepository
 import com.unitip.mobile.features.home.presentation.states.DashboardCustomerState
 import com.unitip.mobile.shared.data.providers.MqttProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardCustomerViewModel @Inject constructor(
     mqttProvider: MqttProvider,
-    private val customerOrderRepository: CustomerOrderRepository
+    private val customerDashboardRepository: CustomerDashboardRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "DashboardViewModel"
@@ -38,9 +38,10 @@ class DashboardCustomerViewModel @Inject constructor(
         getAllOrders()
     }
 
+
     fun getAllOrders() = viewModelScope.launch {
         _uiState.update { it.copy(detail = DashboardCustomerState.Detail.Loading) }
-        customerOrderRepository.getAll()
+        customerDashboardRepository.getDashboard()
             .onLeft { left ->
                 _uiState.update {
                     it.copy(
@@ -49,6 +50,7 @@ class DashboardCustomerViewModel @Inject constructor(
                         )
                     )
                 }
+                Log.d("DashboardCustomerViewModel", "getAllOrders: ${left.message}")
             }
             .onRight { right ->
                 _uiState.update {
@@ -58,6 +60,7 @@ class DashboardCustomerViewModel @Inject constructor(
                         )
                     )
                 }
+                Log.d("DashboardCustomerViewModel", "getAllOrders: $right")
             }
     }
 

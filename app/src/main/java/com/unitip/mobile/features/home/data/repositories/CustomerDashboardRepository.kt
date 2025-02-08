@@ -1,28 +1,27 @@
 package com.unitip.mobile.features.home.data.repositories
 
+import android.util.Log
 import arrow.core.Either
-import com.unitip.mobile.features.home.data.sources.DriverOrderApi
 import com.unitip.mobile.features.home.domain.models.Order
+import com.unitip.mobile.network.openapi.apis.AccountApi
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DriverOrderRepository @Inject constructor(
+class CustomerDashboardRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    private val driverOrderApi: DriverOrderApi
+    private val accountApi: AccountApi
 ) {
-    suspend fun getAll(): Either<Failure, List<Order>> = try {
-        val response = driverOrderApi.getAll(
-            token = "Bearer ${sessionManager.getToken()}"
-        )
+
+    suspend fun getDashboard(): Either<Failure, List<Order>> = try {
+        val response = accountApi.getDashboardCustomer()
+        Log.d("CustomerDashboardRepository", "getDashboard: ${response.body()}")
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
             true -> Either.Right(
-                result.orders.map {
+                (result.needAction + result.ongoing).map {
                     Order(
                         id = it.id,
                         title = it.title,
@@ -30,11 +29,20 @@ class DriverOrderRepository @Inject constructor(
 
                         )
                 }
+
+
             )
 
-            else -> Either.Left(response.mapToFailure())
+
+            else -> {
+//                Log.d("CustomerDashboardRepository", "getDashboard: ${response.errorBody()}")
+                Either.Left(response.mapToFailure())
+            }
         }
     } catch (e: Exception) {
+        Log.d("CustomerDashboardRepository", "getDashboard: ${e.message}")
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+
 }
