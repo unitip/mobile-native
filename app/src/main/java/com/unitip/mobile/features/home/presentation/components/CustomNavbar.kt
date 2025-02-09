@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.home.presentation.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,13 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -97,12 +94,12 @@ fun CustomNavbar(
                     modifier = Modifier
                         .height(56.dp)
                         .clickable(
-                            indication = rememberRipple(
-                                bounded = false,
-                                radius = 48.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant
-                            ),
-                            interactionSource = remember { MutableInteractionSource() },
+//                            indication = rememberRipple(
+//                                bounded = false,
+//                                radius = 48.dp,
+//                                color = MaterialTheme.colorScheme.outlineVariant
+//                            ),
+//                            interactionSource = remember { MutableInteractionSource() },
                         ) {
                             homeNavController.navigate(item.route) {
                                 popUpTo(homeNavController.graph.findStartDestination().id) {
