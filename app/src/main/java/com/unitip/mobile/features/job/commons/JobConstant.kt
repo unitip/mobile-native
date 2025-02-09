@@ -11,6 +11,7 @@ object JobConstant {
         AntarJemput, JasaTitip
     }
 
+    @Deprecated("sudah tidak digunakan")
     enum class Type {
         SINGLE {
             override fun toString(): String = "single"
@@ -20,14 +21,14 @@ object JobConstant {
         }
     }
 
-    val services = listOf<JobService>(
+    val services = listOf(
         JobService(
             title = "Antar jemput",
-            value = "antar-jemput"
+            value = Service.AntarJemput
         ),
         JobService(
             title = "Jasa titip",
-            value = "jasa-titip"
+            value = Service.JasaTitip
         )
     )
 }

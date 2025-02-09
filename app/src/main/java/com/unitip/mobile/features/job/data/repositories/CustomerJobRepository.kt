@@ -15,23 +15,21 @@ class CustomerJobRepository @Inject constructor(
     private val jobApi: JobApi
 ) {
     suspend fun create(
-        title: String,
-        destinationLocation: String,
         note: String,
-        service: String,
         pickupLocation: String,
+        destinationLocation: String,
+        service: JobConstant.Service,
         expectedPrice: Int
     ): Either<Failure, Unit> = try {
         val response = jobApi.createJob(
             CreateJobRequest(
-                title = title,
-                destinationLocation = destinationLocation,
                 note = note,
-                service = when (service) {
-                    "antar-jemput" -> CreateJobRequest.Service.AntarJemput
-                    else -> CreateJobRequest.Service.JasaTitip
-                },
                 pickupLocation = pickupLocation,
+                destinationLocation = destinationLocation,
+                service = when (service) {
+                    JobConstant.Service.AntarJemput -> CreateJobRequest.Service.AntarJemput
+                    JobConstant.Service.JasaTitip -> CreateJobRequest.Service.JasaTitip
+                },
                 expectedPrice = expectedPrice
             )
         )

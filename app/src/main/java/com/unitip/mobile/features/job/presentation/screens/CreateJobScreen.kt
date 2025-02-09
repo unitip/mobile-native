@@ -1,8 +1,6 @@
 package com.unitip.mobile.features.job.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +21,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,6 +32,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,13 +46,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.ChevronDown
-import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Circle
 import com.composables.icons.lucide.CircleCheck
@@ -61,10 +61,9 @@ import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.CreateJobViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomCard
-import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CreateJobScreen(
     viewModel: CreateJobViewModel = hiltViewModel(),
@@ -75,7 +74,6 @@ fun CreateJobScreen(
     val listState = rememberLazyListState()
     val firstVisibleListItemIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
 
-    var title by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
     var pickupLocation by rememberSaveable { mutableStateOf("") }
     var destinationLocation by rememberSaveable { mutableStateOf("") }
@@ -86,7 +84,7 @@ fun CreateJobScreen(
      */
     var expectedPrice by rememberSaveable { mutableIntStateOf(0) }
     var isSelectServiceVisible by rememberSaveable { mutableStateOf(false) }
-    var selectedService by rememberSaveable { mutableStateOf("") }
+    var selectedService by rememberSaveable { mutableStateOf<JobConstant.Service?>(null) }
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -110,46 +108,61 @@ fun CreateJobScreen(
     }
 
     Scaffold(
+        topBar = {
+            Column {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.popBackStack() }
+                        ) {
+                            Icon(Lucide.ArrowLeft, contentDescription = null)
+                        }
+                    },
+                    title = { Text(text = "Pekerjaan Baru") }
+                )
+                HorizontalDivider()
+            }
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surfaceContainerHigh,
-                            MaterialTheme.colorScheme.surfaceContainerLowest,
-                        )
-                    )
-                )
+//                .background(
+//                    brush = Brush.linearGradient(
+//                        colors = listOf(
+//                            MaterialTheme.colorScheme.surfaceContainerHigh,
+//                            MaterialTheme.colorScheme.surfaceContainerLowest,
+//                        )
+//                    )
+//                )
                 .padding(it)
         ) {
             // app bar
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                CustomIconButton(
-                    icon = Lucide.ChevronLeft,
-                    onClick = { navController.popBackStack() }
-                )
-                AnimatedVisibility(
-                    visible = listState.canScrollBackward && firstVisibleListItemIndex.value > 0,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Text(text = "Pekerjaan Baru", style = MaterialTheme.typography.titleLarge)
-                }
-            }
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                modifier = Modifier.padding(16.dp)
+//            ) {
+//                CustomIconButton(
+//                    icon = Lucide.ChevronLeft,
+//                    onClick = { navController.popBackStack() }
+//                )
+//                AnimatedVisibility(
+//                    visible = listState.canScrollBackward && firstVisibleListItemIndex.value > 0,
+//                    enter = fadeIn(),
+//                    exit = fadeOut()
+//                ) {
+//                    Text(text = "Pekerjaan Baru", style = MaterialTheme.typography.titleLarge)
+//                }
+//            }
 
-            AnimatedVisibility(
-                visible = listState.canScrollBackward &&
-                        uiState.detail !is CreateJobState.Detail.Loading
-            ) {
-                HorizontalDivider()
-            }
+//            AnimatedVisibility(
+//                visible = listState.canScrollBackward &&
+//                        uiState.detail !is CreateJobState.Detail.Loading
+//            ) {
+//                HorizontalDivider()
+//            }
 
             // loading bar
             AnimatedVisibility(visible = uiState.detail is CreateJobState.Detail.Loading) {
@@ -170,27 +183,27 @@ fun CreateJobScreen(
                     .imePadding(),
                 state = listState
             ) {
-                item {
-                    Text(
-                        text = "Pekerjaan Baru",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = when (uiState.detail is CreateJobState.Detail.Loading) {
-                                true -> 16.dp
-                                else -> 0.dp
-                            }
-                        )
-                    )
-                }
-                item {
-                    Text(
-                        text = "Masukkan beberapa informasi berikut untuk membuat pekerjaan baru",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                    )
-                }
+//                item {
+//                    Text(
+//                        text = "Pekerjaan Baru",
+//                        style = MaterialTheme.typography.titleLarge,
+//                        modifier = Modifier.padding(
+//                            start = 16.dp,
+//                            end = 16.dp,
+//                            top = when (uiState.detail is CreateJobState.Detail.Loading) {
+//                                true -> 16.dp
+//                                else -> 0.dp
+//                            }
+//                        )
+//                    )
+//                }
+//                item {
+//                    Text(
+//                        text = "Masukkan beberapa informasi berikut untuk membuat pekerjaan baru",
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+//                    )
+//                }
 
                 item {
                     CustomCard(
@@ -230,7 +243,7 @@ fun CreateJobScreen(
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                     Text(
-                                        text = when (selectedService.isBlank()) {
+                                        text = when (selectedService == null) {
                                             true -> "Pilih jenis layanan"
                                             else -> JobConstant.services.find { service ->
                                                 service.value == selectedService
@@ -294,14 +307,6 @@ fun CreateJobScreen(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
                     ) {
                         CustomTextField(
-                            label = "Judul pekerjaan",
-                            value = title,
-                            onValueChange = { title = it },
-                            placeholder = "Cth: Anjem ke Gacoan",
-                            enabled = uiState.detail !is CreateJobState.Detail.Loading
-                        )
-
-                        CustomTextField(
                             label = "Lokasi penjemputan",
                             value = pickupLocation,
                             onValueChange = { pickupLocation = it },
@@ -348,13 +353,12 @@ fun CreateJobScreen(
                 AnimatedVisibility(visible = uiState.detail !is CreateJobState.Detail.Loading) {
                     Button(
                         onClick = {
-                            if (selectedService.isNotBlank())
+                            if (selectedService != null)
                                 viewModel.create(
-                                    title = title,
-                                    destinationLocation = destinationLocation,
                                     note = note,
-                                    service = selectedService,
                                     pickupLocation = pickupLocation,
+                                    destinationLocation = destinationLocation,
+                                    service = selectedService!!,
                                     expectedPrice = expectedPrice
                                 )
                         },

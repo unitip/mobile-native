@@ -2,6 +2,7 @@ package com.unitip.mobile.features.job.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.features.job.data.repositories.CustomerJobRepository
 import com.unitip.mobile.features.job.presentation.states.CreateJobState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,21 +25,19 @@ class CreateJobViewModel @Inject constructor(
     }
 
     fun create(
-        title: String,
-        destinationLocation: String,
         note: String,
-        service: String,
         pickupLocation: String,
+        destinationLocation: String,
+        service: JobConstant.Service,
         expectedPrice: Int
     ) = viewModelScope.launch {
         _uiState.update { it.copy(detail = CreateJobState.Detail.Loading) }
         customerJobRepository
             .create(
-                title = title,
-                destinationLocation = destinationLocation,
                 note = note,
-                service = service,
                 pickupLocation = pickupLocation,
+                destinationLocation = destinationLocation,
+                service = service,
                 expectedPrice = expectedPrice
             )
             .onLeft { left ->
