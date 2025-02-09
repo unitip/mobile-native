@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.home.presentation.states
 
+import com.unitip.mobile.features.home.domain.models.CustomerDashboardResult
 import com.unitip.mobile.features.home.domain.models.Order
 
 data class DashboardCustomerState(

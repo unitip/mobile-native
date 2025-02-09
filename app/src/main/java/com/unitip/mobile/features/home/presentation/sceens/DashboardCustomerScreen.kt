@@ -242,7 +242,9 @@ fun DashboardCustomerScreen(
                             }
                         }
 
-                        else -> Unit
+                        else ->
+                            Unit
+
                     }
                 }
 

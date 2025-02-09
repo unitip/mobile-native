@@ -26,8 +26,9 @@ class CustomerOrderRepository @Inject constructor(
                     Order(
                         id = it.id,
                         title = it.title,
-                        note = it.note
-                    )
+                        note = it.note,
+
+                        )
                 }
             )
 
