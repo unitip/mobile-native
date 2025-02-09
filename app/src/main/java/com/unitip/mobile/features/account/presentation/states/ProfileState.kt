@@ -12,8 +12,7 @@ data class ProfileState(
         data object Loading : LogoutDetail
         data object Success : LogoutDetail
         data class Failure(
-            val message: String,
-            val code: Int? = null
+            val message: String
         ) : LogoutDetail
     }
 }

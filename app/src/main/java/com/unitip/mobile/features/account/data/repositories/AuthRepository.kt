@@ -1,7 +1,7 @@
 package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.account.data.sources.AuthApi
+import com.unitip.mobile.network.openapi.apis.AuthApi
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -13,22 +13,19 @@ class AuthRepository @Inject constructor(
     private val authApi: AuthApi,
     private val sessionManager: SessionManager,
 ) {
-    suspend fun logout(): Either<Failure, Boolean> {
-        try {
-            val token = sessionManager.read()?.token
+    suspend fun logout(): Either<Failure, Unit> = try {
+        val response = authApi.logout()
+        val result = response.body()
 
-            val response = authApi.logout(token = "Bearer $token")
-            val result = response.body()
-
-            if (response.isSuccessful && result != null) {
+        when (response.isSuccessful && result != null) {
+            true -> {
                 sessionManager.delete()
-
-                return Either.Right(true)
+                Either.Right(Unit)
             }
 
-            return Either.Left(response.mapToFailure())
-        } catch (e: Exception) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+            else -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 }
