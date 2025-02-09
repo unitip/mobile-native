@@ -42,7 +42,6 @@ import org.osmdroid.util.GeoPoint
 fun ApplyOfferScreen(
     offerId: String,
     viewModel: ApplyOfferViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
 ) {
     val state = viewModel.state.collectAsState().value
     val navController = LocalNavController.current
@@ -58,7 +57,8 @@ fun ApplyOfferScreen(
     // Navigate back ketika detail success
     LaunchedEffect(state.detail) {
         if (state.detail is ApplyOfferState.Detail.Success) {
-            onNavigateBack()
+            navController.previousBackStackEntry?.savedStateHandle?.set("applyOfferSuccess", true)
+            navController.popBackStack()
         }
     }
 
@@ -84,7 +84,7 @@ fun ApplyOfferScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CustomIconButton(
-                    onClick = onNavigateBack,
+                    onClick = { navController.popBackStack() },
                     icon = Lucide.ChevronLeft
                 )
 
@@ -159,7 +159,6 @@ fun ApplyOfferScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Tambahkan pemilihan lokasi tujuan
                 when (state.destinationLocationGeoPoint) {
                     null -> Button(
                         onClick = {

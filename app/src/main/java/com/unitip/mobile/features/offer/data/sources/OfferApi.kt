@@ -7,10 +7,13 @@ import com.unitip.mobile.features.offer.data.dtos.CreateOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.DetailApplicantOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.GetAllOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
+import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusPayload
+import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -36,7 +39,7 @@ interface OfferApi {
         @Path("id") offerId: String
     ): Response<GetOfferResponse>
 
-//    Apply
+    //    Apply
     @POST("offers/{id}/apply")
     suspend fun applyOffer(
         @Header("Authorization") token: String,
@@ -51,4 +54,12 @@ interface OfferApi {
         @Path("applicant_id") applicantId: String
     ): Response<DetailApplicantOfferResponse>
 
+    //   Applicant Offer status
+    @PATCH("offers/{offer_id}/applicants/{applicant_id}")
+    suspend fun updateApplicantStatus(
+        @Header("Authorization") token: String,
+        @Path("offer_id") offerId: String,
+        @Path("applicant_id") applicantId: String,
+        @Body payload: UpdateApplicantStatusPayload
+    ): Response<UpdateApplicantStatusResponse>
 }

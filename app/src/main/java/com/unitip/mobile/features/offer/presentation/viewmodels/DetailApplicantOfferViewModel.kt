@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.offer.data.repositories.OfferRepository
-import com.unitip.mobile.features.offer.domain.models.DetailApplicantOffer
 import com.unitip.mobile.features.offer.presentation.states.DetailApplicantOfferState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -49,4 +49,46 @@ class DetailApplicantOfferViewModel @Inject constructor(
             }
         )
     }
+
+    fun updateStatus(newStatus: String) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Loading)
+        }
+
+        offerRepository.updateApplicantStatus(offerId, applicantId, newStatus).fold(
+            ifLeft = { failure ->
+                _uiState.update {
+                    it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(failure.message))
+                }
+                delay(500)
+                _uiState.update {
+                    it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Initial)
+                }
+                fetchData() // Tetap refresh data meskipun gagal
+            },
+            ifRight = { response ->
+                if (response.status) {
+                    fetchData()
+                    _uiState.update {
+                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Success)
+                    }
+                    // Reset status setelah beberapa detik
+                    delay(500)
+                    _uiState.update {
+                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Initial)
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(response.message))
+                    }
+                    delay(500)
+                    _uiState.update {
+                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Initial)
+                    }
+                    fetchData()
+                }
+            }
+        )
+    }
 }
+

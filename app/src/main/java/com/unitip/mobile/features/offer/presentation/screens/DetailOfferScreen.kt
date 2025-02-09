@@ -58,6 +58,7 @@ import com.unitip.mobile.features.offer.presentation.components.ErrorState
 import com.unitip.mobile.features.offer.presentation.states.DetailOfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.DetailOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.GetPopResult
 import com.unitip.mobile.shared.commons.extensions.isCustomer
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
@@ -80,6 +81,12 @@ fun DetailOfferScreen(
             Toast.LENGTH_SHORT
         ).show()
         showToastForbidden = false
+    }
+    // ketika user berhasil mengajukan penawaran, maka fetch data kembali
+    navController.GetPopResult<Boolean>("applyOfferSuccess") { applyOffer ->
+        if (applyOffer == true) {
+            viewModel.fetchData()
+        }
     }
 
     Scaffold {
@@ -191,14 +198,15 @@ fun DetailOfferScreen(
                         // List of Applicants
                         item {
                             if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
-                                uiState.session.isCustomer() && offer.applicants.any { applicant -> applicant.customerId == uiState.session.id }
-                            ) {
+                                uiState.session.isCustomer() && offer.applicants.any { it.customerId == uiState.session.id }) {
+
                                 Text(
                                     text = "Daftar Pelamar (${offer.applicantsCount})",
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 )
 
+                                // pplicant  list
                                 offer.applicants.forEach { applicant ->
                                     ApplicantItem(
                                         applicant = applicant,
@@ -207,18 +215,27 @@ fun DetailOfferScreen(
                                             vertical = 8.dp
                                         ),
                                         onItemClick = {
-                                            // Cek apakah user adalah driver pemilik offer atau customer yang mengajukan
-                                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
-                                                uiState.session.isCustomer() && applicant.customerId == uiState.session.id
-                                            ) {
+                                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id) {
+                                                // Driver yang membuat offer bisa akses semua detail
                                                 navController.navigate(
                                                     OfferRoutes.DetailApplicant(
                                                         offerId = offerId,
                                                         applicantId = applicant.id
                                                     )
                                                 )
-                                            } else {
-                                                showToastForbidden = true
+                                            } else if (uiState.session.isCustomer()) {
+                                                // Customer hanya bisa akses detail miliknya
+                                                if (applicant.customerId == uiState.session.id) {
+                                                    navController.navigate(
+                                                        OfferRoutes.DetailApplicant(
+                                                            offerId = offerId,
+                                                            applicantId = applicant.id
+                                                        )
+                                                    )
+                                                } else {
+                                                    // Tampilkan toast jika mencoba akses detail applicant lain
+                                                    showToastForbidden = true
+                                                }
                                             }
                                         }
                                     )

@@ -24,7 +24,8 @@ data class GetAllOfferResponse(
     )
 
     data class Freelancer(
-        @SerializedName("name") val name: String
+        @SerializedName("id") val id: String = "",
+        @SerializedName("name") val name: String = ""
     )
 }
 //    data class PageInfo(

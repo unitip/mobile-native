@@ -63,12 +63,6 @@ class ApplyOfferViewModel @Inject constructor(
 
     fun applyOffer(offerId: String) {
         viewModelScope.launch {
-//            println("destinationLocation: ${state.value.destinationLocation}")
-//            println("destinationLatitude: ${state.value.destinationLatitude}")
-//            println("destinationLongitude: ${state.value.destinationLongitude}")
-//            println("pickupLocation: ${state.value.pickupLocation}")
-//            println("pickupLatitude: ${state.value.pickupLatitude}")
-//            println("pickupLongitude: ${state.value.pickupLongitude}")
 
             _state.update { it.copy(detail = ApplyOfferState.Detail.Loading) }
 
