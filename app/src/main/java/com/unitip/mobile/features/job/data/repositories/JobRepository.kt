@@ -54,34 +54,36 @@ class JobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
+    @Deprecated("sudah tidak digunakan")
     suspend fun getAll(): Either<Failure, List<JobModel.ListItem>> = try {
-        val response = jobApi.getAll(
-            token = "Bearer ${sessionManager.getToken()}"
-        )
-        val result = response.body()
+//        val response = jobApi.getAll(
+//            token = "Bearer ${sessionManager.getToken()}"
+//        )
+//        val result = response.body()
+//
+//        when (response.isSuccessful && result != null) {
+//            true -> Either.Right(
+//                result.jobs.map { job ->
+//                    JobModel.ListItem(
+//                        id = job.id,
+//                        title = job.title,
+//                        note = job.note,
+//                        service = job.service,
+//                        pickupLocation = job.pickupLocation,
+//                        destinationLocation = job.destinationLocation,
+//                        createdAt = job.createdAt,
+//                        updatedAt = job.updatedAt,
+//                        customer = JobModel.ListItem.Customer(
+//                            name = job.customer.name
+//                        )
+//                    )
+//                }
+//            )
+//
+//            false -> Either.Left(response.mapToFailure())
+//        }
 
-        when (response.isSuccessful && result != null) {
-            true -> Either.Right(
-                result.jobs.map { job ->
-                    JobModel.ListItem(
-                        id = job.id,
-                        title = job.title,
-                        note = job.note,
-                        service = job.service,
-                        pickupLocation = job.pickupLocation,
-                        destinationLocation = job.destinationLocation,
-                        createdAt = job.createdAt,
-                        updatedAt = job.updatedAt,
-                        customer = JobModel.ListItem.Customer(
-                            name = job.customer.name
-                        )
-                    )
-                }
-            )
-
-            false -> Either.Left(response.mapToFailure())
-        }
-
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     } catch (e: Exception) {
         e.printStackTrace()
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))

@@ -1,13 +1,14 @@
 package com.unitip.mobile.features.job.domain.models
 
+import com.unitip.mobile.features.job.commons.JobConstant
+
 sealed class JobModel {
     data class ListItem(
         val id: String,
-        val title: String,
         val note: String,
-        val service: String,
         val pickupLocation: String,
         val destinationLocation: String,
+        val service: JobConstant.Service,
         val createdAt: String,
         val updatedAt: String,
         val customer: Customer
@@ -17,6 +18,7 @@ sealed class JobModel {
         )
     }
 
+    @Deprecated("sudah tidak digunakan")
     data class Detail(
         val id: String = "",
         val title: String = "",

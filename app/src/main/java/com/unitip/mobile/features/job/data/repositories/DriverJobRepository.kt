@@ -1,6 +1,8 @@
 package com.unitip.mobile.features.job.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.job.commons.JobConstant
+import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.network.openapi.apis.JobApi
 import com.unitip.mobile.network.openapi.models.CreateJobApplicationRequest
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
@@ -34,12 +36,26 @@ class DriverJobRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun getAll(): Either<Failure, Unit> = try {
+    suspend fun getAll(): Either<Failure, List<JobModel.ListItem>> = try {
         val response = jobApi.getAllJobs()
         val result = response.body()
 
         when (response.isSuccessful && result != null) {
-            true -> Either.Right(Unit)
+            true -> Either.Right(result.jobs.map { job ->
+                JobModel.ListItem(
+                    id = job.id,
+                    note = job.note,
+                    pickupLocation = job.pickupLocation,
+                    destinationLocation = job.destinationLocation,
+                    service = JobConstant.Service.entries[job.service.ordinal],
+                    createdAt = job.createdAt,
+                    updatedAt = job.updatedAt,
+                    customer = JobModel.ListItem.Customer(
+                        name = job.customer.name,
+                    )
+                )
+            })
+
             else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {
