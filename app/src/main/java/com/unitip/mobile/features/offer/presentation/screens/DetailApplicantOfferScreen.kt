@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.offer.presentation.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -63,18 +61,6 @@ fun DetailApplicantOfferScreen(
     val navController = LocalNavController.current
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(uiState.showSuccessToast) {
-        if (uiState.showSuccessToast) {
-            Toast.makeText(
-                context,
-                "Status berhasil diperbarui",
-                Toast.LENGTH_SHORT
-            ).show()
-            viewModel.resetToastState()
-        }
-    }
 
     Scaffold {
         Column(

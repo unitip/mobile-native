@@ -7,7 +7,6 @@ import com.unitip.mobile.features.offer.data.repositories.OfferRepository
 import com.unitip.mobile.features.offer.presentation.states.DetailApplicantOfferState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -51,40 +50,52 @@ class DetailApplicantOfferViewModel @Inject constructor(
     }
 
     fun updateStatus(newStatus: String) = viewModelScope.launch {
-        _uiState.update { it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Loading) }
+        // Hanya set loading state untuk updateStatus
+        _uiState.update {
+            it.copy(
+                updateStatus = DetailApplicantOfferState.UpdateStatus.Loading
+            )
+        }
+
         offerRepository.updateApplicantStatus(offerId, applicantId, newStatus).fold(
             ifLeft = { failure ->
-                delay(500)
                 _uiState.update {
-                    it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(failure.message))
+                    it.copy(
+                        updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(failure.message)
+                    )
                 }
             },
             ifRight = { response ->
                 if (response.status) {
-                    delay(500)
+                    // Langsung fetch data baru tanpa mengubah state detail menjadi loading
+                    offerRepository.getApplicantDetail(offerId, applicantId).fold(
+                        ifLeft = { failure ->
+                            _uiState.update {
+                                it.copy(
+                                    detail = DetailApplicantOfferState.Detail.Failure(failure.message),
+                                    updateStatus = DetailApplicantOfferState.UpdateStatus.Initial
+                                )
+                            }
+                        },
+                        ifRight = { applicant ->
+                            _uiState.update {
+                                it.copy(
+                                    detail = DetailApplicantOfferState.Detail.Success,
+                                    applicant = applicant,
+                                    updateStatus = DetailApplicantOfferState.UpdateStatus.Initial
+                                )
+                            }
+                        }
+                    )
+                } else {
                     _uiState.update {
                         it.copy(
-                            updateStatus = DetailApplicantOfferState.UpdateStatus.Success,
-                            showSuccessToast = true,
-                            // Update applicant status langsung
-                            applicant = it.applicant.copy(applicantStatus = newStatus)
+                            updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(response.message)
                         )
-                    }
-                    // Fetch data untuk memastikan sync dengan server
-                    fetchData()
-                } else {
-                    delay(500)
-                    _uiState.update {
-                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(response.message))
                     }
                 }
             }
         )
     }
-
-
-    fun resetToastState() {
-
-        _uiState.update { it.copy(showSuccessToast = false) }
-    }
 }
+

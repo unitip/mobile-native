@@ -7,8 +7,7 @@ data class DetailApplicantOfferState(
     val session: Session = Session(),
     val detail: Detail = Detail.Initial,
     val applicant: DetailApplicantOffer = DetailApplicantOffer(),
-    val updateStatus: UpdateStatus = UpdateStatus.Initial,
-    val showSuccessToast: Boolean = false
+    val updateStatus: UpdateStatus = UpdateStatus.Initial
 ) {
     sealed interface Detail {
         data object Initial : Detail
