@@ -22,7 +22,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -53,7 +52,6 @@ import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.GetPopResult
-import com.unitip.mobile.shared.commons.extensions.redirectToUnauthorized
 import com.unitip.mobile.features.account.presentation.states.ProfileState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,19 +77,6 @@ fun ProfileScreen(
                 is State.LogoutDetail.Success -> {
                     navController.navigate(AuthRoutes.Index) {
                         popUpTo(HomeRoutes.Index) { inclusive = true }
-                    }
-                }
-
-                is State.LogoutDetail.Failure -> {
-                    when (code) {
-                        401 -> navController.redirectToUnauthorized()
-                        else -> {
-                            snackbarHost.showSnackbar(
-                                message = message,
-                                actionLabel = "Oke",
-                                duration = SnackbarDuration.Indefinite
-                            )
-                        }
                     }
                 }
 
