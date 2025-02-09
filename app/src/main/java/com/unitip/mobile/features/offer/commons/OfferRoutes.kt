@@ -17,7 +17,9 @@ sealed class OfferRoutes {
     @Serializable
     @SerialName("offer/{offerId}/apply")
     data class ApplyOffer(
-        val offerId: String
+        val offerId: String,
+        val offerType: String,
+        val offerPickupLocation: String? = null,
     )
 
     @Serializable

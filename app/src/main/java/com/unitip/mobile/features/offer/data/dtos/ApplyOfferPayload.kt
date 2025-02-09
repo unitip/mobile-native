@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ApplyOfferPayload(
     @SerializedName("note") val note: String,
+    @SerializedName("final_price") val finalPrice: Int,
     @SerializedName("destination_location") val destinationLocation: String,
     @SerializedName("pickup_location") val pickupLocation: String,
     @SerializedName("pickup_latitude") val pickupLatitude: Double,

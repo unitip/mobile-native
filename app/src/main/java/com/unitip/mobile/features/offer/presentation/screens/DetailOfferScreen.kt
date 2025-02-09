@@ -45,11 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.CircleUser
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MapPinned
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.MessageCircle
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Wallet
 import com.unitip.mobile.features.offer.commons.OfferRoutes
@@ -72,9 +74,9 @@ fun DetailOfferScreen(
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
     val offer by viewModel.offer.collectAsState()
-    var showToastForbidden by remember {mutableStateOf(false)}
+    var showToastForbidden by remember { mutableStateOf(false) }
 
-    if(showToastForbidden){
+    if (showToastForbidden) {
         Toast.makeText(
             LocalContext.current,
             "Anda tidak memiliki akses untuk melihat detail pelamar ini",
@@ -171,17 +173,26 @@ fun DetailOfferScreen(
                                 ),
                                 mapOf(
                                     "icon" to Lucide.MapPin,
-                                    "title" to "Area Penjemputan",
+                                    "title" to when (offer.type) {
+                                        "jasa-titip" -> "Outlet Jastip"
+                                        else -> "Area Penjemputan"
+                                    },
                                     "value" to offer.pickupArea
                                 ),
                                 mapOf(
                                     "icon" to Lucide.MapPinned,
                                     "title" to "Area Pengantaran",
                                     "value" to offer.destinationArea
-                                )
+                                ),
                             )
                         ) { _, item ->
                             DetailItemOffer(item)
+                        }
+
+                        item {
+                            if (uiState.session.isCustomer()) {
+                                ItemChat()
+                            }
                         }
 
                         item {
@@ -198,7 +209,8 @@ fun DetailOfferScreen(
                         // List of Applicants
                         item {
                             if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
-                                uiState.session.isCustomer() && offer.applicants.any { it.customerId == uiState.session.id }) {
+                                uiState.session.isCustomer() && offer.applicants.any { it.customerId == uiState.session.id }
+                            ) {
 
                                 Text(
                                     text = "Daftar Pelamar (${offer.applicantsCount})",
@@ -206,7 +218,7 @@ fun DetailOfferScreen(
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                                 )
 
-                                // pplicant  list
+                                // applicant  list
                                 offer.applicants.forEach { applicant ->
                                     ApplicantItem(
                                         applicant = applicant,
@@ -267,10 +279,26 @@ fun DetailOfferScreen(
                                     color = MaterialTheme.colorScheme.outline
                                 )
                             }
+
                             else -> {
                                 Button(
                                     onClick = {
-                                        navController.navigate(OfferRoutes.ApplyOffer(offerId = offerId))
+                                        if (offer.type == "jasa-titip") {
+                                            navController.navigate(
+                                                OfferRoutes.ApplyOffer(
+                                                    offerId = offerId,
+                                                    offerType = offer.type,
+                                                    offerPickupLocation = offer.pickupArea
+                                                )
+                                            )
+                                        } else {
+                                            navController.navigate(
+                                                OfferRoutes.ApplyOffer(
+                                                    offerId = offerId,
+                                                    offerType = offer.type
+                                                )
+                                            )
+                                        }
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -285,6 +313,63 @@ fun DetailOfferScreen(
 
                 else -> {}
             }
+        }
+    }
+}
+
+@Composable
+private fun ItemChat() {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+            .clickable { /* onClick akan diimplementasikan nanti */ }
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        Lucide.CircleUser,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(20.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Chat",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = "Chat dengan Driver",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Icon(
+                imageVector = Lucide.MessageCircle,
+                contentDescription = "Chat",
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

@@ -502,7 +502,7 @@ fun CreateOfferScreen(
                                     }
                                 )
                             }) {
-                                Text("Pilih Tanggal")
+                                Text("Available Sampai")
                             }
 
                             // Tampilkan waktu yang dipilih dalam format ISO

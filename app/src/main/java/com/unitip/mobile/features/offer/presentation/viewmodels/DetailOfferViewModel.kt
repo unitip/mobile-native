@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.unitip.mobile.features.chat.data.repositories.ChatRepository
 import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.data.repositories.OfferRepository
 import com.unitip.mobile.features.offer.domain.models.Offer
@@ -56,11 +57,11 @@ class DetailOfferViewModel @Inject constructor(
             ifRight = { offer ->
                 _offer.value = offer
 
-                Log.d("DetailOffer", "isDriver: ${session.isDriver()}")
-                Log.d("DetailOffer", "freelancerId: ${offer.freelancer.id}")
-                Log.d("DetailOffer", "sessionId: ${session.id}")
+//                Log.d("DetailOffer", "isDriver: ${session.isDriver()}")
+//                Log.d("DetailOffer", "freelancerId: ${offer.freelancer.id}")
+//                Log.d("DetailOffer", "sessionId: ${session.id}")
                 // session id
-                println("Session id: ${session?.id}")
+//                println("Session id: ${session?.id}")
                 _uiState.update {
                     it.copy(
                         detail = DetailOfferState.Detail.Success
@@ -69,4 +70,5 @@ class DetailOfferViewModel @Inject constructor(
             }
         )
     }
+
 }

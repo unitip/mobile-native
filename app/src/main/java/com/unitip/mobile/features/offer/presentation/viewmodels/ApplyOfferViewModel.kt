@@ -25,10 +25,14 @@ class ApplyOfferViewModel @Inject constructor(
         _state.update { it.copy(note = note) }
     }
 
+    fun onFinalPriceChange(finalPrice: Int) {
+        _state.update { it.copy(finalPrice = finalPrice) }
+    }
+
     fun onPickupLocationChange(location: String) {
         _state.update {
             it.copy(
-                pickupLocation = location.trim()
+                pickupLocation = location
             )
         }
     }
@@ -36,7 +40,7 @@ class ApplyOfferViewModel @Inject constructor(
     fun onDestinationLocationChange(location: String) {
         _state.update {
             it.copy(
-                destinationLocation = location.trim()
+                destinationLocation = location
             )
         }
     }
@@ -69,6 +73,7 @@ class ApplyOfferViewModel @Inject constructor(
             val result = offerRepository.applyOffer(
                 offerId = offerId,
                 note = state.value.note,
+                finalPrice = state.value.finalPrice,
                 pickupLocation = state.value.pickupLocation,
                 destinationLocation = state.value.destinationLocation,
                 pickupLatitude = state.value.pickupLatitude,

@@ -4,6 +4,7 @@ import org.osmdroid.util.GeoPoint
 
 data class ApplyOfferState(
     val note: String = "",
+    val finalPrice: Int = 0,
     val pickupLocation: String = "",
     val destinationLocation: String = "",
     val pickupLatitude: Double = 0.0,

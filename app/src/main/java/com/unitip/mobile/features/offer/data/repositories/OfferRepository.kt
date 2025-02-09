@@ -177,6 +177,7 @@ class OfferRepository @Inject constructor(
     suspend fun applyOffer(
         offerId: String,
         note: String,
+        finalPrice: Int,
         destinationLocation: String,
         pickupLocation: String,
         pickupLatitude: Double,
@@ -191,6 +192,7 @@ class OfferRepository @Inject constructor(
                 offerId = offerId,
                 payload = ApplyOfferPayload(
                     note = note,
+                    finalPrice = finalPrice,
                     destinationLocation = destinationLocation,
                     pickupLocation = pickupLocation,
                     pickupLatitude = pickupLatitude,

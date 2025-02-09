@@ -22,7 +22,7 @@ fun NavGraphBuilder.offerNavigation() {
 
     composable<OfferRoutes.ApplyOffer> {
         val data = it.toRoute<OfferRoutes.ApplyOffer>()
-        ApplyOfferScreen(offerId = data.offerId)
+        ApplyOfferScreen(offerId = data.offerId, offerType = data.offerType, offerPickupLocation = data.offerPickupLocation)
     }
 
     composable<OfferRoutes.DetailApplicant> {

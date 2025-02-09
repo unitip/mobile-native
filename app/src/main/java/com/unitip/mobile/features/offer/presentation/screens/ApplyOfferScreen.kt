@@ -41,6 +41,8 @@ import org.osmdroid.util.GeoPoint
 @Composable
 fun ApplyOfferScreen(
     offerId: String,
+    offerType: String,
+    offerPickupLocation: String? = null,
     viewModel: ApplyOfferViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsState().value
@@ -59,6 +61,9 @@ fun ApplyOfferScreen(
         if (state.detail is ApplyOfferState.Detail.Success) {
             navController.previousBackStackEntry?.savedStateHandle?.set("applyOfferSuccess", true)
             navController.popBackStack()
+        }
+        if (offerPickupLocation != null) {
+            viewModel.onPickupLocationChange(offerPickupLocation)
         }
     }
 
@@ -118,7 +123,12 @@ fun ApplyOfferScreen(
                 OutlinedTextField(
                     value = state.pickupLocation,
                     onValueChange = viewModel::onPickupLocationChange,
-                    label = { Text("Lokasi Penjemputan") },
+                    label = {
+                        Text(
+                            if (offerType == "jasa-titip") "Lokasi Outlet Jastip"
+                            else "Lokasi Penjemputan"
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -155,7 +165,12 @@ fun ApplyOfferScreen(
                 OutlinedTextField(
                     value = state.destinationLocation,
                     onValueChange = viewModel::onDestinationLocationChange,
-                    label = { Text("Lokasi Tujuan") },
+                    label = {
+                        Text(
+                            if (offerType == "jasa-titip") "Lokasi Pengantaran"
+                            else "Lokasi Tujuan"
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -186,6 +201,14 @@ fun ApplyOfferScreen(
                         }
                     )
                 }
+
+                // finalPrice int
+                OutlinedTextField(
+                    value = state.finalPrice.toString(),
+                    onValueChange = { viewModel.onFinalPriceChange(it.toIntOrNull() ?: 0) },
+                    label = { Text("Harga Tawaran") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
