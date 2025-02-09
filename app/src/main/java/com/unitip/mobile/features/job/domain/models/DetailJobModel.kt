@@ -7,9 +7,12 @@ sealed class DetailJobModel {
 
     data class ForCustomer(
         val id: String,
-        val title: String,
         val note: String,
+        val pickupLocation: String,
+        val destinationLocation: String,
+        val expectedPrice: Int,
         val price: Int,
+        val service: JobConstant.Service,
         val status: JobConstant.Status,
         val applications: List<Application>,
         val driver: Driver?

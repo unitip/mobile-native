@@ -57,9 +57,12 @@ class CustomerJobRepository @Inject constructor(
             true -> Either.Right(
                 GetResult(
                     id = result.id,
-                    title = result.title,
                     note = result.note,
+                    pickupLocation = result.pickupLocation,
+                    destinationLocation = result.destinationLocation,
+                    expectedPrice = result.expectedPrice,
                     price = result.price,
+                    service = JobConstant.Service.entries[result.service.ordinal],
                     status = JobConstant.Status.entries[result.status.ordinal],
                     applications = result.applications.map { application ->
                         GetResult.Application(

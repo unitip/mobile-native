@@ -7,6 +7,10 @@ object JobConstant {
         Initial, Ongoing, Done
     }
 
+    enum class Service {
+        AntarJemput, JasaTitip
+    }
+
     enum class Type {
         SINGLE {
             override fun toString(): String = "single"

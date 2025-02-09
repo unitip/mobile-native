@@ -24,7 +24,8 @@ class DetailOrderJobCustomerViewModel @Inject constructor(
     val uiState get() = _uiState.asStateFlow()
 
     init {
-        getData()
+        if (_uiState.value.detail !is State.Detail.Success)
+            getData()
     }
 
     fun getData() = viewModelScope.launch {
