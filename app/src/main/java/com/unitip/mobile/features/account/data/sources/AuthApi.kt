@@ -6,6 +6,6 @@ import retrofit2.http.DELETE
 import retrofit2.http.Header
 
 interface AuthApi {
-    @DELETE("auth/logout")
+    @DELETE("api/v1/auth/logout")
     suspend fun logout(@Header("Authorization") token: String): Response<LogoutResponse>
 }

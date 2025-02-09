@@ -17,14 +17,19 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +52,7 @@ import com.unitip.mobile.features.offer.presentation.components.ErrorState
 import com.unitip.mobile.features.offer.presentation.states.DetailApplicantOfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.DetailApplicantOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.commons.extensions.openGoogleMaps
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
@@ -59,8 +65,32 @@ fun DetailApplicantOfferScreen(
     val navController = LocalNavController.current
     val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold {
+    LaunchedEffect(uiState.updateStatus) {
+        when (uiState.updateStatus) {
+            is DetailApplicantOfferState.UpdateStatus.Success -> {
+                snackbarHostState.showSnackbar("Status berhasil diupdate")
+            }
+
+            is DetailApplicantOfferState.UpdateStatus.Failure -> {
+                snackbarHostState.showSnackbar(
+                    (uiState.updateStatus as DetailApplicantOfferState.UpdateStatus.Failure).message
+                )
+            }
+
+            else -> {}
+        }
+    }
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.padding(bottom = 80.dp)
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -151,9 +181,106 @@ fun DetailApplicantOfferScreen(
                             )
                         }
                     }
+
+                    if (uiState.session.isDriver()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            when (uiState.updateStatus) {
+                                is DetailApplicantOfferState.UpdateStatus.Loading -> {
+                                    CircularProgressIndicator()
+                                }
+
+                                else -> {
+                                    StatusButtons(
+                                        status = uiState.applicant.applicantStatus,
+                                        onUpdateStatus = viewModel::updateStatus
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 else -> Unit
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatusButtons(
+    status: String,
+    onUpdateStatus: (String) -> Unit
+) {
+    when (status) {
+        "pending" -> {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { onUpdateStatus("accepted") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Accept")
+                }
+                Button(
+                    onClick = { onUpdateStatus("rejected") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Reject")
+                }
+            }
+        }
+
+        "accepted" -> {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { onUpdateStatus("on_the_way") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Perjalanan")
+                }
+                Button(
+                    onClick = { onUpdateStatus("pending") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Pending")
+                }
+            }
+        }
+
+        "rejected" -> {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { onUpdateStatus("pending") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Pending")
+                }
+                Button(
+                    onClick = { onUpdateStatus("accepted") },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Accept")
+                }
+            }
+        }
+
+        "on_the_way" -> {
+            Button(
+                onClick = { onUpdateStatus("done") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Set Done")
             }
         }
     }

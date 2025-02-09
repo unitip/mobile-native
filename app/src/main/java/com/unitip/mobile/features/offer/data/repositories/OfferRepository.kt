@@ -5,6 +5,8 @@ import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.DetailApplicantOfferResponse
+import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusPayload
+import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
 import com.unitip.mobile.features.offer.data.sources.OfferApi
 import com.unitip.mobile.features.offer.domain.models.Applicant
@@ -90,7 +92,9 @@ class OfferRepository @Inject constructor(
                                         availableUntil = apiOffer.availableUntil,
                                         offerStatus = apiOffer.offerStatus,
                                         maxParticipants = apiOffer.maxParticipants,
-                                        freelancer = OfferFreelancer(name = apiOffer.freelancer.name)
+                                        freelancer = OfferFreelancer(
+                                            id = apiOffer.freelancer.id,
+                                            name = apiOffer.freelancer.name)
                                     )
                                 },
                                 hasNext = body.pageInfo.page < body.pageInfo.totalPages
@@ -144,7 +148,10 @@ class OfferRepository @Inject constructor(
             destinationArea = this.destinationArea,
             availableUntil = this.availableUntil,
             offerStatus = this.offerStatus,
-            freelancer = OfferFreelancer(name = this.freelancer.name),
+            freelancer = OfferFreelancer(
+                id = this.freelancer.id,
+                name = this.freelancer.name
+            ),
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
             applicantsCount = this.applicantsCount,
@@ -259,6 +266,36 @@ class OfferRepository @Inject constructor(
             applicantStatus = this.applicantStatus,
             finalPrice = this.finalPrice
         )
+    }
+
+    suspend fun updateApplicantStatus(
+        offerId: String,
+        applicantId: String,
+        status: String
+    ): Either<Failure, UpdateApplicantStatusResponse> {
+        return try {
+            val session = sessionManager.read()
+            val response = offerApi.updateApplicantStatus(
+                token = "Bearer ${session.token}",
+                offerId = offerId,
+                applicantId = applicantId,
+                payload = UpdateApplicantStatusPayload(status)
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(body)
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
     }
 
 }

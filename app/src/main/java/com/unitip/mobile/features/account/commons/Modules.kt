@@ -12,8 +12,8 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object Modules {
     @Provides
-    fun provideAuthApi(): AuthApi = ApiConfig.retrofit.create(AuthApi::class.java)
+    fun provideAuthApi(): AuthApi = ApiConfig.newRetrofit.create(AuthApi::class.java)
 
     @Provides
-    fun provideAccountApi(): AccountApi = ApiConfig.retrofit.create((AccountApi::class.java))
+    fun provideAccountApi(): AccountApi = ApiConfig.newRetrofit.create((AccountApi::class.java))
 }

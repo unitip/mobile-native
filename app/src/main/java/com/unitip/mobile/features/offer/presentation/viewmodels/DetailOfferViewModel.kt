@@ -1,5 +1,6 @@
 package com.unitip.mobile.features.offer.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.data.repositories.OfferRepository
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.presentation.states.DetailOfferState
+import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +43,7 @@ class DetailOfferViewModel @Inject constructor(
     }
 
     fun fetchData() = viewModelScope.launch {
+
         _uiState.update { it.copy(detail = DetailOfferState.Detail.Loading) }
         offerRepository.getOfferDetail(parameters.offerId).fold(
             ifLeft = { failure ->
@@ -52,6 +55,12 @@ class DetailOfferViewModel @Inject constructor(
             },
             ifRight = { offer ->
                 _offer.value = offer
+
+                Log.d("DetailOffer", "isDriver: ${session.isDriver()}")
+                Log.d("DetailOffer", "freelancerId: ${offer.freelancer.id}")
+                Log.d("DetailOffer", "sessionId: ${session.id}")
+                // session id
+                println("Session id: ${session?.id}")
                 _uiState.update {
                     it.copy(
                         detail = DetailOfferState.Detail.Success
