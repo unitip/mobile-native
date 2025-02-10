@@ -64,6 +64,7 @@ fun ChatsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically

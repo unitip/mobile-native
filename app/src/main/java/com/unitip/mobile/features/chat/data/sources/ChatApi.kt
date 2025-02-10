@@ -1,5 +1,8 @@
 package com.unitip.mobile.features.chat.data.sources
 
+import com.unitip.mobile.features.chat.data.dtos.CheckRoomResponse
+import com.unitip.mobile.features.chat.data.dtos.CreateRoomPayload
+import com.unitip.mobile.features.chat.data.dtos.CreateRoomResponse
 import com.unitip.mobile.features.chat.data.dtos.GetAllMessagesResponse
 import com.unitip.mobile.features.chat.data.dtos.GetAllRoomsResponse
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
@@ -13,6 +16,7 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ChatApi {
     @POST("chats/rooms/{room_id}/messages")
@@ -39,4 +43,16 @@ interface ChatApi {
         @Path("room_id") roomId: String,
         @Body payload: UpdateReadCheckpointPayload
     ): Response<UpdateReadCheckpointResponse>
+
+    @POST("chats/")
+    suspend fun createRoom(
+        @Header("Authorization") token: String,
+        @Body payload: CreateRoomPayload
+    ): Response<CreateRoomResponse>
+
+    @GET("chats")
+    suspend fun checkRoom(
+        @Header("Authorization") token: String,
+        @Query("members") members: String
+    ): Response<CheckRoomResponse>
 }

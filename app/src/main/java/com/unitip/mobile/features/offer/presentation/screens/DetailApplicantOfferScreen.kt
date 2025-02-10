@@ -50,12 +50,12 @@ import com.composables.icons.lucide.MessageCircle
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Tag
 import com.composables.icons.lucide.Wallet
+import com.unitip.mobile.features.chat.commons.ChatRoutes
 import com.unitip.mobile.features.offer.domain.models.DetailApplicantOffer
 import com.unitip.mobile.features.offer.presentation.components.ErrorState
 import com.unitip.mobile.features.offer.presentation.states.DetailApplicantOfferState
 import com.unitip.mobile.features.offer.presentation.viewmodels.DetailApplicantOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.commons.extensions.isCustomer
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.commons.extensions.openGoogleMaps
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
@@ -191,58 +191,8 @@ fun DetailApplicantOfferScreen(
 
                         item {
                             if (uiState.session.isDriver()) {
-                                Box(
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                                        .clickable { /* onClick akan diimplementasikan nanti */ }
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(32.dp)
-                                                    .clip(CircleShape)
-                                                    .background(MaterialTheme.colorScheme.primary)
-                                            ) {
-                                                Icon(
-                                                    Lucide.CircleUser,
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .align(Alignment.Center)
-                                                        .size(20.dp),
-                                                    tint = MaterialTheme.colorScheme.onPrimary
-                                                )
-                                            }
-                                            Spacer(modifier = Modifier.width(16.dp))
-                                            Column {
-                                                Text(
-                                                    text = "Chat",
-                                                    style = MaterialTheme.typography.titleSmall
-                                                )
-                                                Text(
-                                                    text = "Chat dengan Driver",
-                                                    style = MaterialTheme.typography.bodySmall
-                                                )
-                                            }
-                                        }
-
-                                        Icon(
-                                            imageVector = Lucide.MessageCircle,
-                                            contentDescription = "Chat",
-                                            modifier = Modifier.size(24.dp),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
+                                uiState.applicant.customer.id.let { customerId ->
+                                    ItemChat(customerId = customerId, viewModel = viewModel)
                                 }
                             }
                         }
@@ -274,6 +224,85 @@ fun DetailApplicantOfferScreen(
 
                 else -> Unit
             }
+        }
+    }
+}
+
+@Composable
+private fun ItemChat(
+    customerId: String,
+    viewModel: DetailApplicantOfferViewModel
+) {
+
+    val navController = LocalNavController.current
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.navigateToChat) {
+        uiState.navigateToChat?.let { (roomId, otherUserId, otherUserName) ->
+            navController.navigate(
+                ChatRoutes.Conversation(
+                    roomId = roomId,
+                    otherUserId = otherUserId,
+                    otherUserName = otherUserName
+                )
+            ) {
+                launchSingleTop = true
+            }
+            // Reset state setelah navigasi
+            viewModel.resetNavigateToChat()
+        }
+    }
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+            .clickable { viewModel.createChat(customerId) }
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        Lucide.CircleUser,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(20.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = "Chat",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = "Chat dengan Driver",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Icon(
+                imageVector = Lucide.MessageCircle,
+                contentDescription = "Chat",
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

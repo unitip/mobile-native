@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.offer.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.chat.data.dtos.CreateRoomPayload
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
@@ -299,5 +300,4 @@ class OfferRepository @Inject constructor(
             Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
         }
     }
-
 }

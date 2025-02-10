@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.offer.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.data.repositories.OfferRepository
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.presentation.states.DetailOfferState
-import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +21,8 @@ import javax.inject.Inject
 class DetailOfferViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
-    private val offerRepository: OfferRepository
+    private val offerRepository: OfferRepository,
+    private val chatRepository: ChatRepository
 ) : ViewModel() {
     companion object {
         private const val TAG = "DetailOfferViewModel"
@@ -56,12 +55,6 @@ class DetailOfferViewModel @Inject constructor(
             },
             ifRight = { offer ->
                 _offer.value = offer
-
-//                Log.d("DetailOffer", "isDriver: ${session.isDriver()}")
-//                Log.d("DetailOffer", "freelancerId: ${offer.freelancer.id}")
-//                Log.d("DetailOffer", "sessionId: ${session.id}")
-                // session id
-//                println("Session id: ${session?.id}")
                 _uiState.update {
                     it.copy(
                         detail = DetailOfferState.Detail.Success
@@ -71,4 +64,53 @@ class DetailOfferViewModel @Inject constructor(
         )
     }
 
+    fun createChat(driverId: String) = viewModelScope.launch {
+        val members = listOf(session.id, driverId)
+
+        // Cek room yang sudah ada
+        chatRepository.checkRoom(members).fold(
+            ifLeft = { failure ->
+                _uiState.update {
+                    it.copy(error = failure.message)
+                }
+            },
+            ifRight = { existingRoomId ->
+                if (existingRoomId != null) {
+                    // Gunakan room yang sudah ada
+                    _uiState.update {
+                        it.copy(
+                            navigateToChat = Triple(
+                                existingRoomId,
+                                driverId,
+                                offer.value.freelancer.name
+                            )
+                        )
+                    }
+                } else {
+                    // Buat room baru jika belum ada
+                    chatRepository.createRoom(members).fold(
+                        ifLeft = { failure ->
+                            _uiState.update {
+                                it.copy(error = failure.message)
+                            }
+                        },
+                        ifRight = { roomId ->
+                            _uiState.update {
+                                it.copy(
+                                    navigateToChat = Triple(
+                                        roomId,
+                                        driverId,
+                                        offer.value.freelancer.name
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    }
+    fun resetNavigateToChat() {
+        _uiState.update { it.copy(navigateToChat = null) }
+    }
 }

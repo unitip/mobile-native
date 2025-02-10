@@ -1,5 +1,7 @@
 package com.unitip.mobile.shared.commons
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -17,6 +19,7 @@ import com.unitip.mobile.features.location.commons.locationNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
 import com.unitip.mobile.features.test.TestScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApplicationNavigationGraph(
     navController: NavHostController,

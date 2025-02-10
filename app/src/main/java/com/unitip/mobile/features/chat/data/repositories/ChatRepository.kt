@@ -1,6 +1,7 @@
 package com.unitip.mobile.features.chat.data.repositories
 
 import arrow.core.Either
+import com.unitip.mobile.features.chat.data.dtos.CreateRoomPayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessagePayload
 import com.unitip.mobile.features.chat.data.dtos.SendMessageResponse
 import com.unitip.mobile.features.chat.data.dtos.UpdateReadCheckpointPayload
@@ -150,4 +151,53 @@ class ChatRepository @Inject constructor(
     } catch (e: Exception) {
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+    suspend fun createRoom(members: List<String>): Either<Failure, String> {
+        return try {
+            val session = sessionManager.read()
+            val response = chatApi.createRoom(
+                token = "Bearer ${session.token}",
+                payload = CreateRoomPayload(members)
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(body.id)
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
+    }
+
+    suspend fun checkRoom(members: List<String>): Either<Failure, String?> {
+        return try {
+            val session = sessionManager.read()
+            val response = chatApi.checkRoom(
+                token = "Bearer ${session.token}",
+                members = members.joinToString(",")
+            )
+
+            when {
+                response.isSuccessful -> {
+                    val body = response.body()
+                    if (body != null) {
+                        Either.Right(body.roomId)
+                    } else {
+                        Either.Left(Failure("Response body is null"))
+                    }
+                }
+                else -> Either.Left(response.mapToFailure())
+            }
+        } catch (e: Exception) {
+            Either.Left(Failure("Terjadi kesalahan: ${e.message}"))
+        }
+    }
+
 }

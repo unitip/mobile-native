@@ -3,6 +3,7 @@ package com.unitip.mobile.features.offer.presentation.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unitip.mobile.features.chat.data.repositories.ChatRepository
 import com.unitip.mobile.features.offer.data.repositories.OfferRepository
 import com.unitip.mobile.features.offer.presentation.states.DetailApplicantOfferState
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class DetailApplicantOfferViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     sessionManager: SessionManager,
-    private val offerRepository: OfferRepository
+    private val offerRepository: OfferRepository,
+    private val chatRepository: ChatRepository,
 ) : ViewModel() {
     private val session = sessionManager.read()
     private val offerId = savedStateHandle.get<String>("offerId") ?: ""
@@ -79,7 +81,11 @@ class DetailApplicantOfferViewModel @Inject constructor(
                     }
                 } else {
                     _uiState.update {
-                        it.copy(updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(response.message))
+                        it.copy(
+                            updateStatus = DetailApplicantOfferState.UpdateStatus.Failure(
+                                response.message
+                            )
+                        )
                     }
                     delay(500)
                     _uiState.update {
@@ -89,6 +95,57 @@ class DetailApplicantOfferViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    fun createChat(customerId: String) = viewModelScope.launch {
+        val members = listOf(session.id, customerId)
+
+        // Cek room yang sudah ada
+        chatRepository.checkRoom(members).fold(
+            ifLeft = { failure ->
+                _uiState.update {
+                    it.copy(error = failure.message)
+                }
+            },
+            ifRight = { existingRoomId ->
+                if (existingRoomId != null) {
+                    // Gunakan room yang sudah ada
+                    _uiState.update {
+                        it.copy(
+                            navigateToChat = Triple(
+                                existingRoomId,
+                                customerId,
+                                uiState.value.applicant.customer.name
+                            )
+                        )
+                    }
+                } else {
+                    // Buat room baru jika belum ada
+                    chatRepository.createRoom(members).fold(
+                        ifLeft = { failure ->
+                            _uiState.update {
+                                it.copy(error = failure.message)
+                            }
+                        },
+                        ifRight = { roomId ->
+                            _uiState.update {
+                                it.copy(
+                                    navigateToChat = Triple(
+                                        roomId,
+                                        customerId,
+                                        uiState.value.applicant.customer.name
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    }
+
+    fun resetNavigateToChat() {
+        _uiState.update { it.copy(navigateToChat = null) }
     }
 }
 

@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.CircleUser
 import com.composables.icons.lucide.Clock
@@ -54,6 +56,7 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.MessageCircle
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Wallet
+import com.unitip.mobile.features.chat.commons.ChatRoutes
 import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.features.offer.domain.models.Applicant
 import com.unitip.mobile.features.offer.presentation.components.ErrorState
@@ -191,7 +194,12 @@ fun DetailOfferScreen(
 
                         item {
                             if (uiState.session.isCustomer()) {
-                                ItemChat()
+                                offer.freelancer?.id?.let { driverId ->
+                                    ItemChat(
+                                        driverId = driverId,
+                                        viewModel = viewModel
+                                    )
+                                }
                             }
                         }
 
@@ -208,8 +216,11 @@ fun DetailOfferScreen(
 
                         // List of Applicants
                         item {
-                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id ||
-                                uiState.session.isCustomer() && offer.applicants.any { it.customerId == uiState.session.id }
+                            if (uiState.session.isDriver() && offer.freelancer.id == (uiState.session?.id
+                                    ?: "") ||
+                                uiState.session.isCustomer() && offer.applicants.any {
+                                    it.customerId == (uiState.session?.id ?: "")
+                                }
                             ) {
 
                                 Text(
@@ -227,7 +238,9 @@ fun DetailOfferScreen(
                                             vertical = 8.dp
                                         ),
                                         onItemClick = {
-                                            if (uiState.session.isDriver() && offer.freelancer.id == uiState.session.id) {
+                                            if (uiState.session.isDriver() && offer.freelancer.id == (uiState.session?.id
+                                                    ?: "")
+                                            ) {
                                                 // Driver yang membuat offer bisa akses semua detail
                                                 navController.navigate(
                                                     OfferRoutes.DetailApplicant(
@@ -237,7 +250,9 @@ fun DetailOfferScreen(
                                                 )
                                             } else if (uiState.session.isCustomer()) {
                                                 // Customer hanya bisa akses detail miliknya
-                                                if (applicant.customerId == uiState.session.id) {
+                                                if (applicant.customerId == (uiState.session?.id
+                                                        ?: "")
+                                                ) {
                                                     navController.navigate(
                                                         OfferRoutes.DetailApplicant(
                                                             offerId = offerId,
@@ -310,7 +325,6 @@ fun DetailOfferScreen(
                         }
                     }
                 }
-
                 else -> {}
             }
         }
@@ -318,13 +332,35 @@ fun DetailOfferScreen(
 }
 
 @Composable
-private fun ItemChat() {
+private fun ItemChat(
+    driverId: String,
+    viewModel: DetailOfferViewModel
+) {
+
+    val navController = LocalNavController.current
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.navigateToChat) {
+        uiState.navigateToChat?.let { (roomId, otherUserId, otherUserName) ->
+            navController.navigate(
+                ChatRoutes.Conversation(
+                    roomId = roomId,
+                    otherUserId = otherUserId,
+                    otherUserName = otherUserName
+                )
+            ) {
+                launchSingleTop = true
+            }
+            // Reset state setelah navigasi
+            viewModel.resetNavigateToChat()
+        }
+    }
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-            .clickable { /* onClick akan diimplementasikan nanti */ }
+            .clickable { viewModel.createChat(driverId) }
     ) {
         Row(
             modifier = Modifier

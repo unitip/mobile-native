@@ -10,4 +10,5 @@ interface CustomerOrderApi {
     suspend fun getAll(
         @Header("Authorization") token: String
     ): Response<GetAllCustomerOrdersResponse>
+
 }
