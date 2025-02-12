@@ -17,7 +17,7 @@ class AuthRepository @Inject constructor(
         val response = authApi.logout()
         val result = response.body()
 
-        when (response.isSuccessful && result != null) {
+        when ((response.isSuccessful && result != null) || response.code() == 401) {
             true -> {
                 sessionManager.delete()
                 Either.Right(Unit)

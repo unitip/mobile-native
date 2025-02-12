@@ -1,14 +1,12 @@
 package com.unitip.mobile.features.account.presentation.screens
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -18,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -75,9 +72,15 @@ fun ProfileScreen(
         with(uiState.logoutDetail) {
             when (this) {
                 is State.LogoutDetail.Success -> {
+                    isConfirmDialogVisible = false
                     navController.navigate(AuthRoutes.Index) {
                         popUpTo(HomeRoutes.Index) { inclusive = true }
                     }
+                }
+
+                is State.LogoutDetail.Failure -> {
+                    isConfirmDialogVisible = false
+                    snackbarHost.showSnackbar(message = message)
                 }
 
                 else -> Unit
@@ -92,9 +95,9 @@ fun ProfileScreen(
                     title = { Text(text = "Akun Saya") }
                 )
                 HorizontalDivider()
-                AnimatedVisibility(visible = uiState.logoutDetail is State.LogoutDetail.Loading) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
+//                AnimatedVisibility(visible = uiState.logoutDetail is State.LogoutDetail.Loading) {
+//                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+//                }
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHost) },
@@ -207,9 +210,9 @@ fun ProfileScreen(
 
     if (isConfirmDialogVisible)
         DialogLogout(
+            isLoading = uiState.logoutDetail is State.LogoutDetail.Loading,
             onConfirm = {
                 viewModel.logout()
-                isConfirmDialogVisible = false
             },
             onDismiss = {
                 isConfirmDialogVisible = false
