@@ -171,17 +171,17 @@ fun ProfileScreen(
             ListItem(
                 modifier = Modifier.clickable { navController.navigate(AccountRoutes.EditProfile) },
                 leadingContent = { Icon(Lucide.User, contentDescription = null) },
-                headlineContent = { Text(text = "Ubah informasi akun") }
+                headlineContent = { Text(text = "Ubah Informasi Akun") }
             )
             ListItem(
                 modifier = Modifier.clickable { navController.navigate(AccountRoutes.EditPassword) },
                 leadingContent = { Icon(Lucide.KeyRound, contentDescription = null) },
-                headlineContent = { Text(text = "Ubah kata sandi") }
+                headlineContent = { Text(text = "Ubah Kata Sandi") }
             )
             ListItem(
                 modifier = Modifier.clickable { navController.navigate(AccountRoutes.ChangeRole) },
                 leadingContent = { Icon(Lucide.UserRoundPen, contentDescription = null) },
-                headlineContent = { Text(text = "Ubah peran") }
+                headlineContent = { Text(text = "Ubah Peran") }
             )
 
             Text(
@@ -192,7 +192,7 @@ fun ProfileScreen(
             ListItem(
                 modifier = Modifier.clickable { navController.navigate(AccountRoutes.OrderHistory) },
                 leadingContent = { Icon(Lucide.ListOrdered, contentDescription = null) },
-                headlineContent = { Text(text = "Riwayat pesanan") }
+                headlineContent = { Text(text = "Riwayat Pesanan") }
             )
 
             Text(
