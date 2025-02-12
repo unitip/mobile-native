@@ -42,6 +42,7 @@ import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.User
 import com.composables.icons.lucide.UserRoundPen
+import com.composables.icons.lucide.UserX
 import com.unitip.mobile.features.account.commons.AccountRoutes
 import com.unitip.mobile.features.account.presentation.components.DialogLogout
 import com.unitip.mobile.features.account.presentation.viewmodels.ProfileViewModel
@@ -182,6 +183,11 @@ fun ProfileScreen(
                 modifier = Modifier.clickable { navController.navigate(AccountRoutes.ChangeRole) },
                 leadingContent = { Icon(Lucide.UserRoundPen, contentDescription = null) },
                 headlineContent = { Text(text = "Ubah Peran") }
+            )
+            ListItem(
+                modifier = Modifier.clickable { },
+                leadingContent = { Icon(Lucide.UserX, contentDescription = null) },
+                headlineContent = { Text(text = "Hapus Akun") }
             )
 
             Text(
