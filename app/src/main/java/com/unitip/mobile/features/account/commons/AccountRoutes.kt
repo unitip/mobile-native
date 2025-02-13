@@ -15,5 +15,4 @@ sealed class AccountRoutes {
 
     @Serializable
     object OrderHistory
-
 }

@@ -41,7 +41,7 @@ import com.unitip.mobile.features.account.presentation.states.UpdatePasswordStat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditPasswordScreen(
+fun UpdatePasswordScreen(
     viewModel: UpdatePasswordViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current

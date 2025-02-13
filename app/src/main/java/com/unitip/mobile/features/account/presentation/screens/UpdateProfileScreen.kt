@@ -50,7 +50,7 @@ import com.unitip.mobile.features.account.presentation.states.UpdateProfileState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen(
+fun UpdateProfileScreen(
     viewModel: UpdateProfileViewModel = hiltViewModel()
 ) {
     val genderOptions = listOf(
