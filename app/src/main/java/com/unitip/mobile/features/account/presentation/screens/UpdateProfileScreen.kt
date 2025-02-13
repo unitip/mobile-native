@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.account.presentation.screens
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,17 +46,13 @@ import com.unitip.mobile.features.account.presentation.viewmodels.UpdateProfileV
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.presentation.components.CustomTextField
-import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
 import com.unitip.mobile.features.account.presentation.states.UpdateProfileState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-    sessionViewModel: SessionViewModel = hiltViewModel(),
-    viewModel: UpdateProfileViewModel = hiltViewModel(),
+    viewModel: UpdateProfileViewModel = hiltViewModel()
 ) {
-    Log.d("EditProfileScreen", "$sessionViewModel")
-
     val genderOptions = listOf(
         mapOf("label" to "Laki-laki", "value" to GenderConstant.Male),
         mapOf("label" to "Perempuan", "value" to GenderConstant.Female),
@@ -66,8 +61,8 @@ fun EditProfileScreen(
 
     val navController = LocalNavController.current
 
-    val session by sessionViewModel.session.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val session = viewModel.session
 
     val snackbarHostState = remember { SnackbarHostState() }
     var name by rememberSaveable { mutableStateOf(session.name) }
@@ -77,13 +72,8 @@ fun EditProfileScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is State.Detail.Success -> {
-                    sessionViewModel.refreshSession()
-                    navController.popBackStack()
-                }
-
+                is State.Detail.Success -> navController.popBackStack()
                 is State.Detail.Failure -> snackbarHostState.showSnackbar(message = message)
-
                 else -> Unit
             }
         }

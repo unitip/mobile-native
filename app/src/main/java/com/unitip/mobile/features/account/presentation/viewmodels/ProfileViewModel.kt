@@ -14,17 +14,12 @@ import com.unitip.mobile.features.account.presentation.states.ProfileState as St
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(State())
     val uiState get() = _uiState.asStateFlow()
-
-    private val session = sessionManager.read()
-
-    init {
-        _uiState.update { it.copy(session = session) }
-    }
+    val session get() = sessionManager.read()
 
     fun logout() = viewModelScope.launch {
         _uiState.update { it.copy(logoutDetail = State.LogoutDetail.Loading) }

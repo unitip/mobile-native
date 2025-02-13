@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+@Deprecated("ganti langsung read dari local saja, karena susah untuk implementasi shared view model")
 @HiltViewModel
 class SessionViewModel @Inject constructor(
     private val sessionManager: SessionManager

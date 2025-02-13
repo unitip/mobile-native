@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.account.presentation.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -49,25 +48,21 @@ import com.unitip.mobile.features.account.presentation.viewmodels.ProfileViewMod
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
 import com.unitip.mobile.features.account.presentation.states.ProfileState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    sessionViewModel: SessionViewModel = hiltViewModel(),
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    Log.d("ProfileScreen", "$sessionViewModel")
-
     val navController = LocalNavController.current
     val snackbarHost = remember { SnackbarHostState() }
 
     val scrollState = rememberScrollState()
     var isDialogLogoutVisible by remember { mutableStateOf(false) }
 
-    val session by sessionViewModel.session.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val session = viewModel.session
 
     LaunchedEffect(uiState.logoutDetail) {
         with(uiState.logoutDetail) {
@@ -123,7 +118,6 @@ fun ProfileScreen(
                         .size(56.dp)
                         .clip(CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable { sessionViewModel.refreshSession() }
                 ) {
                     Icon(
                         Lucide.User,
