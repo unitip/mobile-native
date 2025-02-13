@@ -16,3 +16,4 @@ local.properties
 .env.*
 app/release
 swagger.json
+.idea
