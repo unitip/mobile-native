@@ -148,6 +148,9 @@ dependencies {
     // google play service
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
+    // shimmer
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
