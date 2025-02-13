@@ -76,31 +76,26 @@ fun ChangeRoleScreen(
 
     LaunchedEffect(uiState.changeDetail) {
         with(uiState.changeDetail) {
-            if (this is State.ChangeDetail.Success)
-                navController.navigate(HomeRoutes.Index) {
+            when (this) {
+                is State.ChangeDetail.Failure -> snackbarHostState.showSnackbar(message = message)
+
+                /**
+                 * ketika berhasil mengubah role, popup seluruh screen hingga homescreen
+                 * kemudian buka homescreen baru
+                 */
+                is State.ChangeDetail.Success -> navController.navigate(HomeRoutes.Index) {
                     popUpTo<HomeRoutes.Index> { inclusive = true }
                 }
+
+                else -> Unit
+            }
         }
     }
 
     LaunchedEffect(uiState.getDetail) {
         with(uiState.getDetail) {
             when (this) {
-                is State.GetDetail.Failure -> snackbarHostState.showSnackbar(
-                    message = message
-                )
-
-                else -> Unit
-            }
-        }
-        with(uiState.changeDetail) {
-            when (this) {
-                is State.ChangeDetail.Failure -> snackbarHostState.showSnackbar(
-                    message = message
-                )
-
-                is State.ChangeDetail.Success -> navController.popBackStack()
-
+                is State.GetDetail.Failure -> snackbarHostState.showSnackbar(message = message)
                 else -> Unit
             }
         }

@@ -1,12 +1,12 @@
 package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
 import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.dtos.GetDriverOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.sources.AccountApi
 import com.unitip.mobile.features.account.domain.models.Order
 import com.unitip.mobile.features.account.domain.models.UpdateProfileResult
+import com.unitip.mobile.network.openapi.models.ChangeRoleRequest
 import com.unitip.mobile.network.openapi.models.UpdatePasswordRequest
 import com.unitip.mobile.network.openapi.models.UpdateProfileRequest
 import com.unitip.mobile.shared.commons.constants.GenderConstant
@@ -150,33 +150,35 @@ class AccountRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun changeRole(role: String): Either<Failure, Boolean> {
-        try {
-            val response = accountApi.changeRole(
-                token = "Bearer ${sessionManager.getToken()}",
-                payload = ChangeRolePayload(role = role)
-            )
-            val result = response.body()
+    suspend fun changeRole(
+        role: String
+    ): Either<Failure, Boolean> = try {
+        val response = accountApi2.changeRole(ChangeRoleRequest(role = role))
+        val result = response.body()
 
-            return when (response.isSuccessful && result != null) {
-                true -> {
-                    val currentSession = sessionManager.read()
-                    sessionManager.create(
-                        Session(
-                            id = currentSession.id,
-                            name = currentSession.name,
-                            email = currentSession.email,
-                            token = currentSession.token,
-                            role = role
-                        )
+        when (response.isSuccessful && result != null) {
+            true -> {
+                /**
+                 * simpan role dan token baru dari database ke session saat ini
+                 */
+                val currentSession = sessionManager.read()
+                sessionManager.create(
+                    Session(
+                        id = result.id,
+                        name = currentSession.name,
+                        email = currentSession.email,
+                        token = result.token,
+                        role = result.role,
+                        gender = currentSession.gender
                     )
-                    Either.Right(true)
-                }
-
-                else -> Either.Left(response.mapToFailure())
+                )
+                Either.Right(true)
             }
-        } catch (e: Exception) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+
+            else -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 }

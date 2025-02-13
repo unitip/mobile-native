@@ -45,23 +45,19 @@ class ChangeRoleViewModel @Inject constructor(
 
     fun changeRole(role: String) = viewModelScope.launch {
         _uiState.update { it.copy(changeDetail = State.ChangeDetail.Loading) }
-        accountRepository.changeRole(role).fold(
-            ifLeft = { left ->
+        accountRepository
+            .changeRole(role)
+            .onLeft { left ->
                 _uiState.update {
                     it.copy(
-                        changeDetail = State.ChangeDetail.Failure(
-                            message = left.message
-                        )
+                        changeDetail = State.ChangeDetail.Failure(message = left.message)
                     )
                 }
-            }, ifRight = { right ->
+            }
+            .onRight {
                 _uiState.update {
-                    it.copy(
-                        changeDetail = State.ChangeDetail.Success
-                    )
-
+                    it.copy(changeDetail = State.ChangeDetail.Success)
                 }
-            })
-
+            }
     }
 }
