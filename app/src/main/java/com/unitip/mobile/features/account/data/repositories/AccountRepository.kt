@@ -9,6 +9,7 @@ import com.unitip.mobile.features.account.domain.models.UpdateProfileResult
 import com.unitip.mobile.network.openapi.models.ChangeRoleRequest
 import com.unitip.mobile.network.openapi.models.UpdatePasswordRequest
 import com.unitip.mobile.network.openapi.models.UpdateProfileRequest
+import com.unitip.mobile.shared.commons.configs.ApiConfig
 import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
@@ -172,6 +173,13 @@ class AccountRepository @Inject constructor(
                         gender = currentSession.gender
                     )
                 )
+
+                /**
+                 * karena token berubah maka perlu dilakukan refresh token cache aplikasi
+                 * agar user tetap bisa melakukan request dan tidak 401
+                 */
+                ApiConfig.refreshToken(token = result.token)
+
                 Either.Right(true)
             }
 
