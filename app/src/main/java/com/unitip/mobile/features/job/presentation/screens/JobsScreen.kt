@@ -7,9 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,9 +28,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +48,7 @@ import com.composables.icons.lucide.MapPinCheck
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobConstant
+import com.unitip.mobile.features.job.presentation.components.ApplyJobBottomSheet
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.localDateFormat
@@ -58,10 +62,11 @@ fun JobsScreen(
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
+    
+    val uiState by viewModel.uiState.collectAsState()
 
     val listState = rememberLazyListState()
-
-    val uiState by viewModel.uiState.collectAsState()
+    var selectedJobId by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
@@ -76,6 +81,7 @@ fun JobsScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(bottom = 0.dp),
         topBar = {
             Column {
                 TopAppBar(
@@ -103,58 +109,49 @@ fun JobsScreen(
 //                )
                 .padding(it)
         ) {
-            // app bar
-//            Row(
-//                modifier = Modifier.padding(
-//                    start = 16.dp,
-//                    end = 16.dp,
-//                    top = 16.dp,
-//                    bottom = 16.dp
-//                ),
-//                verticalAlignment = Alignment.Top,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Column(modifier = Modifier.weight(1f)) {
-//                    Text(
-//                        text = "Jobs",
-//                        style = MaterialTheme.typography.titleLarge
-//                    )
-//                    Text(
-//                        text = "Berikut adalah beberapa pekerjaan yang dapat Anda lamar sebagai driver",
-//                        style = MaterialTheme.typography.bodyMedium
-//                    )
-//                }
-//            }
-
             with(uiState.detail) {
                 when (this) {
-                    is State.Detail.Loading -> CircularProgressIndicator()
+                    is State.Detail.Loading -> Box(modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            strokeCap = StrokeCap.Round
+                        )
+                    }
+
                     is State.Detail.Success -> LazyColumn(state = listState) {
                         itemsIndexed(jobs) { index, job ->
-//                            val isExpanded = uiState.expandedJobId == job.id
-
                             if (index > 0) HorizontalDivider()
-                            Box(modifier = Modifier.clickable { }) {
+                            Box(
+                                modifier = Modifier.clickable {
+                                    selectedJobId = job.id
+                                }
+                            ) {
                                 Row(
                                     verticalAlignment = Alignment.Top,
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.padding(16.dp)
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(24.dp))
-                                            .background(MaterialTheme.colorScheme.primaryContainer)
-                                            .size(40.dp)
-                                    ) {
-                                        Icon(
-                                            Lucide.User,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .size(20.dp)
+                                    if (index == 2)
+                                        CircularProgressIndicator(
+                                            strokeCap = StrokeCap.Round,
+                                            modifier = Modifier.size(40.dp)
                                         )
-                                    }
+                                    else
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(24.dp))
+                                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                                .size(40.dp)
+                                        ) {
+                                            Icon(
+                                                Lucide.User,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                modifier = Modifier
+                                                    .align(Alignment.Center)
+                                                    .size(20.dp)
+                                            )
+                                        }
                                     Column(modifier = Modifier.weight(1f)) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -342,10 +339,6 @@ fun JobsScreen(
 //                                }
 //                            }
                         }
-
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
                     }
 
                     else -> Unit
@@ -353,4 +346,15 @@ fun JobsScreen(
             }
         }
     }
+
+    /**
+     * bottom sheet untuk apply job bagi role driver
+     */
+    if (selectedJobId.isNotBlank())
+        ApplyJobBottomSheet(
+            onSend = { withOffer ->
+                selectedJobId = ""
+            },
+            onDismiss = { selectedJobId = "" }
+        )
 }
