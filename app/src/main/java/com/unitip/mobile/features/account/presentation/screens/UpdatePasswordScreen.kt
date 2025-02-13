@@ -36,15 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.account.presentation.states.EditPasswordState
-import com.unitip.mobile.features.account.presentation.viewmodels.EditPasswordViewModel
+import com.unitip.mobile.features.account.presentation.states.UpdatePasswordState
+import com.unitip.mobile.features.account.presentation.viewmodels.UpdatePasswordViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 import com.unitip.mobile.shared.presentation.components.CustomTextField
 
 @Composable
 fun EditPasswordScreen(
-    viewModel: EditPasswordViewModel = hiltViewModel(),
+    viewModel: UpdatePasswordViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
@@ -58,7 +58,7 @@ fun EditPasswordScreen(
     LaunchedEffect(uiState.editDetail) {
         with(uiState.editDetail) {
             when (this) {
-                is EditPasswordState.EditDetail.Failure -> {
+                is UpdatePasswordState.EditDetail.Failure -> {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
 
@@ -107,7 +107,7 @@ fun EditPasswordScreen(
 
                 AnimatedVisibility(
                     visible = listState.canScrollBackward &&
-                            uiState.editDetail !is EditPasswordState.EditDetail.Loading
+                            uiState.editDetail !is UpdatePasswordState.EditDetail.Loading
                 ) {
                     HorizontalDivider()
                 }
@@ -125,7 +125,7 @@ fun EditPasswordScreen(
                         modifier = Modifier.padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = when (uiState.editDetail is EditPasswordState.EditDetail.Loading) {
+                            top = when (uiState.editDetail is UpdatePasswordState.EditDetail.Loading) {
                                 true -> 16.dp
                                 else -> 0.dp
                             }
@@ -148,13 +148,13 @@ fun EditPasswordScreen(
                             label = "Password Baru",
                             value = newPassword,
                             onValueChange = { newPassword = it },
-                            enabled = uiState.editDetail !is EditPasswordState.EditDetail.Loading
+                            enabled = uiState.editDetail !is UpdatePasswordState.EditDetail.Loading
                         )
                         CustomTextField(
                             label = "Konfirmasi Password",
                             value = confirmNewPassword,
                             onValueChange = { confirmNewPassword = it },
-                            enabled = uiState.editDetail !is EditPasswordState.EditDetail.Loading
+                            enabled = uiState.editDetail !is UpdatePasswordState.EditDetail.Loading
                         )
                         Button(modifier = Modifier.padding(top = 16.dp),
                             onClick = {

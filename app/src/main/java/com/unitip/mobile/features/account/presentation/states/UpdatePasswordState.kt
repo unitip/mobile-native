@@ -2,7 +2,7 @@ package com.unitip.mobile.features.account.presentation.states
 
 import com.unitip.mobile.shared.domain.models.Session
 
-data class EditPasswordState(
+data class UpdatePasswordState(
     val session: Session = Session(),
     val editDetail: EditDetail = EditDetail.Initial
 ) {

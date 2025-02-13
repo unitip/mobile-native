@@ -3,7 +3,7 @@ package com.unitip.mobile.features.account.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.account.data.repositories.AccountRepository
-import com.unitip.mobile.features.account.presentation.states.EditPasswordState
+import com.unitip.mobile.features.account.presentation.states.UpdatePasswordState
 import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditPasswordViewModel @Inject constructor(
+class UpdatePasswordViewModel @Inject constructor(
     sessionManager: SessionManager,
     private val accountRepository: AccountRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(EditPasswordState())
+    private val _uiState = MutableStateFlow(UpdatePasswordState())
     val uiState get() = _uiState.asStateFlow()
 
     init {
@@ -27,7 +27,7 @@ class EditPasswordViewModel @Inject constructor(
     fun edit(password: String, confirmPassword: String) = viewModelScope.launch {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(editDetail = EditPasswordState.EditDetail.Loading)
+                it.copy(editDetail = UpdatePasswordState.EditDetail.Loading)
             }
 
             if (password == confirmPassword)
@@ -37,17 +37,23 @@ class EditPasswordViewModel @Inject constructor(
                     ifLeft = { left ->
                         _uiState.update {
                             it.copy(
-                                editDetail = EditPasswordState.EditDetail.Failure(
+                                editDetail = UpdatePasswordState.EditDetail.Failure(
                                     message = left.message
                                 )
                             )
                         }
                     },
-                    ifRight = { right -> _uiState.update { it.copy(editDetail = EditPasswordState.EditDetail.Success) } }
+                    ifRight = { right -> _uiState.update { it.copy(editDetail = UpdatePasswordState.EditDetail.Success) } }
 
                 )
             else {
-                _uiState.update { it.copy(editDetail = EditPasswordState.EditDetail.Failure(message = "Password tidak sama")) }
+                _uiState.update {
+                    it.copy(
+                        editDetail = UpdatePasswordState.EditDetail.Failure(
+                            message = "Password tidak sama"
+                        )
+                    )
+                }
             }
         }
     }
