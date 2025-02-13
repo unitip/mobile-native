@@ -49,38 +49,38 @@ import com.unitip.mobile.features.account.presentation.viewmodels.ProfileViewMod
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
-import com.unitip.mobile.shared.commons.extensions.GetPopResult
+import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
 import com.unitip.mobile.features.account.presentation.states.ProfileState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    sessionViewModel: SessionViewModel = hiltViewModel(),
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
+    Log.d("ProfileScreen", "$sessionViewModel")
+
     val navController = LocalNavController.current
     val snackbarHost = remember { SnackbarHostState() }
 
     val scrollState = rememberScrollState()
-    var isConfirmDialogVisible by remember { mutableStateOf(false) }
+    var isDialogLogoutVisible by remember { mutableStateOf(false) }
 
+    val session by sessionViewModel.session.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
-
-    navController.GetPopResult<Boolean>(key = "updateProfile") {
-        Log.d("ProfileScreen", "ProfileScreen: $it")
-    }
 
     LaunchedEffect(uiState.logoutDetail) {
         with(uiState.logoutDetail) {
             when (this) {
                 is State.LogoutDetail.Success -> {
-                    isConfirmDialogVisible = false
+                    isDialogLogoutVisible = false
                     navController.navigate(AuthRoutes.Index) {
                         popUpTo(HomeRoutes.Index) { inclusive = true }
                     }
                 }
 
                 is State.LogoutDetail.Failure -> {
-                    isConfirmDialogVisible = false
+                    isDialogLogoutVisible = false
                     snackbarHost.showSnackbar(message = message)
                 }
 
@@ -96,9 +96,6 @@ fun ProfileScreen(
                     title = { Text(text = "Akun Saya") }
                 )
                 HorizontalDivider()
-//                AnimatedVisibility(visible = uiState.logoutDetail is State.LogoutDetail.Loading) {
-//                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-//                }
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHost) },
@@ -126,6 +123,7 @@ fun ProfileScreen(
                         .size(56.dp)
                         .clip(CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .clickable { sessionViewModel.refreshSession() }
                 ) {
                     Icon(
                         Lucide.User,
@@ -133,32 +131,31 @@ fun ProfileScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                with(uiState.session) {
-                    Column(modifier = Modifier.padding(start = 16.dp)) {
-                        Text(
-                            text = name,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = email,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.alpha(.8f)
-                        )
-                        Text(
-                            text = token,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.alpha(.8f)
-                        )
-                        Text(
-                            text = role,
-                            modifier = Modifier
-                                .padding(top = 8.dp)
-                                .clip(RoundedCornerShape(32.dp))
-                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                .padding(horizontal = 8.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
+
+                Column(modifier = Modifier.padding(start = 16.dp)) {
+                    Text(
+                        text = session.name,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = session.email,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.alpha(.8f)
+                    )
+                    Text(
+                        text = session.token,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.alpha(.8f)
+                    )
+                    Text(
+                        text = session.role,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .clip(RoundedCornerShape(32.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
 
@@ -207,21 +204,21 @@ fun ProfileScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
             )
             ListItem(
-                modifier = Modifier.clickable { isConfirmDialogVisible = true },
+                modifier = Modifier.clickable { isDialogLogoutVisible = true },
                 leadingContent = { Icon(Lucide.LogOut, contentDescription = null) },
                 headlineContent = { Text(text = "Keluar") }
             )
         }
     }
 
-    if (isConfirmDialogVisible)
+    if (isDialogLogoutVisible)
         DialogLogout(
             isLoading = uiState.logoutDetail is State.LogoutDetail.Loading,
             onConfirm = {
                 viewModel.logout()
             },
             onDismiss = {
-                isConfirmDialogVisible = false
+                isDialogLogoutVisible = false
             }
         )
 }
