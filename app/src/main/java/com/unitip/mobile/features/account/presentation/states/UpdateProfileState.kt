@@ -7,6 +7,8 @@ data class UpdateProfileState(
         data object Initial : Detail
         data object Loading : Detail
         data object Success : Detail
-        data class Failure(val message: String) : Detail
+        data class Failure(
+            val message: String
+        ) : Detail
     }
 }

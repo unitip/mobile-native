@@ -5,7 +5,6 @@ import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesRes
 import com.unitip.mobile.features.account.data.dtos.GetDriverOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.sources.AccountApi
 import com.unitip.mobile.features.account.domain.models.Order
-import com.unitip.mobile.features.account.domain.models.UpdateProfileResult
 import com.unitip.mobile.network.openapi.models.ChangeRoleRequest
 import com.unitip.mobile.network.openapi.models.UpdatePasswordRequest
 import com.unitip.mobile.network.openapi.models.UpdateProfileRequest
@@ -94,7 +93,7 @@ class AccountRepository @Inject constructor(
     suspend fun updateProfile(
         name: String,
         gender: GenderConstant,
-    ): Either<Failure, UpdateProfileResult> = try {
+    ): Either<Failure, Boolean> = try {
         val response = accountApi2.updateProfile(
             UpdateProfileRequest(
                 name = name,
@@ -120,13 +119,7 @@ class AccountRepository @Inject constructor(
                     )
                 )
 
-                Either.Right(
-                    UpdateProfileResult(
-                        id = result.id,
-                        name = result.name,
-                        gender = GenderConstant.valueOf(result.gender.name)
-                    )
-                )
+                Either.Right(true)
             }
 
             else -> Either.Left(response.mapToFailure())
