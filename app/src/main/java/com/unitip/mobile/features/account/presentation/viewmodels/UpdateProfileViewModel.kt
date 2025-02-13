@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.unitip.mobile.features.account.presentation.states.EditProfileState as State
+import com.unitip.mobile.features.account.presentation.states.UpdateProfileState as State
 
 @HiltViewModel
-class EditProfileViewModel @Inject constructor(
+class UpdateProfileViewModel @Inject constructor(
     private val accountRepository: AccountRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(State())

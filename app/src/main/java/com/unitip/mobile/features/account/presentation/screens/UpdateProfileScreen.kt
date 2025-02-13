@@ -42,18 +42,18 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.account.presentation.viewmodels.EditProfileViewModel
+import com.unitip.mobile.features.account.presentation.viewmodels.UpdateProfileViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.presentation.components.CustomTextField
 import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
-import com.unitip.mobile.features.account.presentation.states.EditProfileState as State
+import com.unitip.mobile.features.account.presentation.states.UpdateProfileState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     sessionViewModel: SessionViewModel = hiltViewModel(),
-    viewModel: EditProfileViewModel = hiltViewModel(),
+    viewModel: UpdateProfileViewModel = hiltViewModel(),
 ) {
     val genderOptions = listOf(
         mapOf("label" to "Laki-laki", "value" to GenderConstant.Male),

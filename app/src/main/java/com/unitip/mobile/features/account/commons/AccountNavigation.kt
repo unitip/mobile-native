@@ -8,11 +8,11 @@ import com.unitip.mobile.features.account.presentation.screens.EditProfileScreen
 import com.unitip.mobile.features.account.presentation.screens.OrderHistoryScreen
 
 fun NavGraphBuilder.settingNavigation() {
-    composable<AccountRoutes.EditProfile> {
+    composable<AccountRoutes.UpdateProfile> {
         EditProfileScreen()
     }
 
-    composable<AccountRoutes.EditPassword> {
+    composable<AccountRoutes.UpdatePassword> {
         EditPasswordScreen()
     }
 

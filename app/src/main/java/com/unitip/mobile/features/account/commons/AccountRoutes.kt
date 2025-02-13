@@ -5,14 +5,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class AccountRoutes {
     @Serializable
-    object EditProfile
+    object UpdateProfile
 
     @Serializable
-    object EditPassword
+    object UpdatePassword
+
+    @Serializable
+    object ChangeRole
 
     @Serializable
     object OrderHistory
 
-    @Serializable
-    object ChangeRole
 }

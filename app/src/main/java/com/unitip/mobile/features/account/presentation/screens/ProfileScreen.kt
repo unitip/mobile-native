@@ -170,12 +170,12 @@ fun ProfileScreen(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
             )
             ListItem(
-                modifier = Modifier.clickable { navController.navigate(AccountRoutes.EditProfile) },
+                modifier = Modifier.clickable { navController.navigate(AccountRoutes.UpdateProfile) },
                 leadingContent = { Icon(Lucide.User, contentDescription = null) },
                 headlineContent = { Text(text = "Ubah Informasi Akun") }
             )
             ListItem(
-                modifier = Modifier.clickable { navController.navigate(AccountRoutes.EditPassword) },
+                modifier = Modifier.clickable { navController.navigate(AccountRoutes.UpdatePassword) },
                 leadingContent = { Icon(Lucide.KeyRound, contentDescription = null) },
                 headlineContent = { Text(text = "Ubah Kata Sandi") }
             )

@@ -1,6 +1,6 @@
 package com.unitip.mobile.features.account.presentation.states
 
-data class EditProfileState(
+data class UpdateProfileState(
     val detail: Detail = Detail.Initial
 ) {
     sealed interface Detail {
