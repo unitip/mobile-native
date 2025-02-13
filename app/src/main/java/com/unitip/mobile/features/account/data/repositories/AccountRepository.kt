@@ -2,12 +2,12 @@ package com.unitip.mobile.features.account.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
-import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
 import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.dtos.GetDriverOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.sources.AccountApi
 import com.unitip.mobile.features.account.domain.models.Order
 import com.unitip.mobile.features.account.domain.models.UpdateProfileResult
+import com.unitip.mobile.network.openapi.models.UpdatePasswordRequest
 import com.unitip.mobile.network.openapi.models.UpdateProfileRequest
 import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.commons.extensions.isDriver
@@ -139,25 +139,19 @@ class AccountRepository @Inject constructor(
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
-    suspend fun editPassword(password: String): Either<Failure, Boolean> {
-        try {
-            val token = session.token
+    suspend fun updatePassword(password: String): Either<Failure, Boolean> = try {
+        val response = accountApi2.updatePassword(
+            UpdatePasswordRequest(password = password)
+        )
+        val result = response.body()
 
-            val response = accountApi.editPassword(
-                token = "Bearer $token",
-                payload = EditPasswordPayload(password = password),
-            )
-            val result = response.body()
-
-            if (response.isSuccessful && result != null) {
-                return Either.Right(true)
-            }
-
-            return Either.Left(response.mapToFailure())
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(true)
+            else -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
     suspend fun changeRole(role: String): Either<Failure, Boolean> {

@@ -3,57 +3,47 @@ package com.unitip.mobile.features.account.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.features.account.data.repositories.AccountRepository
-import com.unitip.mobile.features.account.presentation.states.UpdatePasswordState
-import com.unitip.mobile.shared.data.managers.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.unitip.mobile.features.account.presentation.states.UpdatePasswordState as State
 
 @HiltViewModel
 class UpdatePasswordViewModel @Inject constructor(
-    sessionManager: SessionManager,
     private val accountRepository: AccountRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(UpdatePasswordState())
+    private val _uiState = MutableStateFlow(State())
     val uiState get() = _uiState.asStateFlow()
 
-    init {
-        _uiState.update { it.copy(session = sessionManager.read()) }
-    }
+    fun resetState() = _uiState.update { it.copy(detail = State.Detail.Initial) }
 
-    fun edit(password: String, confirmPassword: String) = viewModelScope.launch {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(editDetail = UpdatePasswordState.EditDetail.Loading)
-            }
+    fun save(
+        password: String,
+        confirmPassword: String
+    ) = viewModelScope.launch {
+        _uiState.update { it.copy(detail = State.Detail.Loading) }
 
-            if (password == confirmPassword)
-                accountRepository.editPassword(
-                    password = password
-                ).fold(
-                    ifLeft = { left ->
-                        _uiState.update {
-                            it.copy(
-                                editDetail = UpdatePasswordState.EditDetail.Failure(
-                                    message = left.message
-                                )
-                            )
-                        }
-                    },
-                    ifRight = { right -> _uiState.update { it.copy(editDetail = UpdatePasswordState.EditDetail.Success) } }
-
-                )
-            else {
-                _uiState.update {
-                    it.copy(
-                        editDetail = UpdatePasswordState.EditDetail.Failure(
-                            message = "Password tidak sama"
-                        )
-                    )
+        when (password.isNotBlank() && password == confirmPassword) {
+            true -> accountRepository
+                .updatePassword(password = password)
+                .onLeft { left ->
+                    _uiState.update {
+                        it.copy(detail = State.Detail.Failure(message = left.message))
+                    }
                 }
+                .onRight {
+                    _uiState.update {
+                        it.copy(detail = State.Detail.Success)
+                    }
+                }
+
+            else -> _uiState.update {
+                it.copy(
+                    detail = State.Detail.Failure(message = "Konfirmasi kata sandi tidak valid!")
+                )
             }
         }
     }

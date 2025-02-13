@@ -1,15 +1,14 @@
 package com.unitip.mobile.features.account.presentation.states
 
-import com.unitip.mobile.shared.domain.models.Session
-
 data class UpdatePasswordState(
-    val session: Session = Session(),
-    val editDetail: EditDetail = EditDetail.Initial
+    val detail: Detail = Detail.Initial
 ) {
-    sealed interface EditDetail {
-        data object Initial : EditDetail
-        data object Loading : EditDetail
-        data object Success : EditDetail
-        data class Failure(val message: String) : EditDetail
+    sealed interface Detail {
+        data object Initial : Detail
+        data object Loading : Detail
+        data object Success : Detail
+        data class Failure(
+            val message: String
+        ) : Detail
     }
 }
