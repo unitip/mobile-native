@@ -19,7 +19,8 @@ class ChangeRoleViewModel @Inject constructor(
     val uiState get() = _uiState.asStateFlow()
 
     init {
-        getAllRoles()
+        if (_uiState.value.getDetail !is State.GetDetail.Success)
+            getAllRoles()
     }
 
     fun getAllRoles() = viewModelScope.launch {
