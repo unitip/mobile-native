@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -217,13 +220,29 @@ fun ChangeRoleScreen(
                         }
 
                         Button(
-                            enabled = selectedRole != session.role,
+                            enabled = selectedRole != session.role && uiState.changeDetail !is State.ChangeDetail.Loading,
                             modifier = Modifier
                                 .align(Alignment.End)
                                 .padding(16.dp),
                             onClick = { viewModel.changeRole(role = selectedRole) },
                         ) {
-                            Text(text = "Simpan")
+                            Box {
+                                Text(
+                                    text = "Simpan",
+                                    modifier = Modifier.alpha(
+                                        if (uiState.changeDetail is State.ChangeDetail.Loading) 0f
+                                        else 1f
+                                    )
+                                )
+                                if (uiState.changeDetail is State.ChangeDetail.Loading)
+                                    CircularProgressIndicator(
+                                        strokeCap = StrokeCap.Round,
+                                        strokeWidth = 2.dp,
+                                        modifier = Modifier
+                                            .size(ButtonDefaults.IconSize)
+                                            .align(Alignment.Center)
+                                    )
+                            }
                         }
                     }
 
