@@ -48,6 +48,7 @@ import com.composables.icons.lucide.MapPinCheck
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobConstant
+import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.ApplyJobBottomSheet
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -62,7 +63,7 @@ fun JobsScreen(
 ) {
     val navController = LocalNavController.current
     val context = LocalContext.current
-    
+
     val uiState by viewModel.uiState.collectAsState()
 
     val listState = rememberLazyListState()
@@ -353,6 +354,10 @@ fun JobsScreen(
     if (selectedJobId.isNotBlank())
         ApplyJobBottomSheet(
             onSend = { withOffer ->
+                when (withOffer) {
+                    true -> navController.navigate(JobRoutes.Apply(jobId = selectedJobId))
+                    else -> Unit
+                }
                 selectedJobId = ""
             },
             onDismiss = { selectedJobId = "" }
