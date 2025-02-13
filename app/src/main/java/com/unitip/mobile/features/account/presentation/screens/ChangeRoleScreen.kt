@@ -48,20 +48,18 @@ import com.unitip.mobile.features.account.presentation.viewmodels.ChangeRoleView
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.constants.RoleConstants
-import com.unitip.mobile.shared.presentation.viewmodels.SessionViewModel
 import com.unitip.mobile.features.account.presentation.states.ChangeRoleState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeRoleScreen(
-    sessionViewModel: SessionViewModel = hiltViewModel(),
-    viewModel: ChangeRoleViewModel = hiltViewModel(),
+    viewModel: ChangeRoleViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val session by sessionViewModel.session.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val session = viewModel.session
 
     var selectedRole by remember { mutableStateOf(session.role) }
     var isSelectRoleExpanded by remember { mutableStateOf(false) }
