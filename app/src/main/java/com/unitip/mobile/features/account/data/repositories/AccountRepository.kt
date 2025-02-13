@@ -3,11 +3,13 @@ package com.unitip.mobile.features.account.data.repositories
 import arrow.core.Either
 import com.unitip.mobile.features.account.data.dtos.ChangeRolePayload
 import com.unitip.mobile.features.account.data.dtos.EditPasswordPayload
-import com.unitip.mobile.features.account.data.dtos.EditPayload
 import com.unitip.mobile.features.account.data.dtos.GetCustomerOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.dtos.GetDriverOrderHistoriesResponse
 import com.unitip.mobile.features.account.data.sources.AccountApi
 import com.unitip.mobile.features.account.domain.models.Order
+import com.unitip.mobile.features.account.domain.models.UpdateProfileResult
+import com.unitip.mobile.network.openapi.models.UpdateProfileRequest
+import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.commons.extensions.isDriver
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
@@ -19,8 +21,13 @@ import javax.inject.Singleton
 @Singleton
 class AccountRepository @Inject constructor(
     private val accountApi: AccountApi,
+    private val accountApi2: com.unitip.mobile.network.openapi.apis.AccountApi,
     private val sessionManager: SessionManager
 ) {
+    companion object {
+        private val TAG = AccountRepository::class.java.simpleName
+    }
+
     @Deprecated("use sessionManager.getToken() instead")
     private val session = sessionManager.read()
 
@@ -87,29 +94,49 @@ class AccountRepository @Inject constructor(
         )
     }
 
-    suspend fun editProfile(
+    suspend fun updateProfile(
         name: String,
-        gender: String,
-    ): Either<Failure, Boolean> {
-        try {
-            val token = sessionManager.getToken()
-
-            val response = accountApi.editProfile(
-                token = "Bearer $token",
-                payload = EditPayload(name = name, gender = gender)
+        gender: GenderConstant,
+    ): Either<Failure, UpdateProfileResult> = try {
+        val response = accountApi2.updateProfile(
+            UpdateProfileRequest(
+                name = name,
+                gender = UpdateProfileRequest.Gender.valueOf(gender.name),
             )
-            val result = response.body()
+        )
+        val result = response.body()
 
-            if (response.isSuccessful && result != null) {
+        when (response.isSuccessful && result != null) {
+            true -> {
+                /**
+                 * simpan perubahan nama dan gender ke session saat ini
+                 */
+                val currentSession = sessionManager.read()
+                sessionManager.create(
+                    Session(
+                        id = result.id,
+                        name = result.name,
+                        email = currentSession.email,
+                        token = currentSession.token,
+                        role = currentSession.role,
+                        gender = GenderConstant.valueOf(result.gender.name)
+                    )
+                )
 
-                return Either.Right(true)
+                Either.Right(
+                    UpdateProfileResult(
+                        id = result.id,
+                        name = result.name,
+                        gender = GenderConstant.valueOf(result.gender.name)
+                    )
+                )
             }
-            return Either.Left(response.mapToFailure())
-        } catch (
-            e: Exception
-        ) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+
+            else -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
     suspend fun editPassword(password: String): Either<Failure, Boolean> {
@@ -128,6 +155,7 @@ class AccountRepository @Inject constructor(
 
             return Either.Left(response.mapToFailure())
         } catch (e: Exception) {
+            e.printStackTrace()
             return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
     }

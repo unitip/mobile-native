@@ -2,6 +2,7 @@ package com.unitip.mobile.shared.data.repositories
 
 import arrow.core.Either
 import com.unitip.mobile.network.openapi.apis.AccountApi
+import com.unitip.mobile.shared.commons.constants.GenderConstant
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -41,7 +42,7 @@ class AccountRepository @Inject constructor(
                             email = result.email,
                             token = result.token,
                             role = result.role,
-                            gender = result.gender,
+                            gender = GenderConstant.valueOf(result.gender),
                         )
                     )
                     return Either.Right(Unit)
@@ -57,5 +58,5 @@ class AccountRepository @Inject constructor(
         }
     }
 
-    
+
 }
