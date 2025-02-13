@@ -77,21 +77,17 @@ class AccountRepository @Inject constructor(
             Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
         }
 
-    suspend fun getRoles(): Either<Failure, List<String>> = try {
-        val response = accountApi.getRole(
-            token = "Bearer ${sessionManager.getToken()}"
-        )
-
+    suspend fun getAllRoles(): Either<Failure, List<String>> = try {
+        val response = accountApi2.getAllRoles()
         val result = response.body()
+
         when (response.isSuccessful && result != null) {
             true -> Either.Right(result.roles)
             false -> Either.Left(response.mapToFailure())
         }
-
     } catch (e: Exception) {
-        Either.Left(
-            Failure(message = "Terjadi kesalahan tak terduga")
-        )
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga"))
     }
 
     suspend fun updateProfile(

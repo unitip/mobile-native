@@ -1,4 +1,4 @@
-package com.unitip.mobile.shared.commons
+package com.unitip.mobile.shared.commons.constants
 
 import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Lucide

@@ -1,20 +1,27 @@
 package com.unitip.mobile.features.account.presentation.states
 
 data class ChangeRoleState(
-    val getRoleDetail: GetRoleDetail = GetRoleDetail.Initial,
-    val changeRoleDetail: ChangeRoleDetail = ChangeRoleDetail.Initial
+    val getDetail: GetDetail = GetDetail.Initial,
+    val changeDetail: ChangeDetail = ChangeDetail.Initial
 ) {
-    sealed interface GetRoleDetail {
-        data object Initial : GetRoleDetail
-        data object Loading : GetRoleDetail
-        data class Success(val roles: List<String>) : GetRoleDetail
-        data class Failure(val message: String) : GetRoleDetail
+    sealed interface GetDetail {
+        data object Initial : GetDetail
+        data object Loading : GetDetail
+        data class Success(
+            val roles: List<String>
+        ) : GetDetail
+
+        data class Failure(
+            val message: String
+        ) : GetDetail
     }
 
-    sealed interface ChangeRoleDetail {
-        data object Initial : ChangeRoleDetail
-        data object Loading : ChangeRoleDetail
-        data object Success : ChangeRoleDetail
-        data class Failure(val message: String) : ChangeRoleDetail
+    sealed interface ChangeDetail {
+        data object Initial : ChangeDetail
+        data object Loading : ChangeDetail
+        data object Success : ChangeDetail
+        data class Failure(
+            val message: String
+        ) : ChangeDetail
     }
 }
