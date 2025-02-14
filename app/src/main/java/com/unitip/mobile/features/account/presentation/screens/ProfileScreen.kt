@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.KeyRound
@@ -155,11 +156,12 @@ fun ProfileScreen(
                 }
             }
 
-            HorizontalDivider()
+            HorizontalDivider(thickness = 0.56.dp)
 
             Text(
                 text = "Akun",
                 style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
             )
             ListItem(
@@ -186,6 +188,7 @@ fun ProfileScreen(
             Text(
                 text = "Pesanan",
                 style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
             )
             ListItem(
@@ -197,6 +200,7 @@ fun ProfileScreen(
             Text(
                 text = "Lainnya",
                 style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
             )
             ListItem(
