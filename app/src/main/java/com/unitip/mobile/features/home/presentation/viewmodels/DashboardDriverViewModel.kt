@@ -19,7 +19,7 @@ class DashboardDriverViewModel @Inject constructor(
     val uiState get() = _uiState.asStateFlow()
 
     init {
-        getAllOrders()
+//        getAllOrders()
     }
 
     fun getAllOrders() = viewModelScope.launch {
