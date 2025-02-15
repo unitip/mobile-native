@@ -1,17 +1,16 @@
 package com.unitip.mobile.features.home.presentation.sceens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -27,8 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,11 +35,11 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Tag
+import com.unitip.mobile.features.home.presentation.components.DashboardDriverApplicationsLoadingPlaceholder
 import com.unitip.mobile.features.home.presentation.viewmodels.DashboardDriverViewModel
 import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.toLocalCurrencyFormat
-import com.valentinilk.shimmer.shimmer
 import com.unitip.mobile.features.home.presentation.states.DashboardDriverState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,100 +97,19 @@ fun DashboardDriverScreen(
             with(uiState.detail) {
                 when (this) {
                     is State.Detail.Loading -> item {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .shimmer()
-                        ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(
-                                    text = "Rizal Dwi Anggoro",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f)
-                                )
-                                Text(
-                                    text = "Antar jemput",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = ListItemDefaults.colors().supportingTextColor,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f)
-                                )
-                            }
-                            Text(
-                                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever",
-                                maxLines = 2,
-                                style = MaterialTheme.typography.bodyMedium,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(MaterialTheme.colorScheme.outlineVariant)
-                                    .alpha(0f)
-                            )
-                            Row(
-                                modifier = Modifier.padding(top = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    Lucide.BadgePercent,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(MaterialTheme.typography.bodyMedium.fontSize.value.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f),
-                                    tint = ListItemDefaults.colors().supportingTextColor
-                                )
-                                Text(
-                                    text = "Rp 12.000,00",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f)
-                                )
-                            }
-                            Row(
-                                modifier = Modifier.padding(top = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    Lucide.Tag,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(MaterialTheme.typography.bodyMedium.fontSize.value.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f),
-                                    tint = ListItemDefaults.colors().supportingTextColor
-                                )
-                                Text(
-                                    text = "Menunggu persetujuan",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(MaterialTheme.colorScheme.outlineVariant)
-                                        .alpha(0f)
-                                )
-                            }
-                        }
+                        DashboardDriverApplicationsLoadingPlaceholder()
                     }
 
                     is State.Detail.Success -> itemsIndexed(data.applications) { index, application ->
                         if (index > 0)
                             HorizontalDivider(thickness = 0.56.dp)
-                        Column(modifier = Modifier
-                            .padding(top = if (index == 0) 8.dp else 0.dp)
-                            .clickable { }
-                            .padding(16.dp)
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = if (index == 0) 8.dp else 0.dp)
+                                .clickable { }
+                                .padding(16.dp)
                         ) {
                             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
@@ -222,7 +138,7 @@ fun DashboardDriverScreen(
                                 Icon(
                                     Lucide.BadgePercent,
                                     contentDescription = null,
-                                    modifier = Modifier.size(MaterialTheme.typography.bodyMedium.fontSize.value.dp),
+                                    modifier = Modifier.size(MaterialTheme.typography.bodySmall.fontSize.value.dp),
                                     tint = ListItemDefaults.colors().supportingTextColor
                                 )
                                 Text(
@@ -241,7 +157,7 @@ fun DashboardDriverScreen(
                                     color = ListItemDefaults.colors().supportingTextColor,
                                     modifier = Modifier.padding(
                                         top = 2.dp,
-                                        start = MaterialTheme.typography.bodyMedium.fontSize.value.dp + 8.dp
+                                        start = MaterialTheme.typography.bodySmall.fontSize.value.dp + 8.dp
                                     )
                                 )
                             Row(
@@ -252,7 +168,7 @@ fun DashboardDriverScreen(
                                 Icon(
                                     Lucide.Tag,
                                     contentDescription = null,
-                                    modifier = Modifier.size(MaterialTheme.typography.bodyMedium.fontSize.value.dp),
+                                    modifier = Modifier.size(MaterialTheme.typography.bodySmall.fontSize.value.dp),
                                     tint = ListItemDefaults.colors().supportingTextColor
                                 )
                                 Text(
