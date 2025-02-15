@@ -1,14 +1,33 @@
 package com.unitip.mobile.features.job.presentation.states
 
-import com.unitip.mobile.features.job.data.models.GetAllJobsResult
+import com.unitip.mobile.features.job.domain.models.JobModel
 
 data class JobsState(
-    val detail: JobsStateDetail = JobsStateDetail.Initial,
-)
+    val detail: Detail = Detail.Initial,
+    val applyDetail: ApplyDetail = ApplyDetail.Initial
+) {
+    sealed interface Detail {
+        data object Initial : Detail
+        data object Loading : Detail
+        data class Success(
+            val jobs: List<JobModel.ListItem>
+        ) : Detail
 
-sealed interface JobsStateDetail {
-    data object Initial : JobsStateDetail
-    data object Loading : JobsStateDetail
-    data class Success(val result: GetAllJobsResult) : JobsStateDetail
-    data class Failure(val message: String) : JobsStateDetail
+        data class Failure(
+            val message: String
+        ) : Detail
+    }
+
+    sealed interface ApplyDetail {
+        data object Initial : ApplyDetail
+        data class Loading(
+            val jobId: String
+        ) : ApplyDetail
+
+        data object Success : ApplyDetail
+
+        data class Failure(
+            val message: String
+        ) : ApplyDetail
+    }
 }

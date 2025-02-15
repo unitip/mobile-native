@@ -13,4 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-.env
+.env.*
+app/release
+swagger.json
+.idea

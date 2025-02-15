@@ -10,16 +10,22 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.unitip.mobile.features.home.core.HomeRoutes
-import com.unitip.mobile.features.home.core.nestedHomeNavigation
+import com.unitip.mobile.features.home.commons.HomeRoutes
+import com.unitip.mobile.features.home.commons.nestedHomeNavigation
 import com.unitip.mobile.features.home.presentation.components.CustomNavbar
-import com.unitip.mobile.shared.presentation.compositional.LocalHomeNavController
+import com.unitip.mobile.features.home.presentation.viewmodels.HomeViewModel
+import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val homeNavController = rememberNavController()
+
+    val session = viewModel.session
 
     CompositionLocalProvider(LocalHomeNavController provides homeNavController) {
         Scaffold(
@@ -34,8 +40,10 @@ fun HomeScreen() {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                ) { nestedHomeNavigation() }
-                CustomNavbar()
+                ) {
+                    nestedHomeNavigation(session = session)
+                }
+                CustomNavbar(session = session)
             }
         }
     }

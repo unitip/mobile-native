@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 plugins {
@@ -9,12 +10,12 @@ plugins {
     kotlin("plugin.serialization") version "2.0.21"
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
-
+    id("org.openapi.generator") version "7.10.0"
 }
 
 android {
     namespace = "com.unitip.mobile"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.unitip.mobile"
@@ -24,18 +25,35 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val properties = Properties()
-        properties.load(rootProject.file(".env").inputStream())
-
-        buildConfigField(
-            "String",
-            "API_BASE_URL",
-            "\"${properties.getProperty("API_BASE_URL")}\""
-        )
     }
 
     buildTypes {
+        debug {
+            val properties = Properties()
+            properties.load(rootProject.file(".env.local").inputStream())
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SECRET",
+                "\"${properties.getProperty("MQTT_SECRET")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SERVER_URI",
+                "\"${properties.getProperty("MQTT_SERVER_URI")}\""
+            )
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -43,6 +61,30 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
+
+            val properties = Properties()
+            properties.load(rootProject.file(".env.production").inputStream())
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"${properties.getProperty("BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"${properties.getProperty("API_BASE_URL")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SECRET",
+                "\"${properties.getProperty("MQTT_SECRET")}\""
+            )
+            buildConfigField(
+                "String",
+                "MQTT_SERVER_URI",
+                "\"${properties.getProperty("MQTT_SERVER_URI")}\""
+            )
         }
     }
     compileOptions {
@@ -85,16 +127,29 @@ dependencies {
     implementation(libs.icons.lucide)
 
     // mqtt client
-    implementation(libs.org.eclipse.paho.client.mqttv3)
-    implementation(libs.org.eclipse.paho.android.service)
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("com.github.hannesa2:paho.mqtt.android:4.3")
+//    implementation(libs.org.eclipse.paho.client.mqttv3)
+//    implementation(libs.org.eclipse.paho.android.service)
 
     // retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation(libs.converter.scalars)
+
 
     // functional programming
     implementation(libs.arrow.core.jvm)
+
+    // open street map
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+
+    // google play service
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // shimmer
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -108,3 +163,60 @@ dependencies {
 //kapt {
 //    correctErrorTypes = true
 //}
+
+tasks.register("downloadSwagger") {
+    doLast {
+        val properties = Properties()
+        properties.load(rootProject.file(".env.local").inputStream())
+        val localBaseUrl = properties.getProperty("BASE_URL")
+
+        val swaggerUrl = "${localBaseUrl}api/v1/docs/swagger.json"
+        val outputDir = "$rootDir/swagger.json"
+
+        ant.withGroovyBuilder {
+            "get"(
+                "src" to swaggerUrl,
+                "dest" to outputDir,
+                "verbose" to "true"
+            )
+        }
+    }
+}
+
+openApiGenerate {
+    generatorName.set("kotlin")
+    skipValidateSpec.set(true)
+    library.set("jvm-retrofit2")
+    packageName.set("com.unitip.mobile.network.openapi")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    inputSpec.set("$rootDir/swagger.json")
+    configOptions.set(
+        mapOf(
+            "serializationLibrary" to "gson",
+            "useCoroutines" to "true",
+        )
+    )
+}
+
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("${layout.buildDirectory.get()}/generate-resources/main/src")
+        }
+    }
+}
+
+tasks.register("codegen") {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    dependsOn(
+        "downloadSwagger",
+        "openApiGenerate"
+    )
+}

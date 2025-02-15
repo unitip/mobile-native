@@ -1,180 +1,318 @@
 package com.unitip.mobile.features.job.presentation.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.Check
+import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.RefreshCcw
-import com.unitip.mobile.features.job.presentation.states.DetailJobStateDetail
+import com.composables.icons.lucide.MapPin
+import com.composables.icons.lucide.MapPinned
+import com.composables.icons.lucide.RefreshCw
+import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.features.job.presentation.states.DetailJobState
 import com.unitip.mobile.features.job.presentation.viewmodels.DetailJobViewModel
-import com.unitip.mobile.shared.presentation.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.extensions.isDriver
+import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailJobScreen(
-    id: String,
-    type: String,
+    jobId: String,
     viewModel: DetailJobViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
+    val context = LocalContext.current
 
+    val listState = rememberLazyListState()
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(id) {
-        viewModel.fetchData(jobId = id, type = type)
+    LaunchedEffect(uiState.approveApplicationDetail) {
+        with(uiState.approveApplicationDetail) {
+            if (this is DetailJobState.ApproveApplicationDetail.Failure)
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Detail Job") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Lucide.ArrowLeft,
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { viewModel.fetchData(jobId = id, type = type) }) {
-                        Icon(
-                            Lucide.RefreshCcw,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) {
+    Scaffold {
         Column(
             modifier = Modifier
-                .padding(it)
                 .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHigh,
+                            MaterialTheme.colorScheme.surfaceContainerLowest,
+                        )
+                    )
+                )
+                .padding(it)
         ) {
-            // loading indicator
-            AnimatedVisibility(visible = uiState.detail is DetailJobStateDetail.Loading) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
-                    strokeCap = StrokeCap.Round
+            // app bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CustomIconButton(
+                    onClick = { navController.popBackStack() },
+                    icon = Lucide.ChevronLeft
+                )
+                CustomIconButton(
+                    onClick = { viewModel.fetchData() },
+                    icon = Lucide.RefreshCw
                 )
             }
 
-            if (uiState.detail is DetailJobStateDetail.Success) {
-                val result = (uiState.detail as DetailJobStateDetail.Success).result
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+            // loading state
+            if (uiState.detail is DetailJobState.Detail.Loading) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    CircularProgressIndicator(strokeCap = StrokeCap.Round)
+                }
+            }
+
+            // success state
+            if (uiState.detail is DetailJobState.Detail.Success) {
+                Log.d("DetailJobScreen", "DetailJobScreen: called")
+                AnimatedVisibility(visible = listState.canScrollBackward) {
+                    HorizontalDivider()
+                }
+
+                LazyColumn(modifier = Modifier.weight(1f), state = listState) {
+                    /**
+                     * component untuk menampilkan catatan pekerjaan
+                     */
                     item {
                         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
                             Text(
-                                text = result.job.title,
-                                style = MaterialTheme.typography.titleMedium
+                                text = uiState.jobModel.title,
+                                style = MaterialTheme.typography.titleLarge
                             )
                             Text(
-                                text = result.job.note,
-                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline)
+                                text = uiState.jobModel.note,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 8.dp)
                             )
                         }
                     }
 
-                    item {
-                        HorizontalDivider()
-                        Text(
-                            text = "Daftar Applicants",
-                            style = MaterialTheme.typography.titleMedium
+                    /**
+                     * component untuk menampilkan details job
+                     * seperti jenis layanan, titik jemput, destinasi
+                     */
+                    itemsIndexed(
+                        listOf(
+                            mapOf(
+                                "icon" to Lucide.Bike,
+                                "title" to "Jenis Pekerjaan",
+                                "value" to "Service tidak tersedia",
+//                                "value" to JobConstant.services
+//                                    .find { item -> item.value == uiState.jobModel.service }
+//                                    .let { service ->
+//                                        when (service != null) {
+//                                            true -> service.title
+//                                            else -> "Service tidak tersedia"
+//                                        }
+//                                    }
+                            ),
+                            mapOf(
+                                "icon" to Lucide.MapPinned,
+                                "title" to "Titik Jemput",
+                                "value" to uiState.jobModel.pickupLocation
+                            ),
+                            mapOf(
+                                "icon" to Lucide.MapPin,
+                                "title" to "Destinasi",
+                                "value" to uiState.jobModel.destinationLocation
+                            ),
                         )
-                    }
-
-                    // list applicants
-                    items(result.applicants) { applicant ->
-                        OutlinedCard(
+                    ) { index, item ->
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp)
+                                .padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = if (index == 0) 16.dp else 4.dp
+                                )
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = if (index == 0) 16.dp else 4.dp,
+                                        topEnd = if (index == 0) 16.dp else 4.dp,
+                                        bottomStart = if (index == 2) 16.dp else 4.dp,
+                                        bottomEnd = if (index == 2) 16.dp else 4.dp
+                                    )
+                                )
+                                .background(
+                                    MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = .08f
+                                    )
+                                )
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Column(
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
                                     modifier = Modifier
-                                        .padding(
-                                            horizontal = 16.dp,
-                                            vertical = 12.dp
-                                        )
-                                        .weight(1f)
+                                        .size(32.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(MaterialTheme.colorScheme.onSurface)
                                 ) {
-                                    Text(text = applicant.name)
-                                    Text(text = "Rp ${applicant.price}")
+                                    Icon(
+                                        item["icon"]!! as ImageVector,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .size(20.dp),
+                                        tint = MaterialTheme.colorScheme.surface
+                                    )
                                 }
-
-                                IconButton(onClick = {}) {
-                                    Icon(Lucide.Check, contentDescription = null)
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = item["title"]!! as String,
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                    Text(
+                                        text = item["value"]!! as String,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
                                 }
                             }
                         }
                     }
 
-                    // button apply for driver
+                    /**
+                     * menampilkan daftar applications yang melamar job berikut dengan syarat
+                     * yang membuat job adalah user saat ini dan user saat ini login sebagai
+                     * role customer
+                     */
                     item {
-                        Button(
-                            onClick = {},
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) { Text(text = "Apply") }
+                        Text(text = "Daftar pelamar")
+                        Text(text = "Silahkan pilih pelamar yang sesuai dengan kebutuhan anda")
+                    }
+
+                    with(uiState.getAllApplicationsDetail) {
+                        when (this) {
+                            is DetailJobState.GetAllApplicationsDetail.Loading -> item {
+                                CircularProgressIndicator()
+                            }
+
+                            is DetailJobState.GetAllApplicationsDetail.Success ->
+                                itemsIndexed(applications) { index, application ->
+                                    ListItem(
+                                        overlineContent = {
+                                            Text(text = application.price.toString())
+                                        },
+                                        headlineContent = {
+                                            Text(text = application.driver.name)
+                                        },
+                                        supportingContent = {
+                                            Text(text = application.bidNote)
+                                        },
+                                        trailingContent = {
+                                            with(uiState.approveApplicationDetail) {
+                                                if (this is DetailJobState.ApproveApplicationDetail.Loading && applicationId == application.id) {
+                                                    CircularProgressIndicator()
+                                                } else {
+                                                    OutlinedIconButton(
+                                                        onClick = {
+                                                            viewModel.approveApplication(
+                                                                applicationId = application.id
+                                                            )
+                                                        }
+                                                    ) {
+                                                        Icon(
+                                                            Lucide.Check,
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+
+                            else -> Unit
+                        }
+                    }
+
+                    /**
+                     * spacer untuk memberikan jarak bawah pada lazy column
+                     */
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
-            }
 
-            // error handling
-            if (uiState.detail is DetailJobStateDetail.Failure) {
-                val result = uiState.detail as DetailJobStateDetail.Failure
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(text = "Terjadi kesalahan!")
-                    Text(text = result.message)
-                    OutlinedButton(onClick = {
-                        viewModel.fetchData(
-                            jobId = id,
-                            type = type
-                        )
-                    }) { Text(text = "Refresh") }
+                /**
+                 * button untuk melamar pekerjaan, hanya dapat dilihat dan dilakukan
+                 * oleh role driver
+                 */
+                if (uiState.session.isDriver()) {
+                    Button(
+                        onClick = {
+                            navController.navigate(
+                                JobRoutes.Apply(
+                                    jobId = jobId
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp,
+                                top = 16.dp
+                            )
+                    ) {
+                        Text(text = "Lamar pekerjaan")
+                    }
                 }
             }
         }
