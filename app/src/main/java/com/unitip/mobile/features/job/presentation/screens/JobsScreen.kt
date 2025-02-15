@@ -50,6 +50,7 @@ import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.features.job.commons.JobRoutes
 import com.unitip.mobile.features.job.presentation.components.ApplyJobBottomSheet
+import com.unitip.mobile.features.job.presentation.components.JobsLoadingPlaceholder
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.localDateFormat
@@ -100,24 +101,11 @@ fun JobsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-//                .background(
-//                    brush = Brush.linearGradient(
-//                        colors = listOf(
-//                            MaterialTheme.colorScheme.surfaceContainerHigh,
-//                            MaterialTheme.colorScheme.surfaceContainerLowest,
-//                        )
-//                    )
-//                )
                 .padding(it)
         ) {
             with(uiState.detail) {
                 when (this) {
-                    is State.Detail.Loading -> Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            strokeCap = StrokeCap.Round
-                        )
-                    }
+                    is State.Detail.Loading -> JobsLoadingPlaceholder()
 
                     is State.Detail.Success -> LazyColumn(state = listState) {
                         itemsIndexed(jobs) { index, job ->
