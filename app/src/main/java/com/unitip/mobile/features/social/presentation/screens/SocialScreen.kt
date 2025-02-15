@@ -58,6 +58,7 @@ fun SocialScreen(
             is SocialState.Detail.Failure -> {
                 snackbarHostState.showSnackbar(message = detail.message)
             }
+
             else -> Unit
         }
     }
@@ -70,11 +71,12 @@ fun SocialScreen(
                 TopAppBar(
                     title = { Text(text = "Aktivitas Sosial") },
                     actions = {
-                        IconButton(onClick = { viewModel.getActivities() }) {
+                        IconButton(onClick = { viewModel.getActivities(forceRefresh = true) }) {
                             Icon(Lucide.RefreshCw, contentDescription = null)
                         }
                     }
                 )
+
                 HorizontalDivider()
             }
         }
@@ -93,6 +95,7 @@ fun SocialScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 is SocialState.Detail.Success -> {
                     LazyColumn(state = listState) {
                         itemsIndexed(detail.activities) { index, activity ->
@@ -138,6 +141,7 @@ fun SocialScreen(
                         }
                     }
                 }
+
                 else -> Unit
             }
         }

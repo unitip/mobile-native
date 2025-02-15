@@ -2,6 +2,7 @@ package com.unitip.mobile.features.social.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unitip.mobile.features.social.commons.SocialActivityCache
 import com.unitip.mobile.features.social.data.repositories.SocialRepository
 import com.unitip.mobile.features.social.presentation.state.SocialState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,11 @@ class SocialViewModel @Inject constructor(
         getActivities()
     }
 
-    fun getActivities() = viewModelScope.launch {
+    fun getActivities(forceRefresh: Boolean = false) = viewModelScope.launch {
+        if (forceRefresh) {
+            SocialActivityCache.clear()
+        }
+
         _uiState.update { it.copy(detail = SocialState.Detail.Loading) }
         socialRepository.getSocialActivities()
             .onLeft { failure ->
