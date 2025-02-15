@@ -44,6 +44,7 @@ import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.UserX
+import com.unitip.mobile.features.account.presentation.components.ChangeRoleLoadingPlaceholder
 import com.unitip.mobile.features.account.presentation.viewmodels.ChangeRoleViewModel
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
@@ -126,34 +127,22 @@ fun ChangeRoleScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-//                .background(
-//                    brush = Brush.linearGradient(
-//                        colors = listOf(
-//                            MaterialTheme.colorScheme.surfaceContainerHigh,
-//                            MaterialTheme.colorScheme.surfaceContainerLowest,
-//                        )
-//                    )
-//                )
                 .padding(innerPadding)
         ) {
+            Text(
+                text = "Berikut adalah beberapa peran yang Anda miliki dalam akun Unitip, masing-masing dengan akses dan tanggung jawab tertentu untuk menggunakan fitur di platform",
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .then(Modifier),
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+
             with(uiState.getDetail) {
                 when (this) {
-                    is State.GetDetail.Loading -> Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            strokeCap = StrokeCap.Round
-                        )
-                    }
+                    is State.GetDetail.Loading -> ChangeRoleLoadingPlaceholder()
 
                     is State.GetDetail.Success -> {
-                        Text(
-                            text = "Berikut adalah beberapa peran yang Anda miliki dalam akun Unitip, masing-masing dengan akses dan tanggung jawab tertentu untuk menggunakan fitur di platform",
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                                .then(Modifier),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
                         ListItem(
                             modifier = Modifier
                                 .padding(top = 16.dp)
