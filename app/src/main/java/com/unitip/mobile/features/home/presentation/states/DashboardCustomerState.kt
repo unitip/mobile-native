@@ -1,7 +1,6 @@
 package com.unitip.mobile.features.home.presentation.states
 
-import com.unitip.mobile.features.home.domain.models.CustomerDashboardResult
-import com.unitip.mobile.features.home.domain.models.Order
+import com.unitip.mobile.features.home.domain.models.OrderDashboard
 
 data class DashboardCustomerState(
     val onlineDriverIds: Set<String> = emptySet(),
@@ -11,7 +10,7 @@ data class DashboardCustomerState(
         data object Initial : Detail
         data object Loading : Detail
         data class Success(
-            val orders: List<Order>
+            val orders: List<OrderDashboard>
         ) : Detail
 
         data class Failure(

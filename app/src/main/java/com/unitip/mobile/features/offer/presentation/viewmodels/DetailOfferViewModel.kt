@@ -29,7 +29,7 @@ class DetailOfferViewModel @Inject constructor(
     }
 
     private val session = sessionManager.read()
-    private val parameters = savedStateHandle.toRoute<OfferRoutes.Detail>()
+    private val parameters = savedStateHandle.toRoute<OfferRoutes.DetailOfferCustomer>()
 
     private val _uiState = MutableStateFlow(DetailOfferState())
     val uiState get() = _uiState.asStateFlow()

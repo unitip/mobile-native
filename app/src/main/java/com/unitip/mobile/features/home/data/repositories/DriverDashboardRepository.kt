@@ -9,7 +9,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AccountDriverRepository @Inject constructor(
+class DriverDashboardRepository @Inject constructor(
     private val accountApi: AccountApi
 ) {
     suspend fun getDashboard(): Either<Failure, GetDashboardDriverResult> = try {
@@ -34,11 +34,39 @@ class AccountDriverRepository @Inject constructor(
                             ),
                         )
                     },
-                    jobs = emptyList(),
-                    offers = emptyList()
+                    jobs = result.jobs.map {
+                        GetDashboardDriverResult.Job(
+                            id = it.id,
+                            customer = GetDashboardDriverResult.Job.Customer(
+                                name = it.customer.name
+                            )
+                        )
+                    },
+                    offers = result.offers.map {
+                        GetDashboardDriverResult.Offer(
+                            id = it.id,
+                            title = it.title,
+                            price = it.price,
+                            description = it.description,
+                            pickupArea = it.pickupArea,
+                            destinationArea = it.destinationArea,
+                            type = it.type,
+                            availableUntil = it.availableUntil,
+                            maxParticipants = it.maxParticipants,
+                            applicants = it.applicants.map { applicant ->
+                                GetDashboardDriverResult.Offer.Applicant(
+                                    id = applicant.id,
+                                    customerName = applicant.customerName,
+                                    pickupLocation = applicant.pickupLocation,
+                                    destinationLocation = applicant.destinationLocation,
+                                    status = applicant.status,
+                                    finalPrice = applicant.finalPrice
+                                )
+                            }
+                        )
+                    }
                 )
             )
-
             else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {

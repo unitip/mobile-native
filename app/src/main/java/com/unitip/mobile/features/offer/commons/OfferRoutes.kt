@@ -10,7 +10,7 @@ sealed class OfferRoutes {
 
     @Serializable
     @SerialName("offer/detail/{offerId}")
-    data class Detail(
+    data class DetailOfferCustomer(
         val offerId: String
     )
 

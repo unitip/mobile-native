@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -32,9 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.BadgePercent
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.Tag
+import com.composables.icons.lucide.Users
 import com.unitip.mobile.features.home.presentation.components.DashboardDriverApplicationsLoadingPlaceholder
 import com.unitip.mobile.features.home.presentation.viewmodels.DashboardDriverViewModel
 import com.unitip.mobile.features.offer.commons.OfferRoutes
@@ -197,6 +201,114 @@ fun DashboardDriverScreen(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
             }
+
+            item {
+                HorizontalDivider()
+                Text(
+                    text = "Daftar Penawaran",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                )
+                Text(
+                    text = "Berikut daftar penawaran yang Anda buat dan masih aktif",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                )
+            }
+
+            with(uiState.detail) {
+                when (this) {
+                    is State.Detail.Success -> itemsIndexed(data.offers) { index, offer ->
+                        if (index > 0)
+                            HorizontalDivider(thickness = 0.56.dp)
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = if (index == 0) 8.dp else 0.dp)
+                                .clickable {
+                                    navController.navigate(
+                                        OfferRoutes.DetailOfferCustomer(offerId = offer.id)
+                                    )
+                                }
+                                .padding(16.dp),
+                            shape = MaterialTheme.shapes.medium,
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = offer.title,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = offer.description,
+                                    maxLines = 2,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Row(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        Lucide.MapPin,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(MaterialTheme.typography.bodySmall.fontSize.value.dp),
+                                        tint = ListItemDefaults.colors().supportingTextColor
+                                    )
+                                    Text(
+                                        text = "${offer.pickupArea} → ${offer.destinationArea}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Row(
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        Lucide.BadgePercent,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(MaterialTheme.typography.bodySmall.fontSize.value.dp),
+                                        tint = ListItemDefaults.colors().supportingTextColor
+                                    )
+                                    Text(
+                                        text = offer.price.toLocalCurrencyFormat(),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+
+                                // jumlah pendaftar
+                                Row(
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        Lucide.Users,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(MaterialTheme.typography.bodySmall.fontSize.value.dp),
+                                        tint = ListItemDefaults.colors().supportingTextColor
+                                    )
+                                    Text(
+                                        text = "${offer.applicants.size}/${offer.maxParticipants} pendaftar",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
+
         }
     }
 }

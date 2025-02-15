@@ -45,6 +45,7 @@ import com.composables.icons.lucide.RefreshCw
 import com.unitip.mobile.features.home.presentation.states.DashboardCustomerState
 import com.unitip.mobile.features.home.presentation.viewmodels.DashboardCustomerViewModel
 import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.features.offer.commons.OfferRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomIconButton
 
@@ -229,15 +230,42 @@ fun DashboardCustomerScreen(
                             items(orders) { order ->
                                 ListItem(
                                     modifier = Modifier.clickable {
-                                        navController.navigate(
-                                            JobRoutes.DetailOrderCustomer(
-                                                jobId = order.id
+                                        when (order.type) {
+                                            "job" -> navController.navigate(
+                                                JobRoutes.DetailOrderCustomer(jobId = order.id)
                                             )
+                                            "offer" -> navController.navigate(
+                                                OfferRoutes.DetailOfferCustomer(offerId = order.id)
+                                            )
+                                        }
+                                    },
+                                    overlineContent = {
+                                        Text(
+                                            text = when(order.type) {
+                                                "job" -> "Pesanan Jasa"
+                                                "offer" -> "Tawaran Driver"
+                                                else -> "Pesanan"
+                                            }
                                         )
                                     },
-                                    overlineContent = { Text(text = order.id) },
                                     headlineContent = { Text(text = order.title) },
-                                    supportingContent = { Text(text = order.note) }
+                                    supportingContent = {
+                                        Column {
+                                            Text(text = order.note)
+                                            order.status?.let {
+                                                Text(
+                                                    text = when(it) {
+                                                        "pending" -> "Menunggu Konfirmasi"
+                                                        "accepted" -> "Diterima"
+                                                        "on_the_way" -> "Dalam Perjalanan"
+                                                        "rejected" -> "Ditolak"
+                                                        else -> it
+                                                    },
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
+                                            }
+                                        }
+                                    }
                                 )
                             }
                         }

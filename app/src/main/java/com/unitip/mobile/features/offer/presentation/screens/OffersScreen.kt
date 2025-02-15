@@ -172,7 +172,7 @@ fun OffersScreen(
                                 top = if (index == 0) 0.dp else 8.dp
                             ),
                             onClick = {
-                                navController.navigate(OfferRoutes.Detail(offerId = offer.id))
+                                navController.navigate(OfferRoutes.DetailOfferCustomer(offerId = offer.id))
                             }
                         ) {
                             Column {
