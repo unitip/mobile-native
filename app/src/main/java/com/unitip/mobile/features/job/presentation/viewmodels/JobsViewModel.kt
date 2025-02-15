@@ -22,6 +22,14 @@ class JobsViewModel @Inject constructor(
             getAllJobs()
     }
 
+    fun resetState() = _uiState.update {
+        it.copy(detail = State.Detail.Initial)
+    }
+
+    fun resetApplyState() = _uiState.update {
+        it.copy(applyDetail = State.ApplyDetail.Initial)
+    }
+
     fun getAllJobs() = viewModelScope.launch {
         _uiState.update { it.copy(detail = State.Detail.Loading) }
         driverJobRepository.getAll()

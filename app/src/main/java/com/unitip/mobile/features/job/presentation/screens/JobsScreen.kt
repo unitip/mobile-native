@@ -74,7 +74,10 @@ fun JobsScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is State.Detail.Failure -> snackbarHostState.showSnackbar(message = message)
+                is State.Detail.Failure -> {
+                    snackbarHostState.showSnackbar(message = message)
+                    viewModel.resetState()
+                }
 
                 else -> Unit
             }
@@ -84,13 +87,17 @@ fun JobsScreen(
     LaunchedEffect(uiState.applyDetail) {
         with(uiState.applyDetail) {
             when (this) {
-                is State.ApplyDetail.Success -> snackbarHostState.showSnackbar(
-                    message = "Berhasil melamar pekerjaan!"
-                )
+                is State.ApplyDetail.Success -> {
+                    snackbarHostState.showSnackbar(
+                        message = "Berhasil melamar pekerjaan!"
+                    )
+                    viewModel.resetApplyState()
+                }
 
-                is State.ApplyDetail.Failure -> snackbarHostState.showSnackbar(
-                    message = message
-                )
+                is State.ApplyDetail.Failure -> {
+                    snackbarHostState.showSnackbar(message = message)
+                    viewModel.resetApplyState()
+                }
 
                 else -> Unit
             }
