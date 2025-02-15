@@ -1,7 +1,5 @@
 package com.unitip.mobile.features.offer.data.sources
 
-import com.unitip.mobile.features.chat.data.dtos.CreateRoomPayload
-import com.unitip.mobile.features.chat.data.dtos.CreateRoomResponse
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload

@@ -53,6 +53,10 @@ fun SocialScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
 
+    LaunchedEffect(Unit) {
+        viewModel.getActivities(forceRefresh = false)
+    }
+
     LaunchedEffect(uiState.detail) {
         when (val detail = uiState.detail) {
             is SocialState.Detail.Failure -> {

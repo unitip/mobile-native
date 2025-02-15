@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.offer.commons
 
-import com.unitip.mobile.features.job.data.sources.JobApi
 import com.unitip.mobile.features.offer.data.sources.OfferApi
 import com.unitip.mobile.shared.commons.configs.ApiConfig
 import dagger.Module
