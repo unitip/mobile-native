@@ -9,8 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -20,7 +18,6 @@ import com.unitip.mobile.features.home.commons.nestedHomeNavigation
 import com.unitip.mobile.features.home.presentation.components.CustomNavbar
 import com.unitip.mobile.features.home.presentation.viewmodels.HomeViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
-import com.unitip.mobile.shared.commons.extensions.isDriver
 
 @Composable
 fun HomeScreen(
@@ -28,7 +25,7 @@ fun HomeScreen(
 ) {
     val homeNavController = rememberNavController()
 
-    val uiState by viewModel.uiState.collectAsState()
+    val session = viewModel.session
 
     CompositionLocalProvider(LocalHomeNavController provides homeNavController) {
         Scaffold(
@@ -44,13 +41,9 @@ fun HomeScreen(
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
-                    nestedHomeNavigation(
-                        isDriver = uiState.session.isDriver()
-                    )
+                    nestedHomeNavigation(session = session)
                 }
-                CustomNavbar(
-                    isDriver = uiState.session.isDriver()
-                )
+                CustomNavbar(session = session)
             }
         }
     }

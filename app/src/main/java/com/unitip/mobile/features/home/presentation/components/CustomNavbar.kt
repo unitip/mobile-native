@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -24,12 +23,16 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.composables.icons.lucide.BadgeHelp
 import com.composables.icons.lucide.BriefcaseBusiness
+import com.composables.icons.lucide.Heart
 import com.composables.icons.lucide.LayoutDashboard
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessagesSquare
 import com.composables.icons.lucide.User
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalHomeNavController
+import com.unitip.mobile.shared.commons.extensions.isCustomer
+import com.unitip.mobile.shared.commons.extensions.isDriver
+import com.unitip.mobile.shared.domain.models.Session
 
 private data class NavigationItem<T : Any>(
     val title: String,
@@ -39,7 +42,7 @@ private data class NavigationItem<T : Any>(
 
 @Composable
 fun CustomNavbar(
-    isDriver: Boolean
+    session: Session
 ) {
     val navigationItems = listOfNotNull(
         NavigationItem(
@@ -47,7 +50,7 @@ fun CustomNavbar(
             icon = Lucide.LayoutDashboard,
             route = HomeRoutes.Dashboard
         ),
-        when (isDriver) {
+        when (session.isDriver()) {
             true -> NavigationItem(
                 "Jobs",
                 icon = Lucide.BriefcaseBusiness,
@@ -56,10 +59,19 @@ fun CustomNavbar(
 
             else -> null
         },
+        when (session.isCustomer()) {
+            true -> NavigationItem(
+                "Offers",
+                icon = Lucide.BadgeHelp,
+                route = HomeRoutes.Offers
+            )
+
+            else -> null
+        },
         NavigationItem(
-            "Offers",
-            icon = Lucide.BadgeHelp,
-            route = HomeRoutes.Offers
+            "Social",
+            icon = Lucide.Heart,
+            route = HomeRoutes.Social
         ),
         NavigationItem(
             "Chats",
@@ -84,7 +96,6 @@ fun CustomNavbar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(horizontal = 8.dp),
         ) {
             items(navigationItems) { item ->
                 val isSelected =
@@ -93,14 +104,7 @@ fun CustomNavbar(
                 Column(
                     modifier = Modifier
                         .height(56.dp)
-                        .clickable(
-//                            indication = rememberRipple(
-//                                bounded = false,
-//                                radius = 48.dp,
-//                                color = MaterialTheme.colorScheme.outlineVariant
-//                            ),
-//                            interactionSource = remember { MutableInteractionSource() },
-                        ) {
+                        .clickable {
                             homeNavController.navigate(item.route) {
                                 popUpTo(homeNavController.graph.findStartDestination().id) {
                                     saveState = true

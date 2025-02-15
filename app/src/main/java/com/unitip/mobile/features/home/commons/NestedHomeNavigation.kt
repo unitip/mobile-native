@@ -8,19 +8,22 @@ import com.unitip.mobile.features.home.presentation.sceens.DashboardCustomerScre
 import com.unitip.mobile.features.home.presentation.sceens.DashboardDriverScreen
 import com.unitip.mobile.features.job.presentation.screens.JobsScreen
 import com.unitip.mobile.features.offer.presentation.screens.OffersScreen
+import com.unitip.mobile.features.social.presentation.screens.SocialScreen
+import com.unitip.mobile.shared.commons.extensions.isDriver
+import com.unitip.mobile.shared.domain.models.Session
 
 fun NavGraphBuilder.nestedHomeNavigation(
-    isDriver: Boolean
+    session: Session
 ) {
     composable<HomeRoutes.Dashboard> {
-        when (isDriver) {
+        when (session.isDriver()) {
             true -> DashboardDriverScreen()
             else -> DashboardCustomerScreen()
         }
     }
-//    if (isDriver)
     composable<HomeRoutes.Jobs> { JobsScreen() }
     composable<HomeRoutes.Offers> { OffersScreen() }
+    composable<HomeRoutes.Social> { SocialScreen() }
     composable<HomeRoutes.Chats> { ChatsScreen() }
     composable<HomeRoutes.Profile> { ProfileScreen() }
 }

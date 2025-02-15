@@ -16,6 +16,9 @@ sealed class HomeRoutes {
     object Offers
 
     @Serializable
+    object Social
+
+    @Serializable
     object Chats
 
     @Serializable
