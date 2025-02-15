@@ -12,26 +12,15 @@ import com.unitip.mobile.features.job.presentation.states.JobsState as State
 
 @HiltViewModel
 class JobsViewModel @Inject constructor(
-//    sessionManager: SessionManager,
-//    private val jobRepository: JobRepository,
-//    private val jobManager: JobManager,
     private val driverJobRepository: DriverJobRepository
 ) : ViewModel() {
-//    private val session = sessionManager.read()
-
     private val _uiState = MutableStateFlow(State())
     val uiState get() = _uiState
 
     init {
-//        _uiState.update { it.copy(session = session) }
-
         if (uiState.value.detail !is State.Detail.Success)
             getAllJobs()
     }
-
-//    fun expandJob(jobId: String) = _uiState.update {
-//        it.copy(expandedJobId = if (it.expandedJobId == jobId) "" else jobId)
-//    }
 
     fun getAllJobs() = viewModelScope.launch {
         _uiState.update { it.copy(detail = State.Detail.Loading) }
@@ -44,11 +33,33 @@ class JobsViewModel @Inject constructor(
                 }
             }
             .onRight { right ->
-//                jobManager.set(right)
                 _uiState.update {
                     it.copy(
                         detail = State.Detail.Success(jobs = right)
                     )
+                }
+            }
+    }
+
+    fun apply(
+        jobId: String,
+        bidPrice: Int
+    ) = viewModelScope.launch {
+        _uiState.update { it.copy(applyDetail = State.ApplyDetail.Loading(jobId = jobId)) }
+        driverJobRepository
+            .createApplication(
+                jobId = jobId,
+                bidPrice = bidPrice,
+                bidNote = ""
+            )
+            .onLeft { left ->
+                _uiState.update {
+                    it.copy(applyDetail = State.ApplyDetail.Failure(message = left.message))
+                }
+            }
+            .onRight {
+                _uiState.update {
+                    it.copy(applyDetail = State.ApplyDetail.Success)
                 }
             }
     }

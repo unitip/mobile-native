@@ -22,7 +22,7 @@ class DriverJobRepository @Inject constructor(
         val response = jobApi.createJobApplication(
             jobId = jobId,
             CreateJobApplicationRequest(
-                price = bidPrice,
+                bidPrice = bidPrice,
                 bidNote = bidNote
             )
         )
@@ -47,7 +47,8 @@ class DriverJobRepository @Inject constructor(
                     note = job.note,
                     pickupLocation = job.pickupLocation,
                     destinationLocation = job.destinationLocation,
-                    service = JobConstant.Service.entries[job.service.ordinal],
+                    service = JobConstant.Service.valueOf(job.service.name),
+                    expectedPrice = job.expectedPrice,
                     createdAt = job.createdAt,
                     updatedAt = job.updatedAt,
                     customer = JobModel.ListItem.Customer(

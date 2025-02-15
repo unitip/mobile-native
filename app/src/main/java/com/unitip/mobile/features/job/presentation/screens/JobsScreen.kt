@@ -1,6 +1,5 @@
 package com.unitip.mobile.features.job.presentation.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -36,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +49,7 @@ import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.User
 import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.features.job.commons.JobRoutes
+import com.unitip.mobile.features.job.domain.models.JobModel
 import com.unitip.mobile.features.job.presentation.components.ApplyJobBottomSheet
 import com.unitip.mobile.features.job.presentation.components.JobsLoadingPlaceholder
 import com.unitip.mobile.features.job.presentation.viewmodels.JobsViewModel
@@ -63,26 +64,41 @@ fun JobsScreen(
     viewModel: JobsViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
-    val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
-    var selectedJobId by remember { mutableStateOf("") }
+    var selectedJob by remember { mutableStateOf<JobModel.ListItem?>(null) }
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is State.Detail.Failure -> {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                }
+                is State.Detail.Failure -> snackbarHostState.showSnackbar(message = message)
 
-                else -> {}
+                else -> Unit
+            }
+        }
+    }
+
+    LaunchedEffect(uiState.applyDetail) {
+        with(uiState.applyDetail) {
+            when (this) {
+                is State.ApplyDetail.Success -> snackbarHostState.showSnackbar(
+                    message = "Berhasil melamar pekerjaan!"
+                )
+
+                is State.ApplyDetail.Failure -> snackbarHostState.showSnackbar(
+                    message = message
+                )
+
+                else -> Unit
             }
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         contentWindowInsets = WindowInsets(bottom = 0.dp),
         topBar = {
             Column {
@@ -109,38 +125,45 @@ fun JobsScreen(
 
                     is State.Detail.Success -> LazyColumn(state = listState) {
                         itemsIndexed(jobs) { index, job ->
-                            if (index > 0) HorizontalDivider()
+                            if (index > 0)
+                                HorizontalDivider()
+
                             Box(
-                                modifier = Modifier.clickable {
-                                    selectedJobId = job.id
-                                }
+                                modifier = Modifier.clickable(
+                                    enabled = uiState.applyDetail !is State.ApplyDetail.Loading
+                                ) { selectedJob = job }
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.Top,
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.padding(16.dp)
                                 ) {
-                                    if (index == 2)
-                                        CircularProgressIndicator(
-                                            strokeCap = StrokeCap.Round,
-                                            modifier = Modifier.size(40.dp)
-                                        )
-                                    else
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(24.dp))
-                                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                                .size(40.dp)
-                                        ) {
-                                            Icon(
-                                                Lucide.User,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                modifier = Modifier
-                                                    .align(Alignment.Center)
-                                                    .size(20.dp)
+                                    with(uiState.applyDetail) {
+                                        when (this is State.ApplyDetail.Loading && this.jobId == job.id) {
+                                            true -> CircularProgressIndicator(
+                                                strokeCap = StrokeCap.Round,
+                                                modifier = Modifier.size(40.dp)
                                             )
+
+                                            else -> Box(
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(24.dp))
+                                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                                    .size(40.dp)
+                                            ) {
+                                                Icon(
+                                                    Lucide.User,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center)
+                                                        .size(20.dp)
+                                                )
+                                            }
+
                                         }
+                                    }
+
                                     Column(modifier = Modifier.weight(1f)) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -204,129 +227,6 @@ fun JobsScreen(
                                     }
                                 }
                             }
-
-//                            CustomCard(
-//                                modifier = Modifier.padding(
-//                                    start = 16.dp,
-//                                    end = 16.dp,
-//                                    top = if (index == 0) 0.dp else 8.dp
-//                                ),
-//                                onClick = {
-//                                    navController.navigate(JobRoutes.Detail(jobId = job.id))
-//                                }
-//                            ) {
-//                                Column {
-//                                    Row(
-//                                        verticalAlignment = Alignment.CenterVertically,
-//                                        modifier = Modifier.padding(
-//                                            start = 16.dp,
-//                                            end = 16.dp,
-//                                            top = 16.dp
-//                                        )
-//                                    ) {
-//                                        Box(
-//                                            modifier = Modifier
-//                                                .size(20.dp)
-//                                                .clip(RoundedCornerShape(10.dp))
-//                                                .background(MaterialTheme.colorScheme.onSurface)
-//                                        ) {
-//                                            Icon(
-//                                                Lucide.User,
-//                                                contentDescription = null,
-//                                                modifier = Modifier
-//                                                    .size(12.dp)
-//                                                    .align(Alignment.Center),
-//                                                tint = MaterialTheme.colorScheme.surface
-//                                            )
-//                                        }
-//                                        Text(
-//                                            text = job.customer.name,
-//                                            style = MaterialTheme.typography.labelMedium,
-//                                            modifier = Modifier.padding(start = 8.dp)
-//                                        )
-//                                    }
-//                                    Row(
-//                                        verticalAlignment = Alignment.Top,
-//                                        modifier = Modifier.padding(
-//                                            start = 16.dp,
-//                                            end = 16.dp,
-//                                            top = 8.dp,
-//                                            bottom = 16.dp
-//                                        )
-//                                    ) {
-//                                        Column(modifier = Modifier.weight(1f)) {
-//                                            Text(
-//                                                text = job.title,
-//                                                style = MaterialTheme.typography.titleMedium
-//                                            )
-//                                            Text(
-//                                                text = job.note,
-//                                                style = MaterialTheme.typography.bodySmall
-//                                            )
-//                                        }
-//                                        Box(modifier = Modifier
-//                                            .padding(start = 8.dp)
-//                                            .size(40.dp)
-//                                            .clip(RoundedCornerShape(20.dp))
-//                                            .clickable {
-//                                                viewModel.expandJob(jobId = job.id)
-//                                            }
-//                                        ) {
-//                                            Icon(
-//                                                if (isExpanded) Lucide.ChevronUp
-//                                                else Lucide.ChevronDown,
-//                                                contentDescription = null,
-//                                                modifier = Modifier.align(
-//                                                    Alignment.Center
-//                                                )
-//                                            )
-//                                        }
-//                                    }
-//
-//                                    AnimatedVisibility(visible = isExpanded) {
-//                                        Column {
-//                                            HorizontalDivider()
-//
-//                                            listOf(
-//                                                mapOf(
-//                                                    "title" to "Jenis pekerjaan",
-//                                                    "value" to job.service
-//                                                ),
-//                                                mapOf(
-//                                                    "title" to "Titik jemput",
-//                                                    "value" to job.pickupLocation
-//                                                ),
-//                                                mapOf(
-//                                                    "title" to "Destinasi",
-//                                                    "value" to job.destinationLocation
-//                                                ),
-//                                            ).mapIndexed { index, item ->
-//                                                Row(
-//                                                    verticalAlignment = Alignment.Top,
-//                                                    modifier = Modifier.padding(
-//                                                        start = 16.dp,
-//                                                        end = 16.dp,
-//                                                        top = if (index == 0) 16.dp else 4.dp,
-//                                                        bottom = if (index == 2) 16.dp else 0.dp
-//                                                    )
-//                                                ) {
-//                                                    Text(
-//                                                        text = item["title"]!!,
-//                                                        style = MaterialTheme.typography.bodySmall,
-//                                                        fontWeight = FontWeight.SemiBold,
-//                                                        modifier = Modifier.weight(4f)
-//                                                    )
-//                                                    Text(
-//                                                        text = item["value"]!!,
-//                                                        style = MaterialTheme.typography.bodySmall,
-//                                                        modifier = Modifier.weight(8f)
-//                                                    )
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
                         }
                     }
 
@@ -339,15 +239,22 @@ fun JobsScreen(
     /**
      * bottom sheet untuk apply job bagi role driver
      */
-    if (selectedJobId.isNotBlank())
+    if (selectedJob != null)
         ApplyJobBottomSheet(
             onSend = { withOffer ->
+
                 when (withOffer) {
-                    true -> navController.navigate(JobRoutes.Apply(jobId = selectedJobId))
-                    else -> Unit
+                    true -> navController.navigate(
+                        JobRoutes.Apply(jobId = selectedJob!!.id)
+                    )
+
+                    else -> viewModel.apply(
+                        jobId = selectedJob!!.id,
+                        bidPrice = selectedJob!!.expectedPrice
+                    )
                 }
-                selectedJobId = ""
+                selectedJob = null
             },
-            onDismiss = { selectedJobId = "" }
+            onDismiss = { selectedJob = null }
         )
 }
