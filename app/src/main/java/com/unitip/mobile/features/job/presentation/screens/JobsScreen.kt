@@ -89,7 +89,7 @@ fun JobsScreen(
                 TopAppBar(
                     title = { Text(text = "Jobs") },
                     actions = {
-                        IconButton(onClick = { viewModel.refreshJobs() }) {
+                        IconButton(onClick = { viewModel.getAllJobs() }) {
                             Icon(Lucide.RefreshCw, contentDescription = null)
                         }
                     }

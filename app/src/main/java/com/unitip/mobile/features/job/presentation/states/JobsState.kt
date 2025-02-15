@@ -7,6 +7,7 @@ data class JobsState(
 //    val jobs: List<JobModel.ListItem> = emptyList(),
 //    val session: Session? = null,
     val detail: Detail = Detail.Initial,
+    val applyDetail: ApplyDetail = ApplyDetail.Initial
 ) {
     sealed interface Detail {
         data object Initial : Detail
@@ -18,5 +19,18 @@ data class JobsState(
         data class Failure(
             val message: String
         ) : Detail
+    }
+
+    sealed interface ApplyDetail {
+        data object Initial : ApplyDetail
+        data class Loading(
+            val jobId: String
+        ) : ApplyDetail
+
+        data object Success : ApplyDetail
+
+        data class Failure(
+            val message: String
+        ) : ApplyDetail
     }
 }
