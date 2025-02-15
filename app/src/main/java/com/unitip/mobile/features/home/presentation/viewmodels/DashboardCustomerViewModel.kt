@@ -38,7 +38,6 @@ class DashboardCustomerViewModel @Inject constructor(
         getAllOrders()
     }
 
-
     fun getAllOrders() = viewModelScope.launch {
         _uiState.update { it.copy(detail = DashboardCustomerState.Detail.Loading) }
         customerDashboardRepository.getDashboard()
