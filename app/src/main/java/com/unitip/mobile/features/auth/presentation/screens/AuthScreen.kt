@@ -38,11 +38,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unitip.mobile.features.auth.commons.AuthRoutes
-import com.unitip.mobile.features.auth.presentation.states.AuthState
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomTextField
+import com.unitip.mobile.features.auth.presentation.states.AuthState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,14 +63,14 @@ fun AuthScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is AuthState.Detail.Success -> {
+                is State.Detail.Success -> {
                     navController.navigate(HomeRoutes.Index) {
                         popUpTo(AuthRoutes.Index) { inclusive = true }
                     }
                     viewModel.resetState()
                 }
 
-                is AuthState.Detail.SuccessWithPickRole -> {
+                is State.Detail.SuccessWithPickRole -> {
                     navController.navigate(
                         AuthRoutes.PickRole(
                             email = email,
@@ -81,7 +81,7 @@ fun AuthScreen(
                     viewModel.resetState()
                 }
 
-                is AuthState.Detail.Failure -> {
+                is State.Detail.Failure -> {
                     snackbarHost.showSnackbar(message = message)
                     viewModel.resetState()
                 }
@@ -120,6 +120,7 @@ fun AuthScreen(
 
             AnimatedVisibility(visible = !uiState.isLogin) {
                 CustomTextField(
+                    enabled = uiState.detail !is State.Detail.Loading,
                     label = "Nama Lengkap",
                     value = name,
                     onValueChange = { value -> name = value },
@@ -127,6 +128,7 @@ fun AuthScreen(
                 )
             }
             CustomTextField(
+                enabled = uiState.detail !is State.Detail.Loading,
                 label = "Alamat Email",
                 value = email,
                 onValueChange = { value -> email = value },
@@ -137,6 +139,7 @@ fun AuthScreen(
                 )
             )
             CustomTextField(
+                enabled = uiState.detail !is State.Detail.Loading,
                 label = "Kata Sandi",
                 value = password,
                 onValueChange = { value -> password = value },
@@ -144,6 +147,7 @@ fun AuthScreen(
             )
             AnimatedVisibility(visible = !uiState.isLogin) {
                 CustomTextField(
+                    enabled = uiState.detail !is State.Detail.Loading,
                     label = "Konfirmasi Kata Sandi",
                     value = confirmPassword,
                     onValueChange = { value -> confirmPassword = value },
@@ -152,7 +156,7 @@ fun AuthScreen(
             }
 
             Button(
-                enabled = false,
+                enabled = uiState.detail !is State.Detail.Loading,
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(16.dp),
@@ -167,14 +171,14 @@ fun AuthScreen(
                     }
                 }
             ) {
-                Box() {
+                Box {
                     Text(
                         text = if (uiState.isLogin) "Masuk"
                         else "Daftar",
-                        modifier = Modifier.alpha(if (uiState.detail is AuthState.Detail.Loading) 0f else 1f)
+                        modifier = Modifier.alpha(if (uiState.detail is State.Detail.Loading) 0f else 1f)
                     )
 
-                    if (uiState.detail is AuthState.Detail.Loading)
+                    if (uiState.detail is State.Detail.Loading)
                         CircularProgressIndicator(
                             modifier = Modifier
                                 .size(ButtonDefaults.IconSize)
