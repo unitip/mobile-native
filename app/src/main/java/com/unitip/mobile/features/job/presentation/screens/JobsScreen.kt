@@ -133,7 +133,7 @@ fun JobsScreen(
                     is State.Detail.Success -> LazyColumn(state = listState) {
                         itemsIndexed(jobs) { index, job ->
                             if (index > 0)
-                                HorizontalDivider()
+                                HorizontalDivider(thickness = .56.dp)
 
                             Box(
                                 modifier = Modifier.clickable(
