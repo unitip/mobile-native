@@ -412,7 +412,7 @@ fun CreateOfferScreen(
                         viewModel.create(
                             title = title,
                             description = description,
-                            type = "serviceType",
+                            type = serviceType!!,
                             availableUntil = selectedDateTimeMillis!!.toIsoString(),
                             price = price,
                             pickupArea = pickupArea,
