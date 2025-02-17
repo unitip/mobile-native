@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class SocialRoutes {
-   @Serializable
-   data class Index(val index: Int)
+    @Serializable
+    data object Create
 }

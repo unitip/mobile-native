@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,15 +41,20 @@ import com.composables.icons.lucide.BadgeHelp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.Briefcase
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Pen
 import com.composables.icons.lucide.RefreshCw
+import com.unitip.mobile.features.social.commons.SocialRoutes
 import com.unitip.mobile.features.social.presentation.state.SocialState
 import com.unitip.mobile.features.social.presentation.viewmodels.SocialViewModel
+import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SocialScreen(
     viewModel: SocialViewModel = hiltViewModel()
 ) {
+    val navController = LocalNavController.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
@@ -82,6 +88,13 @@ fun SocialScreen(
                 )
 
                 HorizontalDivider()
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(SocialRoutes.Create) }
+            ) {
+                Icon(Lucide.Pen, contentDescription = null)
             }
         }
     ) { paddingValues ->
