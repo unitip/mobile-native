@@ -16,21 +16,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -65,7 +59,7 @@ import com.composables.icons.lucide.Lucide
 import com.unitip.mobile.features.offer.commons.OfferConstans
 import com.unitip.mobile.features.offer.presentation.components.CustomDatePickerDialog
 import com.unitip.mobile.features.offer.presentation.components.CustomTimePickerDialog
-import com.unitip.mobile.features.offer.presentation.states.CreateOfferState
+import com.unitip.mobile.features.offer.presentation.components.ParticipantDropdown
 import com.unitip.mobile.features.offer.presentation.viewmodels.CreateOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.commons.extensions.appendTime
@@ -74,8 +68,8 @@ import com.unitip.mobile.shared.commons.extensions.localTimeFormat
 import com.unitip.mobile.shared.commons.extensions.toIsoString
 import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomTextField
+import com.unitip.mobile.features.offer.presentation.states.CreateOfferState as State
 
-//@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateOfferScreen(
@@ -83,17 +77,17 @@ fun CreateOfferScreen(
 ) {
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var expanded by remember { mutableStateOf(false) }
+//    var expanded by remember { mutableStateOf(false) }
     // List jumlah peserta (1 sampai 5)
-    val participantsList = (1..5).toList()
+//    val participantsList = (1..5).toList()
 
     var title by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var price by rememberSaveable { mutableStateOf(0) }
-    var type by rememberSaveable { mutableStateOf("") }
+//    var type by rememberSaveable { mutableStateOf("") }
     var pickupArea by rememberSaveable { mutableStateOf("") }
     var destinationArea by rememberSaveable { mutableStateOf("") }
-    var availableUntil by rememberSaveable { mutableStateOf("") }
+//    var availableUntil by rememberSaveable { mutableStateOf("") }
     var maxParticipants by rememberSaveable { mutableStateOf(1) }
     var isSelectType by rememberSaveable { mutableStateOf(false) }
     var selectType by rememberSaveable { mutableStateOf("") }
@@ -119,7 +113,7 @@ fun CreateOfferScreen(
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is CreateOfferState.Detail.Failure -> {
+                is State.Detail.Failure -> {
                     snackbarHostState.showSnackbar(
                         message = message,
                         actionLabel = "Oke",
@@ -128,7 +122,7 @@ fun CreateOfferScreen(
                     viewModel.resetState()
                 }
 
-                is CreateOfferState.Detail.Success -> {
+                is State.Detail.Success -> {
                     // Kehalaman berikutnya
                     navController.popBackStack()
 
@@ -181,7 +175,7 @@ fun CreateOfferScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable(
-                                enabled = uiState.detail !is CreateOfferState.Detail.Loading
+                                enabled = uiState.detail !is State.Detail.Loading
                             ) {
                                 isSelectType = !isSelectType
                             }
@@ -276,7 +270,7 @@ fun CreateOfferScreen(
                 value = title,
                 onValueChange = { value -> title = value },
                 placeholder = "Cth: Penawaran dimsum uma yumcha",
-                enabled = uiState.detail !is CreateOfferState.Detail.Loading,
+                enabled = uiState.detail !is State.Detail.Loading,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
 
@@ -285,7 +279,7 @@ fun CreateOfferScreen(
                 value = description,
                 onValueChange = { value -> description = value },
                 placeholder = "Cth: nanti nitipnya boleh 2 porsi per orang",
-                enabled = uiState.detail !is CreateOfferState.Detail.Loading,
+                enabled = uiState.detail !is State.Detail.Loading,
                 minLines = 5,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
@@ -300,7 +294,7 @@ fun CreateOfferScreen(
                     }
                 },
                 placeholder = "Cth: 5000",
-                enabled = uiState.detail !is CreateOfferState.Detail.Loading,
+                enabled = uiState.detail !is State.Detail.Loading,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
@@ -310,7 +304,7 @@ fun CreateOfferScreen(
                 value = pickupArea,
                 onValueChange = { value -> pickupArea = value },
                 placeholder = "Cth: Uma yumcha pasar Gede",
-                enabled = uiState.detail !is CreateOfferState.Detail.Loading,
+                enabled = uiState.detail !is State.Detail.Loading,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
 
@@ -319,71 +313,72 @@ fun CreateOfferScreen(
                 value = destinationArea,
                 onValueChange = { value -> destinationArea = value },
                 placeholder = "Cth: Sekitar UNS",
-                enabled = uiState.detail !is CreateOfferState.Detail.Loading,
+                enabled = uiState.detail !is State.Detail.Loading,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
             )
 
+
             // Dropdown menu
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-                if (selectType == OfferConstans.services.find { it.value == "antar-jemput" }?.value) {
-                    // Automatically set maxParticipants to 1 if "antar jemput"
-                    maxParticipants = 1
-
-
-                    // Read-only OutlinedTextField
-                    OutlinedTextField(
-                        value = maxParticipants.toString(),  // Automatically displays 1
-                        onValueChange = {},  // No value change allowed
-                        label = { Text("Jumlah Peserta") },
-                        readOnly = true,  // Makes the field non-editable
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Lock,  // A lock icon to indicate it's read-only
-                                contentDescription = "Locked icon",
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                } else {
-                    OutlinedTextField(
-                        value = maxParticipants.toString(),
-                        onValueChange = {},
-                        label = { Text("Jumlah Peserta") },
-                        readOnly = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Dropdown icon",
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor()
-                    )
-
-                    // Menu untuk memilih jumlah peserta
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        participantsList.forEach { participant ->
-                            DropdownMenuItem(
-                                text = { Text(participant.toString()) },
-                                onClick = {
-                                    maxParticipants = participant
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+//            ExposedDropdownMenuBox(
+//                expanded = expanded,
+//                onExpandedChange = { expanded = !expanded }
+//            ) {
+//                if (selectType == OfferConstans.services.find { it.value == "antar-jemput" }?.value) {
+//                    // Automatically set maxParticipants to 1 if "antar jemput"
+//                    maxParticipants = 1
+//
+//
+//                    // Read-only OutlinedTextField
+//                    OutlinedTextField(
+//                        value = maxParticipants.toString(),  // Automatically displays 1
+//                        onValueChange = {},  // No value change allowed
+//                        label = { Text("Jumlah Peserta") },
+//                        readOnly = true,  // Makes the field non-editable
+//                        trailingIcon = {
+//                            Icon(
+//                                imageVector = Icons.Default.Lock,  // A lock icon to indicate it's read-only
+//                                contentDescription = "Locked icon",
+//                                modifier = Modifier.size(20.dp)
+//                            )
+//                        },
+//                        modifier = Modifier.fillMaxWidth()
+//                    )
+//
+//                } else {
+//                    OutlinedTextField(
+//                        value = maxParticipants.toString(),
+//                        onValueChange = {},
+//                        label = { Text("Jumlah Peserta") },
+//                        readOnly = true,
+//                        trailingIcon = {
+//                            Icon(
+//                                imageVector = Icons.Default.ArrowDropDown,
+//                                contentDescription = "Dropdown icon",
+//                                modifier = Modifier.size(20.dp)
+//                            )
+//                        },
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .menuAnchor()
+//                    )
+//
+//                    // Menu untuk memilih jumlah peserta
+//                    ExposedDropdownMenu(
+//                        expanded = expanded,
+//                        onDismissRequest = { expanded = false }
+//                    ) {
+//                        participantsList.forEach { participant ->
+//                            DropdownMenuItem(
+//                                text = { Text(participant.toString()) },
+//                                onClick = {
+//                                    maxParticipants = participant
+//                                    expanded = false
+//                                }
+//                            )
+//                        }
+//                    }
+//                }
+//            }
 
             ListItem(
                 leadingContent = { Icon(Lucide.CalendarClock, contentDescription = null) },
@@ -400,20 +395,31 @@ fun CreateOfferScreen(
                     )
                 },
                 trailingContent = { Icon(Lucide.ChevronRight, contentDescription = null) },
-                modifier = Modifier.clickable {
-                    isDatePickerDialogVisible = true
-                }
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clickable {
+                        isDatePickerDialogVisible = true
+                    }
+            )
+
+            ParticipantDropdown(
+                maxValue = 5,
+                value = maxParticipants,
+                onValueChange = { value ->
+                    maxParticipants = value
+                },
+                allowMultiple = selectType != "antar-jemput"
             )
 
             Button(
-                enabled = false,
+                enabled = uiState.detail !is State.Detail.Loading,
                 onClick = {
-                    if (selectType.isNotBlank())
+                    if (selectType.isNotBlank() && selectedDateTimeMillis != null)
                         viewModel.create(
                             title = title,
                             description = description,
                             type = selectType,
-                            availableUntil = availableUntil,
+                            availableUntil = selectedDateTimeMillis!!.toIsoString(),
                             price = price,
                             pickupArea = pickupArea,
                             destinationArea = destinationArea,
@@ -425,7 +431,14 @@ fun CreateOfferScreen(
                     .padding(16.dp)
             ) {
                 Box {
-                    Text("Selesai", modifier = Modifier.alpha(1f))
+                    Text(
+                        "Selesai",
+                        modifier = Modifier.alpha(
+                            if (uiState.detail is State.Detail.Loading) 0f
+                            else 1f
+                        )
+                    )
+                    if (uiState.detail is State.Detail.Loading)
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(ButtonDefaults.IconSize)
