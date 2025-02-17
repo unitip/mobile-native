@@ -1,19 +1,13 @@
 package com.unitip.mobile.features.offer.presentation.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -24,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -42,32 +35,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ArrowLeft
-import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.CalendarClock
-import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ChevronRight
-import com.composables.icons.lucide.ChevronUp
-import com.composables.icons.lucide.Circle
-import com.composables.icons.lucide.CircleCheck
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.offer.commons.OfferConstans
 import com.unitip.mobile.features.offer.presentation.components.CustomDatePickerDialog
 import com.unitip.mobile.features.offer.presentation.components.CustomTimePickerDialog
 import com.unitip.mobile.features.offer.presentation.components.ParticipantDropdown
 import com.unitip.mobile.features.offer.presentation.viewmodels.CreateOfferViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.commons.constants.ServiceTypeConstant
 import com.unitip.mobile.shared.commons.extensions.appendTime
 import com.unitip.mobile.shared.commons.extensions.localDateFormat
 import com.unitip.mobile.shared.commons.extensions.localTimeFormat
 import com.unitip.mobile.shared.commons.extensions.toIsoString
-import com.unitip.mobile.shared.presentation.components.CustomCard
 import com.unitip.mobile.shared.presentation.components.CustomTextField
+import com.unitip.mobile.shared.presentation.components.ServiceTypeDropdown
 import com.unitip.mobile.features.offer.presentation.states.CreateOfferState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +77,7 @@ fun CreateOfferScreen(
 //    var availableUntil by rememberSaveable { mutableStateOf("") }
     var maxParticipants by rememberSaveable { mutableStateOf(1) }
     var isSelectType by rememberSaveable { mutableStateOf(false) }
-    var selectType by rememberSaveable { mutableStateOf("") }
+    var serviceType by rememberSaveable { mutableStateOf<ServiceTypeConstant?>(null) }
 
 //    var dateTimeString by remember { mutableStateOf("") }
 //    val context = LocalContext.current
@@ -167,103 +154,110 @@ fun CreateOfferScreen(
                 .imePadding()
                 .verticalScroll(scrollState)
         ) {
-            CustomCard(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
-            ) {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(
-                                enabled = uiState.detail !is State.Detail.Loading
-                            ) {
-                                isSelectType = !isSelectType
-                            }
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            Icon(
-                                Lucide.Bike,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .align(Alignment.Center),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(
-                                text = "Jenis Layanan",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = when (selectType.isBlank()) {
-                                    true -> "Pilih jenis layanan"
-                                    else -> OfferConstans.services.find { service ->
-                                        service.value == selectType
-                                    }!!.title
-                                },
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                        Icon(
-                            when (isSelectType) {
-                                true -> Lucide.ChevronUp
-                                else -> Lucide.ChevronDown
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    AnimatedVisibility(
-                        visible = isSelectType
-                    ) {
-                        Column {
-                            HorizontalDivider()
-
-                            OfferConstans.services.map { item ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            isSelectType = false
-                                            selectType = item.value
-                                        }
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    Icon(
-                                        when (item.value == selectType) {
-                                            true -> Lucide.CircleCheck
-                                            else -> Lucide.Circle
-                                        },
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Text(
-                                        text = item.title,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-
+            ServiceTypeDropdown(
+                value = serviceType,
+                onConfirm = {
+                    serviceType = it
                 }
-            }
+            )
+
+//            CustomCard(
+//                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+//            ) {
+//                Column {
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .clickable(
+//                                enabled = uiState.detail !is State.Detail.Loading
+//                            ) {
+//                                isSelectType = !isSelectType
+//                            }
+//                            .padding(16.dp),
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                    ) {
+//                        Box(
+//                            modifier = Modifier
+//                                .size(48.dp)
+//                                .clip(RoundedCornerShape(24.dp))
+//                                .background(MaterialTheme.colorScheme.primaryContainer)
+//                        ) {
+//                            Icon(
+//                                Lucide.Bike,
+//                                contentDescription = null,
+//                                modifier = Modifier
+//                                    .size(20.dp)
+//                                    .align(Alignment.Center),
+//                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+//                            )
+//                        }
+//
+//                        Column(
+//                            modifier = Modifier.weight(1f)
+//                        ) {
+//                            Text(
+//                                text = "Jenis Layanan",
+//                                style = MaterialTheme.typography.titleMedium
+//                            )
+//                            Text(
+//                                text = when (serviceType.isBlank()) {
+//                                    true -> "Pilih jenis layanan"
+//                                    else -> OfferConstans.services.find { service ->
+//                                        service.value == serviceType
+//                                    }!!.title
+//                                },
+//                                style = MaterialTheme.typography.bodyMedium
+//                            )
+//                        }
+//                        Icon(
+//                            when (isSelectType) {
+//                                true -> Lucide.ChevronUp
+//                                else -> Lucide.ChevronDown
+//                            },
+//                            contentDescription = null,
+//                            modifier = Modifier.size(20.dp)
+//                        )
+//                    }
+//
+//                    AnimatedVisibility(
+//                        visible = isSelectType
+//                    ) {
+//                        Column {
+//                            HorizontalDivider()
+//
+//                            OfferConstans.services.map { item ->
+//                                Row(
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .clickable {
+//                                            isSelectType = false
+//                                            serviceType = item.value
+//                                        }
+//                                        .padding(16.dp),
+//                                    verticalAlignment = Alignment.CenterVertically,
+//                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                                ) {
+//                                    Icon(
+//                                        when (item.value == serviceType) {
+//                                            true -> Lucide.CircleCheck
+//                                            else -> Lucide.Circle
+//                                        },
+//                                        contentDescription = null,
+//                                        modifier = Modifier.size(20.dp)
+//                                    )
+//                                    Text(
+//                                        text = item.title,
+//                                        style = MaterialTheme.typography.bodyMedium
+//                                    )
+//                                }
+//                            }
+//                        }
+//
+//                    }
+//
+//                }
+//            }
 
             CustomTextField(
                 label = "Judul Penawaran",
@@ -408,17 +402,17 @@ fun CreateOfferScreen(
                 onValueChange = { value ->
                     maxParticipants = value
                 },
-                allowMultiple = selectType != "antar-jemput"
+                allowMultiple = serviceType == ServiceTypeConstant.JasaTitip
             )
 
             Button(
                 enabled = uiState.detail !is State.Detail.Loading,
                 onClick = {
-                    if (selectType.isNotBlank() && selectedDateTimeMillis != null)
+                    if (serviceType != null && selectedDateTimeMillis != null)
                         viewModel.create(
                             title = title,
                             description = description,
-                            type = selectType,
+                            type = "serviceType",
                             availableUntil = selectedDateTimeMillis!!.toIsoString(),
                             price = price,
                             pickupArea = pickupArea,
