@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.unitip.mobile.BuildConfig
 import com.unitip.mobile.features.home.data.repositories.CustomerDashboardRepository
 import com.unitip.mobile.features.home.presentation.states.DashboardCustomerState
+import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.data.providers.MqttProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import info.mqtt.android.service.MqttAndroidClient
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardCustomerViewModel @Inject constructor(
     mqttProvider: MqttProvider,
+    private val sessionManager: SessionManager,
     private val customerDashboardRepository: CustomerDashboardRepository
 ) : ViewModel() {
     companion object {
@@ -29,6 +31,7 @@ class DashboardCustomerViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(DashboardCustomerState())
     val uiState get() = _uiState.asStateFlow()
+    val session get() = sessionManager.read()
 
     private val client: MqttAndroidClient = mqttProvider.client
 
