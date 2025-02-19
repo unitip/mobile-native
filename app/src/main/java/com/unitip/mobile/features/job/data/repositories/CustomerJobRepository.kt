@@ -4,6 +4,7 @@ import arrow.core.Either
 import com.unitip.mobile.features.job.commons.JobConstant
 import com.unitip.mobile.network.openapi.apis.JobApi
 import com.unitip.mobile.network.openapi.models.CreateJobRequest
+import com.unitip.mobile.shared.commons.constants.ServiceTypeConstant
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.domain.models.Failure
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class CustomerJobRepository @Inject constructor(
         note: String,
         pickupLocation: String,
         destinationLocation: String,
-        service: JobConstant.Service,
+        service: ServiceTypeConstant,
         expectedPrice: Int
     ): Either<Failure, Unit> = try {
         val response = jobApi.createJob(
@@ -26,10 +27,7 @@ class CustomerJobRepository @Inject constructor(
                 note = note,
                 pickupLocation = pickupLocation,
                 destinationLocation = destinationLocation,
-                service = when (service) {
-                    JobConstant.Service.AntarJemput -> CreateJobRequest.Service.AntarJemput
-                    JobConstant.Service.JasaTitip -> CreateJobRequest.Service.JasaTitip
-                },
+                service = CreateJobRequest.Service.valueOf(service.name),
                 expectedPrice = expectedPrice
             )
         )

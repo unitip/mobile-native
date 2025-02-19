@@ -1,11 +1,9 @@
 package com.unitip.mobile.features.offer.data.repositories
 
 import arrow.core.Either
-import com.unitip.mobile.features.chat.data.dtos.CreateRoomPayload
 import com.unitip.mobile.features.offer.data.dtos.ApplyOfferPayload
-import com.unitip.mobile.features.offer.data.dtos.CreateOfferPayload
-import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.DetailApplicantOfferResponse
+import com.unitip.mobile.features.offer.data.dtos.GetOfferResponse
 import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusPayload
 import com.unitip.mobile.features.offer.data.dtos.UpdateApplicantStatusResponse
 import com.unitip.mobile.features.offer.data.models.ApplyOfferResult
@@ -15,6 +13,8 @@ import com.unitip.mobile.features.offer.domain.models.DetailApplicantOffer
 import com.unitip.mobile.features.offer.domain.models.GetAllOffersResult
 import com.unitip.mobile.features.offer.domain.models.Offer
 import com.unitip.mobile.features.offer.domain.models.OfferFreelancer
+import com.unitip.mobile.network.openapi.models.CreateOfferRequest
+import com.unitip.mobile.shared.commons.constants.ServiceTypeConstant
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.data.managers.SessionManager
 import com.unitip.mobile.shared.domain.models.Failure
@@ -24,43 +24,41 @@ import javax.inject.Singleton
 @Singleton
 class OfferRepository @Inject constructor(
     private val sessionManager: SessionManager,
-    private val offerApi: OfferApi
+    private val offerApi: OfferApi,
+    private val offerApi2: com.unitip.mobile.network.openapi.apis.OfferApi
 ) {
     suspend fun create(
         title: String,
         description: String,
-        price: Number,
-        type: String,
+        price: Int,
+        type: ServiceTypeConstant,
         pickupArea: String,
         destinationArea: String,
         availableUntil: String,
-        maxParticipants: Number
-    ): Either<Failure, Unit> {
-        try {
-            val token = sessionManager.read().token
-            val response = offerApi.create(
-                token = "Bearer $token",
-                payload = CreateOfferPayload(
-                    title = title,
-                    description = description,
-                    price = price,
-                    type = type,
-                    pickupArea = pickupArea,
-                    destinationArea = destinationArea,
-                    availableUntil = availableUntil,
-                    maxParticipants = maxParticipants
-                )
+        maxParticipants: Int
+    ): Either<Failure, Unit> = try {
+        val response = offerApi2.createOffer(
+            CreateOfferRequest(
+                title = title,
+                description = description,
+                type = CreateOfferRequest.Type.valueOf(type.name),
+                availableUntil = availableUntil,
+                price = price,
+                pickupArea = pickupArea,
+                destinationArea = destinationArea,
+                maxParticipants = maxParticipants
             )
+        )
+        val result = response.body()
 
-            val result = response.body()
-            // mereturn jika sukses dan jika tidak
-            return when (response.isSuccessful && result != null) {
-                true -> Either.Right(Unit)
-                false -> Either.Left(response.mapToFailure())
-            }
-        } catch (e: Exception) {
-            return Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+        // mereturn jika sukses dan jika tidak
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(Unit)
+            false -> Either.Left(response.mapToFailure())
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
 
     suspend fun getOffers(

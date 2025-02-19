@@ -16,6 +16,7 @@ import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
 import com.unitip.mobile.features.location.commons.locationNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
+import com.unitip.mobile.features.social.commons.socialNavigation
 import com.unitip.mobile.features.test.TestScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,9 +45,9 @@ fun ApplicationNavigationGraph(
         jobNavigation()
         offerNavigation()
         chatNavigation()
-//        exampleNavigation()
         locationNavigation()
         settingNavigation()
+        socialNavigation()
 
         // test
         composable<Routes.Test> {

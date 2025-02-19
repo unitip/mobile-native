@@ -1,23 +1,27 @@
 package com.unitip.mobile.features.auth.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,19 +29,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.unitip.mobile.R
 import com.unitip.mobile.features.auth.commons.AuthRoutes
-import com.unitip.mobile.features.auth.presentation.states.AuthState
 import com.unitip.mobile.features.auth.presentation.viewmodels.AuthViewModel
 import com.unitip.mobile.features.home.commons.HomeRoutes
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
+import com.unitip.mobile.shared.presentation.components.CustomTextField
+import com.unitip.mobile.features.auth.presentation.states.AuthState as State
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
@@ -50,19 +57,20 @@ fun AuthScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     val snackbarHost = remember { SnackbarHostState() }
+    val scrollState = rememberScrollState()
     val navController = LocalNavController.current
 
     LaunchedEffect(uiState.detail) {
         with(uiState.detail) {
             when (this) {
-                is AuthState.Detail.Success -> {
+                is State.Detail.Success -> {
                     navController.navigate(HomeRoutes.Index) {
                         popUpTo(AuthRoutes.Index) { inclusive = true }
                     }
                     viewModel.resetState()
                 }
 
-                is AuthState.Detail.SuccessWithPickRole -> {
+                is State.Detail.SuccessWithPickRole -> {
                     navController.navigate(
                         AuthRoutes.PickRole(
                             email = email,
@@ -73,12 +81,8 @@ fun AuthScreen(
                     viewModel.resetState()
                 }
 
-                is AuthState.Detail.Failure -> {
-                    snackbarHost.showSnackbar(
-                        message = message,
-                        actionLabel = "Oke",
-                        duration = SnackbarDuration.Indefinite
-                    )
+                is State.Detail.Failure -> {
+                    snackbarHost.showSnackbar(message = message)
                     viewModel.resetState()
                 }
 
@@ -88,163 +92,130 @@ fun AuthScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHost) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) },
+        topBar = {
+            Column {
+                TopAppBar(title = {
+                    Text(
+                        text = if (uiState.isLogin) "Masuk"
+                        else "Registrasi"
+                    )
+                })
+                HorizontalDivider()
+            }
+        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surfaceContainerHigh,
-                            MaterialTheme.colorScheme.surfaceContainerLowest,
-                        )
-                    )
-                )
                 .padding(it)
+                .verticalScroll(scrollState)
         ) {
-            Column(
+            Text(
+                text = if (uiState.isLogin) "Selamat datang kembali di aplikasi Unitip! Silahkan masukkan beberapa informasi berikut untuk masuk ke akun Unitip Anda"
+                else "Masukkan beberapa informasi berikut untuk bergabung dan menjadi bagian dari keluarga Unitip!",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            )
+
+            AnimatedVisibility(visible = !uiState.isLogin) {
+                CustomTextField(
+                    enabled = uiState.detail !is State.Detail.Loading,
+                    label = "Nama Lengkap",
+                    value = name,
+                    onValueChange = { value -> name = value },
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+            CustomTextField(
+                enabled = uiState.detail !is State.Detail.Loading,
+                label = "Alamat Email",
+                value = email,
+                onValueChange = { value -> email = value },
+                modifier = Modifier.padding(
+                    top = if (uiState.isLogin) 16.dp else 8.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                )
+            )
+            CustomTextField(
+                enabled = uiState.detail !is State.Detail.Loading,
+                label = "Kata Sandi",
+                value = password,
+                onValueChange = { value -> password = value },
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
+            )
+            AnimatedVisibility(visible = !uiState.isLogin) {
+                CustomTextField(
+                    enabled = uiState.detail !is State.Detail.Loading,
+                    label = "Konfirmasi Kata Sandi",
+                    value = confirmPassword,
+                    onValueChange = { value -> confirmPassword = value },
+                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+
+            Button(
+                enabled = uiState.detail !is State.Detail.Loading,
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = if (uiState.isLogin) "Masuk" else "Registrasi",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = if (uiState.isLogin) "Selamat datang kembali di aplikasi Unitip! Silahkan masukkan beberapa informasi berikut untuk masuk ke akun Unitip Anda"
-                    else "Masukkan beberapa informasi berikut untuk bergabung dan menjadi bagian dari keluarga Unitip!",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
-            AnimatedVisibility(visible = uiState.detail is AuthState.Detail.Loading) {
-                LinearProgressIndicator(
-                    strokeCap = StrokeCap.Round,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                )
-            }
-
-            // form
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            ) {
-                AnimatedVisibility(visible = !uiState.isLogin) {
-                    OutlinedTextField(
-                        enabled = uiState.detail !is AuthState.Detail.Loading,
-                        value = name,
-                        onValueChange = { value -> name = value },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 32.dp),
-                        placeholder = {
-                            Text(stringResource(R.string.name_placeholder))
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors().copy(
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                        ),
-                    )
-                }
-                OutlinedTextField(
-                    enabled = uiState.detail !is AuthState.Detail.Loading,
-                    value = email,
-                    onValueChange = { value -> email = value },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = (if (uiState.isLogin) 32 else 8).dp),
-                    placeholder = {
-                        Text(stringResource(R.string.email_placeholder))
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors().copy(
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                    ),
-                )
-                OutlinedTextField(
-                    enabled = uiState.detail !is AuthState.Detail.Loading,
-                    value = password,
-                    onValueChange = { value -> password = value },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    placeholder = {
-                        Text(stringResource(R.string.password_placeholder))
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors().copy(
-                        unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                    ),
-                )
-                AnimatedVisibility(visible = !uiState.isLogin) {
-                    OutlinedTextField(
-                        enabled = uiState.detail !is AuthState.Detail.Loading,
-                        value = confirmPassword,
-                        onValueChange = { value -> confirmPassword = value },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        placeholder = {
-                            Text(stringResource(R.string.confirm_password_placeholder))
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors().copy(
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .16f)
-                        ),
-                    )
-                }
-            }
-
-            // actions
-            AnimatedVisibility(visible = uiState.detail !is AuthState.Detail.Loading) {
-                Column(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    )
-                ) {
-                    Button(
-                        onClick = {
-                            when (uiState.isLogin) {
-                                true -> viewModel.login(email = email, password = password)
-                                false -> viewModel.register(
-                                    name = name,
-                                    email = email,
-                                    password = password
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(
-                                if (uiState.isLogin) R.string.login
-                                else R.string.register
-                            )
-                        )
-                    }
-                    TextButton(
-                        onClick = { viewModel.switchAuthMode() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(
-                                if (uiState.isLogin) R.string.register_switch
-                                else R.string.login_switch
-                            )
+                    .align(Alignment.End)
+                    .padding(16.dp),
+                onClick = {
+                    when (uiState.isLogin) {
+                        true -> viewModel.login(email = email, password = password)
+                        false -> viewModel.register(
+                            name = name,
+                            email = email,
+                            password = password
                         )
                     }
                 }
+            ) {
+                Box {
+                    Text(
+                        text = if (uiState.isLogin) "Masuk"
+                        else "Daftar",
+                        modifier = Modifier.alpha(if (uiState.detail is State.Detail.Loading) 0f else 1f)
+                    )
+
+                    if (uiState.detail is State.Detail.Loading)
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(ButtonDefaults.IconSize)
+                                .align(Alignment.Center),
+                            strokeCap = StrokeCap.Round,
+                            strokeWidth = 2.dp
+                        )
+                }
             }
+
+            HorizontalDivider(thickness = .56.dp)
+
+            Text(
+                text = when (uiState.isLogin) {
+                    true -> "Akun Anda belum terdaftar pada aplikasi Unitip? " +
+                            "Silahkan klik tombol di bawah ini untuk mendaftarkan akun Unitip baru"
+
+                    else -> "Akun Anda sudah terdaftar pada aplikasi Unitip? " +
+                            "Silahkan klik tombol di bawah ini untuk masuk dengan akun lama Unitip"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = if (uiState.isLogin) "Daftarkan akun baru"
+                else "Masuk dengan akun lama",
+                style = MaterialTheme.typography.bodySmall,
+                textDecoration = TextDecoration.Underline,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp)
+                    .clickable { viewModel.switchAuthMode() }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
