@@ -168,10 +168,9 @@ tasks.register("downloadSwagger") {
     doLast {
         val properties = Properties()
         properties.load(rootProject.file(".env.local").inputStream())
-        val localBaseUrl = properties.getProperty("BASE_URL")
+        val swaggerBaseUrl = properties.getProperty("SWAGGER_BASE_URL")
 
-//        val swaggerUrl = "${localBaseUrl}api/v1/docs/swagger.json"
-        val swaggerUrl = "http://localhost:3000/api/v1/docs/swagger.json"
+        val swaggerUrl = "${swaggerBaseUrl}api/v1/docs/swagger.json"
         val outputDir = "$rootDir/swagger.json"
 
         ant.withGroovyBuilder {
