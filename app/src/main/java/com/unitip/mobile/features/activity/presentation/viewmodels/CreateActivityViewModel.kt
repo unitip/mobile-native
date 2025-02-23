@@ -1,11 +1,11 @@
-package com.unitip.mobile.features.social.presentation.viewmodels
+package com.unitip.mobile.features.activity.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
-import com.unitip.mobile.features.social.presentation.state.CreateActivityState as State
+import com.unitip.mobile.features.activity.presentation.state.CreateActivityState as State
 
 @HiltViewModel
 class CreateActivityViewModel @Inject constructor() : ViewModel() {

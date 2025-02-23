@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.commons
+package com.unitip.mobile.features.activity.commons
 
 import kotlinx.serialization.Serializable
 

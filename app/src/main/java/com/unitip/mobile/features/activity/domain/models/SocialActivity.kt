@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.domain.models
+package com.unitip.mobile.features.activity.domain.models
 
 data class SocialActivity(
     val censoredName: String,

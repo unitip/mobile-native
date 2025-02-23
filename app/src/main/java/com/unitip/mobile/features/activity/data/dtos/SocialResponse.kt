@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.data.dtos
+package com.unitip.mobile.features.activity.data.dtos
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

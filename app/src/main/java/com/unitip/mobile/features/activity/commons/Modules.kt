@@ -1,12 +1,11 @@
-package com.unitip.mobile.features.social.commons
+package com.unitip.mobile.features.activity.commons
 
-import com.unitip.mobile.features.social.data.source.SocialApi
+import com.unitip.mobile.features.activity.data.source.SocialApi
 import com.unitip.mobile.shared.commons.configs.ApiConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 
 @Module

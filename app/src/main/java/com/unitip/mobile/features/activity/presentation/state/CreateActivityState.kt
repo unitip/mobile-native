@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.presentation.state
+package com.unitip.mobile.features.activity.presentation.state
 
 data class CreateActivityState(
     val detail: Detail = Detail.Initial

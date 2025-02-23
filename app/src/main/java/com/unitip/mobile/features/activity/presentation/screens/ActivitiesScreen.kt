@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.presentation.screens
+package com.unitip.mobile.features.activity.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,15 +43,15 @@ import com.composables.icons.lucide.Briefcase
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pen
 import com.composables.icons.lucide.RefreshCw
-import com.unitip.mobile.features.social.commons.SocialRoutes
-import com.unitip.mobile.features.social.presentation.state.SocialState
-import com.unitip.mobile.features.social.presentation.viewmodels.SocialViewModel
+import com.unitip.mobile.features.activity.commons.SocialRoutes
+import com.unitip.mobile.features.activity.presentation.state.ActivitiesState
+import com.unitip.mobile.features.activity.presentation.viewmodels.ActivitiesViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SocialScreen(
-    viewModel: SocialViewModel = hiltViewModel()
+fun ActivitiesScreen(
+    viewModel: ActivitiesViewModel = hiltViewModel()
 ) {
     val navController = LocalNavController.current
 
@@ -65,7 +65,7 @@ fun SocialScreen(
 
     LaunchedEffect(uiState.detail) {
         when (val detail = uiState.detail) {
-            is SocialState.Detail.Failure -> {
+            is ActivitiesState.Detail.Failure -> {
                 snackbarHostState.showSnackbar(message = detail.message)
             }
 
@@ -104,7 +104,7 @@ fun SocialScreen(
                 .padding(paddingValues)
         ) {
             when (val detail = uiState.detail) {
-                is SocialState.Detail.Loading -> {
+                is ActivitiesState.Detail.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -113,7 +113,7 @@ fun SocialScreen(
                     }
                 }
 
-                is SocialState.Detail.Success -> {
+                is ActivitiesState.Detail.Success -> {
                     LazyColumn(state = listState) {
                         itemsIndexed(detail.activities) { index, activity ->
                             if (index > 0) {

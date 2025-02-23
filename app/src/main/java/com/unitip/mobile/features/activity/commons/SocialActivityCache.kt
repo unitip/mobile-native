@@ -1,7 +1,7 @@
-package com.unitip.mobile.features.social.commons
+package com.unitip.mobile.features.activity.commons
 
 import android.content.Context
-import com.unitip.mobile.features.social.domain.models.SocialActivity
+import com.unitip.mobile.features.activity.domain.models.SocialActivity
 
 object SocialActivityCache {
     private const val PREFS_NAME = "social_cache"

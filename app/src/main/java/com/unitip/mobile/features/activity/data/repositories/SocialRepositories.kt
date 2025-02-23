@@ -1,11 +1,11 @@
-package com.unitip.mobile.features.social.data.repositories
+package com.unitip.mobile.features.activity.data.repositories
 
 import android.content.Context
 import android.util.Log
 import arrow.core.Either
-import com.unitip.mobile.features.social.commons.SocialActivityCache
-import com.unitip.mobile.features.social.data.source.SocialApi
-import com.unitip.mobile.features.social.domain.models.SocialActivity
+import com.unitip.mobile.features.activity.commons.SocialActivityCache
+import com.unitip.mobile.features.activity.data.source.SocialApi
+import com.unitip.mobile.features.activity.domain.models.SocialActivity
 import com.unitip.mobile.shared.commons.extensions.mapToFailure
 import com.unitip.mobile.shared.domain.models.Failure
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,6 +32,7 @@ class SocialRepository @Inject constructor(
                     Either.Right(it)
                 } ?: fetchFresh() // Jika cache kosong, fetch baru
             }
+
             response.isSuccessful && response.body() != null -> {
                 val result = response.body()!!
                 val activities = result.activities.map {
@@ -48,6 +49,7 @@ class SocialRepository @Inject constructor(
                 Log.d("SocialRepository", "Fetched new data and updated cache")
                 Either.Right(activities)
             }
+
             else -> Either.Left(response.mapToFailure())
         }
     } catch (e: Exception) {

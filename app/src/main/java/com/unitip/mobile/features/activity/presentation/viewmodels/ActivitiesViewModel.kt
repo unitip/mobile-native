@@ -1,11 +1,11 @@
-package com.unitip.mobile.features.social.presentation.viewmodels
+package com.unitip.mobile.features.activity.presentation.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.unitip.mobile.features.social.commons.SocialActivityCache
-import com.unitip.mobile.features.social.data.repositories.SocialRepository
-import com.unitip.mobile.features.social.presentation.state.SocialState
+import com.unitip.mobile.features.activity.commons.SocialActivityCache
+import com.unitip.mobile.features.activity.data.repositories.SocialRepository
+import com.unitip.mobile.features.activity.presentation.state.ActivitiesState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SocialViewModel @Inject constructor(
+class ActivitiesViewModel @Inject constructor(
     private val socialRepository: SocialRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(SocialState())
+    private val _uiState = MutableStateFlow(ActivitiesState())
     val uiState = _uiState.asStateFlow()
 
     fun getActivities(forceRefresh: Boolean = false) = viewModelScope.launch {
@@ -27,13 +27,13 @@ class SocialViewModel @Inject constructor(
             SocialActivityCache.clear(context)
         }
 
-        _uiState.update { it.copy(detail = SocialState.Detail.Loading) }
+        _uiState.update { it.copy(detail = ActivitiesState.Detail.Loading) }
 
         socialRepository.getSocialActivities()
             .onLeft { failure ->
                 _uiState.update {
                     it.copy(
-                        detail = SocialState.Detail.Failure(
+                        detail = ActivitiesState.Detail.Failure(
                             message = failure.message
                         )
                     )
@@ -42,7 +42,7 @@ class SocialViewModel @Inject constructor(
             .onRight { activities ->
                 _uiState.update {
                     it.copy(
-                        detail = SocialState.Detail.Success(
+                        detail = ActivitiesState.Detail.Success(
                             activities = activities
                         )
                     )

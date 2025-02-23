@@ -1,4 +1,4 @@
-package com.unitip.mobile.features.social.presentation.screens
+package com.unitip.mobile.features.activity.presentation.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Lucide
-import com.unitip.mobile.features.social.presentation.viewmodels.CreateActivityViewModel
+import com.unitip.mobile.features.activity.presentation.viewmodels.CreateActivityViewModel
 import com.unitip.mobile.shared.commons.compositional.LocalNavController
 import com.unitip.mobile.shared.presentation.components.CustomTextField
-import com.unitip.mobile.features.social.presentation.state.CreateActivityState as State
+import com.unitip.mobile.features.activity.presentation.state.CreateActivityState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

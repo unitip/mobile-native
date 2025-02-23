@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.unitip.mobile.features.account.commons.settingNavigation
+import com.unitip.mobile.features.activity.commons.socialNavigation
 import com.unitip.mobile.features.auth.commons.AuthRoutes
 import com.unitip.mobile.features.auth.commons.authNavigation
 import com.unitip.mobile.features.chat.commons.chatNavigation
@@ -16,7 +17,6 @@ import com.unitip.mobile.features.home.commons.homeNavigation
 import com.unitip.mobile.features.job.commons.jobNavigation
 import com.unitip.mobile.features.location.commons.locationNavigation
 import com.unitip.mobile.features.offer.commons.offerNavigation
-import com.unitip.mobile.features.social.commons.socialNavigation
 import com.unitip.mobile.features.test.TestScreen
 
 @RequiresApi(Build.VERSION_CODES.O)

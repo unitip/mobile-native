@@ -1,6 +1,6 @@
-package com.unitip.mobile.features.social.data.source
+package com.unitip.mobile.features.activity.data.source
 
-import com.unitip.mobile.features.social.data.dtos.SocialResponse
+import com.unitip.mobile.features.activity.data.dtos.SocialResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
