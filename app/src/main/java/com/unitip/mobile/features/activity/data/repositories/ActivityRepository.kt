@@ -48,4 +48,19 @@ class ActivityRepository @Inject constructor(
         e.printStackTrace()
         Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
     }
+
+    suspend fun deleteActivity(
+        activityId: String
+    ): Either<Failure, Unit> = try {
+        val response = activityApi.deleteActivity(activityId)
+        val result = response.body()
+
+        when (response.isSuccessful && result != null) {
+            true -> Either.Right(Unit)
+            else -> Either.Left(response.mapToFailure())
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Either.Left(Failure(message = "Terjadi kesalahan tak terduga!"))
+    }
 }
