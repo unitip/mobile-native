@@ -1,6 +1,7 @@
 package com.unitip.mobile.shared.commons
 
 import com.unitip.mobile.network.openapi.apis.AccountApi
+import com.unitip.mobile.network.openapi.apis.ActivityApi
 import com.unitip.mobile.network.openapi.apis.AuthApi
 import com.unitip.mobile.network.openapi.apis.JobApi
 import com.unitip.mobile.network.openapi.apis.OfferApi
@@ -31,6 +32,10 @@ object Modules {
     @Provides
     fun provideAccountApi(): AccountApi =
         ApiConfig.newRetrofit.create(AccountApi::class.java)
+
+    @Provides
+    fun provideActivityApi(): ActivityApi =
+        ApiConfig.newRetrofit.create(ActivityApi::class.java)
 
     @Provides
     fun provideJobApi(): JobApi =
